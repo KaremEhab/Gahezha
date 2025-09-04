@@ -310,20 +310,20 @@ class S {
     return Intl.message('Login', name: 'login', desc: '', args: []);
   }
 
-  /// `Discover the best restaurants near you 🍴`
+  /// `Order online, collect in no time 📦`
   String get home_catchy_text {
     return Intl.message(
-      'Discover the best restaurants near you 🍴',
+      'Order online, collect in no time 📦',
       name: 'home_catchy_text',
       desc: '',
       args: [],
     );
   }
 
-  /// `You have 2 active orders`
+  /// `You have 2 orders to pickup`
   String get home_active_orders {
     return Intl.message(
-      'You have 2 active orders',
+      'You have 2 orders to pickup',
       name: 'home_active_orders',
       desc: '',
       args: [],

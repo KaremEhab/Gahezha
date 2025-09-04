@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/screens/cart/cart.dart';
 import 'package:gahezha/screens/home/home.dart';
 import 'package:gahezha/screens/layout/widgets/custom_nav_bar.dart';
+import 'package:gahezha/screens/layout/widgets/home_profile_popup.dart';
 import 'package:gahezha/screens/orders/orders.dart';
 import 'package:gahezha/screens/profile/profile.dart';
-import 'package:iconly/iconly.dart';
 
 class Layout extends StatefulWidget {
   const Layout({super.key});
@@ -40,16 +39,22 @@ class _LayoutState extends State<Layout> {
         statusBarColor: Colors.white,
       ),
     );
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(), // disable swipe
-        children: _pages,
-      ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _currentIndex,
-        onItemTapped: _onItemTapped,
-      ),
+    return Stack(
+      children: [
+        Scaffold(
+          body: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(), // disable swipe
+            children: _pages,
+          ),
+          bottomNavigationBar: CustomNavBar(
+            currentIndex: _currentIndex,
+            onItemTapped: _onItemTapped,
+          ),
+        ),
+        // ================= Profile Pop-up Container =================
+        Material(color: Colors.transparent, child: HomeProfilePopup()),
+      ],
     );
   }
 }

@@ -82,6 +82,10 @@ ThemeData buildGahezhaTheme(Brightness b) {
       ),
     ),
 
-    chipTheme: const ChipThemeData(showCheckmark: false),
+    chipTheme: ChipThemeData(
+      showCheckmark: false,
+      backgroundColor: Colors.grey.shade100,
+      side: BorderSide.none,
+    ),
   );
 }

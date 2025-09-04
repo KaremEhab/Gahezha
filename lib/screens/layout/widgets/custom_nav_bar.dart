@@ -30,7 +30,7 @@ class CustomNavBar extends StatelessWidget {
           currentIndex: currentIndex,
           onTap: onItemTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Theme.of(context).primaryColor,
+          selectedItemColor: primaryBlue,
           unselectedItemColor: Colors.grey,
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -40,26 +40,18 @@ class CustomNavBar extends StatelessWidget {
               activeIcon: Icon(
                 IconlyBold.home,
                 size: 25, // bigger size when selected
-                color: Theme.of(context).primaryColor,
+                color: primaryBlue,
               ),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: const Icon(IconlyLight.bag, size: 22),
-              activeIcon: Icon(
-                IconlyBold.bag,
-                size: 25,
-                color: Theme.of(context).primaryColor,
-              ),
+              activeIcon: Icon(IconlyBold.bag, size: 25, color: primaryBlue),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: const Icon(IconlyLight.paper, size: 22),
-              activeIcon: Icon(
-                IconlyBold.paper,
-                size: 25,
-                color: Theme.of(context).primaryColor,
-              ),
+              activeIcon: Icon(IconlyBold.paper, size: 25, color: primaryBlue),
               label: '',
             ),
             BottomNavigationBarItem(
@@ -67,7 +59,7 @@ class CustomNavBar extends StatelessWidget {
               activeIcon: Icon(
                 IconlyBold.profile,
                 size: 25,
-                color: Theme.of(context).primaryColor,
+                color: primaryBlue,
               ),
               label: '',
             ),

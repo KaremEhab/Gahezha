@@ -6,6 +6,7 @@ import 'package:gahezha/constants/bloc_observer.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
+import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/gahezha_splash.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/theme/app_theme.dart';
@@ -30,7 +31,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => LocaleCubit())],
+      providers: [
+        BlocProvider(create: (_) => LocaleCubit()),
+        BlocProvider(create: (_) => ProfileToggleCubit()),
+      ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
           return MaterialApp(

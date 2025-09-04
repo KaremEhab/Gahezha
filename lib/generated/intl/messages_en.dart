@@ -56,10 +56,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "get_started": MessageLookupByLibrary.simpleMessage("Get Started"),
     "google": MessageLookupByLibrary.simpleMessage("Google"),
     "home_active_orders": MessageLookupByLibrary.simpleMessage(
-      "You have 2 active orders",
+      "You have 2 orders to pickup",
     ),
     "home_catchy_text": MessageLookupByLibrary.simpleMessage(
-      "Discover the best restaurants near you 🍴",
+      "Order online, collect in no time 📦",
     ),
     "home_restaurant_subtitle": MessageLookupByLibrary.simpleMessage(
       "Fast food • 20 mins",

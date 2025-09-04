@@ -111,7 +111,7 @@ class _OnboardingState extends State<Onboarding> {
                 effect: WormEffect(
                   dotHeight: 8,
                   dotWidth: 8,
-                  activeDotColor: Theme.of(context).colorScheme.primary,
+                  activeDotColor: primaryBlue,
                   dotColor: Colors.grey.shade300,
                   spacing: 6,
                 ),
@@ -128,15 +128,13 @@ class _OnboardingState extends State<Onboarding> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: primaryBlue,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: lang,
-                    dropdownColor: Theme.of(
-                      context,
-                    ).primaryColor, // background color
+                    dropdownColor: primaryBlue, // background color
                     borderRadius: BorderRadius.circular(12), // rounded corners
                     iconEnabledColor: Colors.white,
                     style: const TextStyle(
