@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/screens/cart/widgets/preparing_order_page.dart';
 
 class CheckoutPage extends StatelessWidget {
@@ -11,7 +12,7 @@ class CheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Checkout"), centerTitle: true),
+      appBar: AppBar(title: Text(S.current.checkout), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -59,10 +60,10 @@ class CheckoutPage extends StatelessWidget {
                               ),
                               title: Text(order['name']),
                               subtitle: Text(
-                                "${order['quantity']} × \$${order['price']}",
+                                "${order['quantity']} × SAR ${order['price']}",
                               ),
                               trailing: Text(
-                                "\$${(order['price'] * order['quantity']).toStringAsFixed(2)}",
+                                "SAR ${(order['price'] * order['quantity']).toStringAsFixed(2)}",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -75,7 +76,8 @@ class CheckoutPage extends StatelessWidget {
 
                       // ✅ Only show divider if this isn’t the last shop
                       if (shopIndex < cartShops.length - 1)
-                        Divider(height: 20, color: Colors.grey.shade300),
+                        SizedBox(height: 10),
+                      //   Divider(height: 20, color: Colors.grey.shade300),
                     ],
                   );
                 },
@@ -95,12 +97,12 @@ class CheckoutPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "Total Price",
+                  Text(
+                    S.current.total_price,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "\$${total.toStringAsFixed(2)}",
+                    "SAR ${total.toStringAsFixed(2)}",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -128,8 +130,8 @@ class CheckoutPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "Prepare Your Order",
+                  child: Text(
+                    S.current.prepare_your_order,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),

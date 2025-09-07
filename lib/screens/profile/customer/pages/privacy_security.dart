@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:iconly/iconly.dart';
 
 class PrivacyAndPolicyPage extends StatelessWidget {
@@ -15,8 +16,8 @@ class PrivacyAndPolicyPage extends StatelessWidget {
         forceMaterialTransparency: true,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          "Privacy Policy",
+        title: Text(
+          S.current.privacy_policy,
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.black87),
@@ -29,56 +30,44 @@ class PrivacyAndPolicyPage extends StatelessWidget {
             const SizedBox(height: 16),
             _buildSection(
               icon: IconlyLight.document,
-              title: "1. Information We Collect",
-              description:
-                  "• Personal details such as your name, email address, phone number.\n"
-                  "• Data related to your shop, orders, and products.\n"
-                  "• Usage information including app interactions and device details.",
+              title: S.current.privacy_section1_title,
+              description: S.current.privacy_section1_desc,
               theme: theme,
             ),
             _buildSection(
               icon: IconlyLight.info_circle,
-              title: "2. How We Use Your Information",
-              description:
-                  "• To provide and improve our services.\n"
-                  "• To process your orders.\n"
-                  "• To communicate with you regarding updates, promotions, and support.\n"
-                  "• To comply with legal obligations.",
+              title: S.current.privacy_section2_title,
+              description: S.current.privacy_section2_desc,
               theme: theme,
             ),
             _buildSection(
               icon: IconlyLight.shield_done,
-              title: "3. Data Sharing",
-              description:
-                  "We do not sell or rent your personal data. We may share your information with trusted third parties such as delivery partners, and legal authorities when required.",
+              title: S.current.privacy_section3_title,
+              description: S.current.privacy_section3_desc,
               theme: theme,
             ),
             _buildSection(
               icon: IconlyLight.lock,
-              title: "4. Data Security",
-              description:
-                  "We implement strong security measures to protect your data. However, no method of transmission or storage is 100% secure, and we cannot guarantee absolute security.",
+              title: S.current.privacy_section4_title,
+              description: S.current.privacy_section4_desc,
               theme: theme,
             ),
             _buildSection(
               icon: IconlyLight.user,
-              title: "5. Your Rights",
-              description:
-                  "You may update or delete your personal information at any time through your account settings or by contacting our support team.",
+              title: S.current.privacy_section5_title,
+              description: S.current.privacy_section5_desc,
               theme: theme,
             ),
             _buildSection(
               icon: IconlyLight.time_circle,
-              title: "6. Changes to This Policy",
-              description:
-                  "We may update this Privacy Policy from time to time. Any changes will be reflected in the app, and continued use means you agree to the updated terms.",
+              title: S.current.privacy_section6_title,
+              description: S.current.privacy_section6_desc,
               theme: theme,
             ),
             _buildSection(
               icon: IconlyLight.message,
-              title: "Contact Us",
-              description:
-                  "If you have any questions about this Privacy Policy, please contact us at support@gahezha.com",
+              title: S.current.privacy_contact_title,
+              description: S.current.privacy_contact_desc,
               theme: theme,
             ),
           ],
@@ -88,10 +77,10 @@ class PrivacyAndPolicyPage extends StatelessWidget {
   }
 
   Widget _buildIntroCard() {
-    return const Padding(
+    return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Text(
-        "At Gahezha, your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our app and services.",
+        S.current.privacy_intro,
         style: TextStyle(
           fontSize: 15,
           height: 1.5,

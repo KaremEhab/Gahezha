@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,19 +8,33 @@ import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/gahezha_splash.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/theme/app_theme.dart';
+
+Future<void> setupFCM() async {
+  await FirebaseMessaging.instance.requestPermission();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Handle background messages
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Bloc.observer = MyBlocObserver();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CacheHelper.init();
   lang = await CacheHelper.getData(key: 'lang') ?? 'en';
-  SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
   );
   runApp(const MyApp());
 }
@@ -27,7 +42,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -40,7 +54,6 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: buildGahezhaTheme(Brightness.light),
-            // darkTheme: buildGahezhaTheme(Brightness.dark),
             locale: locale,
             supportedLocales: S.delegate.supportedLocales,
             localizationsDelegates: const [

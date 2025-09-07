@@ -65,21 +65,21 @@ class S {
     return Intl.message('EN', name: 'en', desc: '', args: []);
   }
 
-  /// `Discover Restaurants`
-  String get discover_restaurants_title {
+  /// `Discover Shops & Restaurants`
+  String get discover_shops_title {
     return Intl.message(
-      'Discover Restaurants',
-      name: 'discover_restaurants_title',
+      'Discover Shops & Restaurants',
+      name: 'discover_shops_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Find the best restaurants near you with just a few taps.`
-  String get discover_restaurants_subtitle {
+  /// `Find the best shops and restaurants near you with just a few taps.`
+  String get discover_shops_subtitle {
     return Intl.message(
-      'Find the best restaurants near you with just a few taps.',
-      name: 'discover_restaurants_subtitle',
+      'Find the best shops and restaurants near you with just a few taps.',
+      name: 'discover_shops_subtitle',
       desc: '',
       args: [],
     );
@@ -95,10 +95,10 @@ class S {
     );
   }
 
-  /// `Choose your favorite meals and place your order instantly.`
+  /// `Choose your favorite products or meals and place your order instantly.`
   String get make_your_order_subtitle {
     return Intl.message(
-      'Choose your favorite meals and place your order instantly.',
+      'Choose your favorite products or meals and place your order instantly.',
       name: 'make_your_order_subtitle',
       desc: '',
       args: [],
@@ -145,21 +145,21 @@ class S {
     );
   }
 
-  /// `Enjoy Your Meal`
-  String get enjoy_your_meal_title {
+  /// `Enjoy Your Order`
+  String get enjoy_your_order_title {
     return Intl.message(
-      'Enjoy Your Meal',
-      name: 'enjoy_your_meal_title',
+      'Enjoy Your Order',
+      name: 'enjoy_your_order_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Eat or drink and enjoy your delicious experience.`
-  String get enjoy_your_meal_subtitle {
+  /// `Enjoy your products or meals with a great experience.`
+  String get enjoy_your_order_subtitle {
     return Intl.message(
-      'Eat or drink and enjoy your delicious experience.',
-      name: 'enjoy_your_meal_subtitle',
+      'Enjoy your products or meals with a great experience.',
+      name: 'enjoy_your_order_subtitle',
       desc: '',
       args: [],
     );
@@ -286,9 +286,19 @@ class S {
   }
 
   /// `Confirm Password`
-  String get confirm_password {
+  String get confirm_password_title {
     return Intl.message(
       'Confirm Password',
+      name: 'confirm_password_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Re-enter your password`
+  String get confirm_password {
+    return Intl.message(
+      'Re-enter your password',
       name: 'confirm_password',
       desc: '',
       args: [],
@@ -348,6 +358,836 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Profile`
+  String get profile {
+    return Intl.message('Profile', name: 'profile', desc: '', args: []);
+  }
+
+  /// `Edit Profile`
+  String get edit_profile {
+    return Intl.message(
+      'Edit Profile',
+      name: 'edit_profile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logout {
+    return Intl.message('Logout', name: 'logout', desc: '', args: []);
+  }
+
+  /// `App Settings`
+  String get app_settings {
+    return Intl.message(
+      'App Settings',
+      name: 'app_settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account Settings`
+  String get account_settings {
+    return Intl.message(
+      'Account Settings',
+      name: 'account_settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications`
+  String get notifications {
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Email`
+  String get change_email {
+    return Intl.message(
+      'Change Email',
+      name: 'change_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Password`
+  String get change_password {
+    return Intl.message(
+      'Change Password',
+      name: 'change_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy & Policy`
+  String get privacy_policy {
+    return Intl.message(
+      'Privacy & Policy',
+      name: 'privacy_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Your Email`
+  String get change_your_email_title {
+    return Intl.message(
+      'Change Your Email',
+      name: 'change_your_email_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update your email address by entering your new email and password details below.`
+  String get change_your_email_subtitle {
+    return Intl.message(
+      'Update your email address by entering your new email and password details below.',
+      name: 'change_your_email_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Your Password`
+  String get change_your_password_title {
+    return Intl.message(
+      'Change Your Password',
+      name: 'change_your_password_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update your password address by entering your new password below.`
+  String get change_your_password_subtitle {
+    return Intl.message(
+      'Update your password address by entering your new password below.',
+      name: 'change_your_password_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Old email`
+  String get old_email_title {
+    return Intl.message(
+      'Old email',
+      name: 'old_email_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your old email`
+  String get old_email {
+    return Intl.message(
+      'Enter your old email',
+      name: 'old_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New email`
+  String get new_email_title {
+    return Intl.message(
+      'New email',
+      name: 'new_email_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your new email`
+  String get new_email {
+    return Intl.message(
+      'Enter your new email',
+      name: 'new_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your old password`
+  String get old_password {
+    return Intl.message(
+      'Enter your old password',
+      name: 'old_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New password`
+  String get new_password_title {
+    return Intl.message(
+      'New password',
+      name: 'new_password_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your new password`
+  String get new_password {
+    return Intl.message(
+      'Enter your new password',
+      name: 'new_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email`
+  String get enter_your_email {
+    return Intl.message(
+      'Enter your email',
+      name: 'enter_your_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your password`
+  String get enter_your_password {
+    return Intl.message(
+      'Enter your password',
+      name: 'enter_your_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your email change request has been submitted successfully.`
+  String get email_change_submitted {
+    return Intl.message(
+      'Your email change request has been submitted successfully.',
+      name: 'email_change_submitted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Account`
+  String get delete_account {
+    return Intl.message(
+      'Delete Account',
+      name: 'delete_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit`
+  String get submit {
+    return Intl.message('Submit', name: 'submit', desc: '', args: []);
+  }
+
+  /// `Save Changes`
+  String get save_changes {
+    return Intl.message(
+      'Save Changes',
+      name: 'save_changes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Gahezha, your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our app and services.`
+  String get privacy_intro {
+    return Intl.message(
+      'At Gahezha, your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your information when you use our app and services.',
+      name: 'privacy_intro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1. Information We Collect`
+  String get privacy_section1_title {
+    return Intl.message(
+      '1. Information We Collect',
+      name: 'privacy_section1_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Personal details such as your name, email address, phone number.\n• Data related to your shop, orders, and products.\n• Usage information including app interactions and device details.`
+  String get privacy_section1_desc {
+    return Intl.message(
+      '• Personal details such as your name, email address, phone number.\n• Data related to your shop, orders, and products.\n• Usage information including app interactions and device details.',
+      name: 'privacy_section1_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2. How We Use Your Information`
+  String get privacy_section2_title {
+    return Intl.message(
+      '2. How We Use Your Information',
+      name: 'privacy_section2_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• To provide and improve our services.\n• To process your orders.\n• To communicate with you regarding updates, promotions, and support.\n• To comply with legal obligations.`
+  String get privacy_section2_desc {
+    return Intl.message(
+      '• To provide and improve our services.\n• To process your orders.\n• To communicate with you regarding updates, promotions, and support.\n• To comply with legal obligations.',
+      name: 'privacy_section2_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3. Data Sharing`
+  String get privacy_section3_title {
+    return Intl.message(
+      '3. Data Sharing',
+      name: 'privacy_section3_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We do not sell or rent your personal data. We may share your information with trusted third parties such as delivery partners, and legal authorities when required.`
+  String get privacy_section3_desc {
+    return Intl.message(
+      'We do not sell or rent your personal data. We may share your information with trusted third parties such as delivery partners, and legal authorities when required.',
+      name: 'privacy_section3_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `4. Data Security`
+  String get privacy_section4_title {
+    return Intl.message(
+      '4. Data Security',
+      name: 'privacy_section4_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We implement strong security measures to protect your data. However, no method of transmission or storage is 100% secure, and we cannot guarantee absolute security.`
+  String get privacy_section4_desc {
+    return Intl.message(
+      'We implement strong security measures to protect your data. However, no method of transmission or storage is 100% secure, and we cannot guarantee absolute security.',
+      name: 'privacy_section4_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `5. Your Rights`
+  String get privacy_section5_title {
+    return Intl.message(
+      '5. Your Rights',
+      name: 'privacy_section5_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You may update or delete your personal information at any time through your account settings or by contacting our support team.`
+  String get privacy_section5_desc {
+    return Intl.message(
+      'You may update or delete your personal information at any time through your account settings or by contacting our support team.',
+      name: 'privacy_section5_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `6. Changes to This Policy`
+  String get privacy_section6_title {
+    return Intl.message(
+      '6. Changes to This Policy',
+      name: 'privacy_section6_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We may update this Privacy Policy from time to time. Any changes will be reflected in the app, and continued use means you agree to the updated terms.`
+  String get privacy_section6_desc {
+    return Intl.message(
+      'We may update this Privacy Policy from time to time. Any changes will be reflected in the app, and continued use means you agree to the updated terms.',
+      name: 'privacy_section6_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Us`
+  String get privacy_contact_title {
+    return Intl.message(
+      'Contact Us',
+      name: 'privacy_contact_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you have any questions about this Privacy Policy, please contact us at support@gahezha.com`
+  String get privacy_contact_desc {
+    return Intl.message(
+      'If you have any questions about this Privacy Policy, please contact us at support@gahezha.com',
+      name: 'privacy_contact_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checkout`
+  String get checkout {
+    return Intl.message('Checkout', name: 'checkout', desc: '', args: []);
+  }
+
+  /// `Place Order`
+  String get place_order {
+    return Intl.message('Place Order', name: 'place_order', desc: '', args: []);
+  }
+
+  /// `Product`
+  String get product {
+    return Intl.message('Product', name: 'product', desc: '', args: []);
+  }
+
+  /// `Products`
+  String get products {
+    return Intl.message('Products', name: 'products', desc: '', args: []);
+  }
+
+  /// `Qty`
+  String get quantity {
+    return Intl.message('Qty', name: 'quantity', desc: '', args: []);
+  }
+
+  /// `Cart`
+  String get cart {
+    return Intl.message('Cart', name: 'cart', desc: '', args: []);
+  }
+
+  /// `My Cart`
+  String get my_cart {
+    return Intl.message('My Cart', name: 'my_cart', desc: '', args: []);
+  }
+
+  /// `Your Cart`
+  String get your_cart {
+    return Intl.message('Your Cart', name: 'your_cart', desc: '', args: []);
+  }
+
+  /// `Your cart is empty`
+  String get your_cart_is_empty {
+    return Intl.message(
+      'Your cart is empty',
+      name: 'your_cart_is_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `item`
+  String get item {
+    return Intl.message('item', name: 'item', desc: '', args: []);
+  }
+
+  /// `items`
+  String get items {
+    return Intl.message('items', name: 'items', desc: '', args: []);
+  }
+
+  /// `Total Price`
+  String get total_price {
+    return Intl.message('Total Price', name: 'total_price', desc: '', args: []);
+  }
+
+  /// `Price`
+  String get price {
+    return Intl.message('Price', name: 'price', desc: '', args: []);
+  }
+
+  /// `Prepare Your Order`
+  String get prepare_your_order {
+    return Intl.message(
+      'Prepare Your Order',
+      name: 'prepare_your_order',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We are preparing your order`
+  String get we_are_preparing_your_order {
+    return Intl.message(
+      'We are preparing your order',
+      name: 'we_are_preparing_your_order',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order`
+  String get order {
+    return Intl.message('Order', name: 'order', desc: '', args: []);
+  }
+
+  /// `Orders`
+  String get orders {
+    return Intl.message('Orders', name: 'orders', desc: '', args: []);
+  }
+
+  /// `Your order`
+  String get your_order {
+    return Intl.message('Your order', name: 'your_order', desc: '', args: []);
+  }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+  }
+
+  /// `Accepted`
+  String get accepted {
+    return Intl.message('Accepted', name: 'accepted', desc: '', args: []);
+  }
+
+  /// `Rejected`
+  String get rejected {
+    return Intl.message('Rejected', name: 'rejected', desc: '', args: []);
+  }
+
+  /// `PREPARING`
+  String get preparing {
+    return Intl.message('PREPARING', name: 'preparing', desc: '', args: []);
+  }
+
+  /// `Pickup`
+  String get pickup {
+    return Intl.message('Pickup', name: 'pickup', desc: '', args: []);
+  }
+
+  /// `Delivered`
+  String get delivered {
+    return Intl.message('Delivered', name: 'delivered', desc: '', args: []);
+  }
+
+  /// `Placed on`
+  String get placed_on {
+    return Intl.message('Placed on', name: 'placed_on', desc: '', args: []);
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message('Close', name: 'close', desc: '', args: []);
+  }
+
+  /// `Viewing details of order`
+  String get viewing_details_of_order {
+    return Intl.message(
+      'Viewing details of order',
+      name: 'viewing_details_of_order',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active Orders`
+  String get active_orders {
+    return Intl.message(
+      'Active Orders',
+      name: 'active_orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hot Dealers`
+  String get hot_dealers {
+    return Intl.message('Hot Dealers', name: 'hot_dealers', desc: '', args: []);
+  }
+
+  /// `Dealer`
+  String get dealer {
+    return Intl.message('Dealer', name: 'dealer', desc: '', args: []);
+  }
+
+  /// `Special Offer`
+  String get special_offer {
+    return Intl.message(
+      'Special Offer',
+      name: 'special_offer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limited Time`
+  String get limited_time {
+    return Intl.message(
+      'Limited Time',
+      name: 'limited_time',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recommended`
+  String get recommended {
+    return Intl.message('Recommended', name: 'recommended', desc: '', args: []);
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message('Edit', name: 'edit', desc: '', args: []);
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message('Settings', name: 'settings', desc: '', args: []);
+  }
+
+  /// `Shop`
+  String get shop {
+    return Intl.message('Shop', name: 'shop', desc: '', args: []);
+  }
+
+  /// `Fresh items & Quick delivery`
+  String get fresh_items_quick_delivery {
+    return Intl.message(
+      'Fresh items & Quick delivery',
+      name: 'fresh_items_quick_delivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `min`
+  String get min {
+    return Intl.message('min', name: 'min', desc: '', args: []);
+  }
+
+  /// `Minuets`
+  String get minuets {
+    return Intl.message('Minuets', name: 'minuets', desc: '', args: []);
+  }
+
+  /// `Open`
+  String get open {
+    return Intl.message('Open', name: 'open', desc: '', args: []);
+  }
+
+  /// `Closed`
+  String get closed {
+    return Intl.message('Closed', name: 'closed', desc: '', args: []);
+  }
+
+  /// `Menu`
+  String get menu {
+    return Intl.message('Menu', name: 'menu', desc: '', args: []);
+  }
+
+  /// `Info`
+  String get info {
+    return Intl.message('Info', name: 'info', desc: '', args: []);
+  }
+
+  /// `Add`
+  String get add {
+    return Intl.message('Add', name: 'add', desc: '', args: []);
+  }
+
+  /// `Flowers & Gifts`
+  String get flowers_gifts {
+    return Intl.message(
+      'Flowers & Gifts',
+      name: 'flowers_gifts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A tasty and freshly prepared items for you`
+  String get tasty_items_for_you {
+    return Intl.message(
+      'A tasty and freshly prepared items for you',
+      name: 'tasty_items_for_you',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shop Info`
+  String get shop_info {
+    return Intl.message('Shop Info', name: 'shop_info', desc: '', args: []);
+  }
+
+  /// `AM`
+  String get am {
+    return Intl.message('AM', name: 'am', desc: '', args: []);
+  }
+
+  /// `PM`
+  String get pm {
+    return Intl.message('PM', name: 'pm', desc: '', args: []);
+  }
+
+  /// `Pickup Instructions`
+  String get pickup_instructions {
+    return Intl.message(
+      'Pickup Instructions',
+      name: 'pickup_instructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order online and collect from the counter when ready.\nShow your order ID at pickup point`
+  String get pickup_instructions_subtitle {
+    return Intl.message(
+      'Order online and collect from the counter when ready.\nShow your order ID at pickup point',
+      name: 'pickup_instructions_subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome`
+  String get welcome {
+    return Intl.message('Welcome', name: 'welcome', desc: '', args: []);
+  }
+
+  /// `Thanks for joining Gahezha`
+  String get thanks_for_joining {
+    return Intl.message(
+      'Thanks for joining Gahezha',
+      name: 'thanks_for_joining',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Ready`
+  String get order_ready {
+    return Intl.message('Order Ready', name: 'order_ready', desc: '', args: []);
+  }
+
+  /// `Your order is ready for pickup, come and get it.`
+  String get order_pickup {
+    return Intl.message(
+      'Your order is ready for pickup, come and get it.',
+      name: 'order_pickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your order has been accepted`
+  String get order_accepted {
+    return Intl.message(
+      'Your order has been accepted',
+      name: 'order_accepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your order has been rejected`
+  String get order_rejected {
+    return Intl.message(
+      'Your order has been rejected',
+      name: 'order_rejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your order has been delivered`
+  String get order_delivered {
+    return Intl.message(
+      'Your order has been delivered',
+      name: 'order_delivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Size`
+  String get choose_size {
+    return Intl.message('Choose Size', name: 'choose_size', desc: '', args: []);
+  }
+
+  /// `Small`
+  String get small {
+    return Intl.message('Small', name: 'small', desc: '', args: []);
+  }
+
+  /// `Medium`
+  String get medium {
+    return Intl.message('Medium', name: 'medium', desc: '', args: []);
+  }
+
+  /// `Large`
+  String get large {
+    return Intl.message('Large', name: 'large', desc: '', args: []);
+  }
+
+  /// `Add Extras`
+  String get add_extras {
+    return Intl.message('Add Extras', name: 'add_extras', desc: '', args: []);
+  }
+
+  /// `Extra Cheese`
+  String get extra_cheese {
+    return Intl.message(
+      'Extra Cheese',
+      name: 'extra_cheese',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gift Wrap`
+  String get gift_wrap {
+    return Intl.message('Gift Wrap', name: 'gift_wrap', desc: '', args: []);
+  }
+
+  /// `Spicy`
+  String get spicy {
+    return Intl.message('Spicy', name: 'spicy', desc: '', args: []);
+  }
+
+  /// `Regular`
+  String get regular {
+    return Intl.message('Regular', name: 'regular', desc: '', args: []);
+  }
+
+  /// `to Cart`
+  String get to_cart {
+    return Intl.message('to Cart', name: 'to_cart', desc: '', args: []);
+  }
+
+  /// `New Orders`
+  String get new_orders {
+    return Intl.message('New Orders', name: 'new_orders', desc: '', args: []);
   }
 }
 

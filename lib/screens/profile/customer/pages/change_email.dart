@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
 
 class ChangeEmailPage extends StatefulWidget {
@@ -20,17 +22,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Change Email"),
-        leading: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(IconlyLight.arrow_left),
-          ),
-        ),
-      ),
+      appBar: AppBar(centerTitle: true, title: Text(S.current.change_email)),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -57,7 +49,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Change Your Email",
+                      S.current.change_your_email_title,
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey[900],
@@ -65,7 +57,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Update your email address by entering your new email and password details below.",
+                      S.current.change_your_email_subtitle,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[700],
                         height: 1.4,
@@ -82,26 +74,26 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    _buildTextField(
+                    CustomTextField(
                       controller: _oldEmailController,
-                      title: "Old Email",
-                      hint: "Enter your old email",
+                      title: S.current.old_email_title,
+                      hint: S.current.old_email,
                       icon: IconlyLight.message,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
+                    CustomTextField(
                       controller: _newEmailController,
-                      title: "New Email",
-                      hint: "Enter your new email",
+                      title: S.current.new_email_title,
+                      hint: S.current.new_email,
                       icon: IconlyLight.message,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
+                    CustomTextField(
                       controller: _passwordController,
-                      title: "Password",
-                      hint: "Enter your password",
+                      title: S.current.password,
+                      hint: S.current.enter_your_password,
                       icon: IconlyLight.lock,
                       obscureText: true,
                     ),
@@ -125,7 +117,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                 if (_formKey.currentState!.validate()) {
                   // Just UI → no logic
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Email change submitted")),
+                    SnackBar(content: Text(S.current.email_change_submitted)),
                   );
                 }
               },
@@ -137,8 +129,8 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                 elevation: 4,
                 shadowColor: primaryBlue.withOpacity(0.4),
               ),
-              child: const Text(
-                "Submit",
+              child: Text(
+                S.current.submit,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -149,49 +141,6 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String title,
-    required String hint,
-    required IconData icon,
-    bool obscureText = false,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: primaryBlue),
-            filled: true,
-            fillColor: primaryBlue.withOpacity(0.04),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 14,
-              horizontal: 12,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radius),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

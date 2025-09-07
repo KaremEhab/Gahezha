@@ -2,23 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
-import 'package:gahezha/screens/notifications/notifications.dart';
-import 'package:gahezha/screens/profile/pages/addresses.dart';
-import 'package:gahezha/screens/profile/pages/change_email.dart';
-import 'package:gahezha/screens/profile/pages/change_password.dart';
-import 'package:gahezha/screens/profile/pages/edit_profile.dart';
-import 'package:gahezha/screens/profile/pages/preferences.dart';
-import 'package:gahezha/screens/profile/pages/privacy_security.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/screens/profile/customer/pages/change_email.dart';
+import 'package:gahezha/screens/profile/customer/pages/change_password.dart';
+import 'package:gahezha/screens/profile/customer/pages/edit_profile.dart';
+import 'package:gahezha/screens/profile/customer/pages/privacy_security.dart';
 import 'package:iconly/iconly.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class CustomerProfilePage extends StatefulWidget {
+  const CustomerProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<CustomerProfilePage> createState() => _CustomerProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _CustomerProfilePageState extends State<CustomerProfilePage> {
   bool notifications = false;
 
   @override
@@ -30,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
-        title: const Text("Profile"),
+        title: Text(S.current.profile),
         actions: [
           Padding(
             padding: EdgeInsets.only(
@@ -122,11 +120,11 @@ class _ProfilePageState extends State<ProfilePage> {
           // const SizedBox(height: 10),
 
           // Settings Section
-          _buildSectionTitle("App Settings", context),
+          _buildSectionTitle(S.current.app_settings, context),
           SwitchListTile(
             value: notifications,
             contentPadding: EdgeInsets.symmetric(horizontal: 10),
-            title: const Text("Notifications"),
+            title: Text(S.current.notifications),
             secondary: Icon(
               notifications
                   ? IconlyBold.notification
@@ -137,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           _buildListTile(
             icon: IconlyLight.message,
-            title: "Change Email",
+            title: S.current.change_email,
             onTap: () {
               Navigator.push(
                 context,
@@ -149,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           _buildListTile(
             icon: IconlyLight.lock,
-            title: "Change Password",
+            title: S.current.change_password,
             onTap: () {
               Navigator.push(
                 context,
@@ -161,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           _buildListTile(
             icon: IconlyLight.shield_done,
-            title: "Privacy & Policy",
+            title: S.current.privacy_policy,
             onTap: () {
               Navigator.push(
                 context,
@@ -197,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: ElevatedButton.icon(
               onPressed: () {},
               icon: Icon(IconlyBold.delete),
-              label: const Text("Delete Account"),
+              label: Text(S.current.delete_account),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -283,7 +281,7 @@ class GradientBorderButton extends StatelessWidget {
           );
         },
         icon: const Icon(Icons.edit, size: 18),
-        label: const Text("Edit Profile"),
+        label: Text(S.current.edit_profile),
         style: OutlinedButton.styleFrom(
           foregroundColor: primaryBlue,
           backgroundColor: Colors.white.withOpacity(0.4), // button fill

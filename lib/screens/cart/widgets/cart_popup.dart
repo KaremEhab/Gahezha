@@ -1,6 +1,7 @@
 // ✅ Cart popup page with Hero
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 
 class CartPopup extends StatelessWidget {
@@ -28,7 +29,7 @@ class CartPopup extends StatelessWidget {
                   automaticallyImplyLeading: false,
                   forceMaterialTransparency: true,
                   titleSpacing: 0,
-                  toolbarHeight: 35,
+                  toolbarHeight: 43,
                   title: Column(
                     spacing: 5,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,8 +37,8 @@ class CartPopup extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Your Cart",
+                          Text(
+                            S.current.your_cart,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -71,13 +72,13 @@ class CartPopup extends StatelessWidget {
                             leading: CircleAvatar(
                               child: CustomCachedImage(
                                 imageUrl:
-                                "https://picsum.photos/50?random=$index",
+                                    "https://picsum.photos/50?random=$index",
                                 height: double.infinity,
                                 borderRadius: BorderRadius.circular(200),
                               ),
                             ),
-                            title: Text("Product ${index + 1}"),
-                            subtitle: const Text("Qty: 1"),
+                            title: Text("${S.current.product} ${index + 1}"),
+                            subtitle: Text("${S.current.quantity}: 1"),
                             trailing: const Text("\$12.99"),
                           );
                         },
@@ -95,7 +96,7 @@ class CartPopup extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text("Checkout"),
+                  child: Text(S.current.checkout),
                 ),
               ),
             ),

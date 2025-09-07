@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "509967690911",
+    "project_id": "gahezha",
+    "storage_bucket": "gahezha.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509967690911:android:160dbf3bf68254299986aa",
+        "android_client_info": {
+          "package_name": "com.gahezha.gahezha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwbz5BmUP1oZcc5d1BoAdvzYviVCnE4Ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

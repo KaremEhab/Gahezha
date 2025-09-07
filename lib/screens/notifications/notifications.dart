@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 
@@ -9,20 +10,20 @@ class NotificationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifications = [
       {
-        "title": "Order Ready 🎉",
+        "title": "${S.current.order_ready} 🎉",
         "message": "Your flower bouquet is ready for pickup.",
         "time": DateTime.now().subtract(const Duration(minutes: 10)),
         "isRead": false,
       },
       {
-        "title": "Order Confirmed ✅",
-        "message": "Your food order has been confirmed.",
+        "title": "${S.current.order_accepted} ✅",
+        "message": S.current.order_accepted,
         "time": DateTime.now().subtract(const Duration(hours: 1)),
         "isRead": true,
       },
       {
-        "title": "Welcome 👋",
-        "message": "Thanks for joining Gahezha!",
+        "title": "${S.current.welcome} 👋",
+        "message": S.current.thanks_for_joining,
         "time": DateTime.now().subtract(const Duration(days: 1)),
         "isRead": true,
       },
@@ -30,7 +31,7 @@ class NotificationsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notifications"),
+        title: Text(S.current.notifications),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,

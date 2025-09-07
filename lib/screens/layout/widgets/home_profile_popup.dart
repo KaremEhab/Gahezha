@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 
 class HomeProfilePopup extends StatelessWidget {
@@ -101,10 +102,16 @@ class HomeProfilePopup extends StatelessWidget {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   FadeInLeft(
-                                    child: _buildProfileStat("Orders", "120"),
+                                    child: _buildProfileStat(
+                                      S.current.orders,
+                                      "120",
+                                    ),
                                   ),
                                   FadeInRight(
-                                    child: _buildProfileStat("Cart", "3"),
+                                    child: _buildProfileStat(
+                                      S.current.cart,
+                                      "3",
+                                    ),
                                   ),
                                 ],
                               ),
@@ -121,19 +128,19 @@ class HomeProfilePopup extends StatelessWidget {
                                     _buildActionButton(
                                       context,
                                       Icons.settings,
-                                      "Settings",
+                                      S.current.settings,
                                       () {},
                                     ),
                                     _buildActionButton(
                                       context,
                                       Icons.edit,
-                                      "Edit",
+                                      S.current.edit,
                                       () {},
                                     ),
                                     _buildActionButton(
                                       context,
                                       Icons.logout,
-                                      "Logout",
+                                      S.current.logout,
                                       () {},
                                     ),
                                   ],
@@ -181,12 +188,12 @@ Widget _buildActionButton(
       children: [
         CircleAvatar(
           radius: 22,
-          backgroundColor: label == 'Logout'
+          backgroundColor: label == S.current.logout
               ? Colors.red.withOpacity(0.1)
               : Colors.blue.withOpacity(0.1),
           child: Icon(
             icon,
-            color: label == 'Logout' ? Colors.red : Colors.blue,
+            color: label == S.current.logout ? Colors.red : Colors.blue,
             size: 20,
           ),
         ),

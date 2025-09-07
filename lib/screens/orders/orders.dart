@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/order_model.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/orders/widgets/order_card.dart';
 import 'package:iconly/iconly.dart';
 
@@ -14,43 +16,71 @@ class OrdersPage extends StatelessWidget {
         centerTitle: true,
         forceMaterialTransparency: true,
         leadingWidth: 53,
-        leading: Padding(
-          padding: EdgeInsets.fromLTRB(
-            lang == 'en' ? 7 : 0,
-            6,
-            lang == 'ar' ? 7 : 0,
-            6,
-          ),
-          child: Material(
-            color: Colors.grey.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(radius),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(radius),
-              onTap: () {},
-              child: const Center(
-                child: Icon(IconlyBold.delete, color: Colors.red, size: 20),
+        leading: currentUserType == UserType.admin
+            ? null
+            : Padding(
+                padding: EdgeInsets.fromLTRB(
+                  lang == 'en' ? 7 : 0,
+                  6,
+                  lang == 'ar' ? 7 : 0,
+                  6,
+                ),
+                child: Material(
+                  color: Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(radius),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(radius),
+                    onTap: () {},
+                    child: const Center(
+                      child: Icon(
+                        IconlyBold.delete,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-        title: const Text("My Orders"),
+        title: Text(S.current.orders),
         actions: [
           Padding(
             padding: EdgeInsets.only(
               right: lang == 'en' ? 7 : 0,
               left: lang == 'ar' ? 7 : 0,
             ),
-            child: Material(
-              color: Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(radius),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(radius),
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.all(13),
-                  child: Icon(IconlyLight.search, size: 16),
+            child: Row(
+              spacing: 5,
+              children: [
+                Material(
+                  color: Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(radius),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(radius),
+                    onTap: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.all(13),
+                      child: Icon(IconlyLight.search, size: 16),
+                    ),
+                  ),
                 ),
-              ),
+                if (currentUserType == UserType.admin)
+                  Material(
+                    color: Colors.grey.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(radius),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(radius),
+                      onTap: () {},
+                      child: const Padding(
+                        padding: EdgeInsets.all(13),
+                        child: Icon(
+                          IconlyBold.delete,
+                          color: Colors.red,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

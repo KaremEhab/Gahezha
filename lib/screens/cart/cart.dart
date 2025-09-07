@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/cart/checkout.dart';
-import 'package:gahezha/screens/products/widgets/product_details_sheet.dart';
+import 'package:gahezha/screens/products/customer/widgets/product_details_sheet.dart';
 import 'package:iconly/iconly.dart';
 
 class CartPage extends StatefulWidget {
@@ -14,6 +16,81 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
+
+  // Fake products for UI demo
+  List<ProductModel> fakeProducts = [
+    ProductModel(
+      id: "141514",
+      name: "Cheeseburger",
+      description: "Cheeseburger description",
+      quantity: 23,
+      price: 8.99,
+      specifications: [
+        {
+          "Select Size": [
+            {"name": "Small", "price": 0.0},
+            {"name": "Medium", "price": 2.5},
+            {"name": "Large", "price": 4.0},
+          ],
+        },
+      ],
+      selectedAddOns: [
+        {"name": "Extra Pickles", "price": 0.5},
+        {"name": "No Vegetables", "price": 0.0},
+        {"name": "Extra Mushrooms", "price": 1.0},
+      ],
+      images: [
+        "https://www.sargento.com/assets/Uploads/Recipe/Image/cheddarbaconcheeseburger__FocusFillWyIwLjAwIiwiMC4wMCIsODAwLDQ3OF0_CompressedW10.jpg",
+      ],
+    ),
+    ProductModel(
+      id: "231412",
+      name: "Pepperoni Pizza",
+      description: "Pepperoni Pizza description",
+      quantity: 4,
+      price: 12.50,
+      specifications: [
+        {
+          "Select Size": [
+            {"name": "Small", "price": 0.0},
+            {"name": "Medium", "price": 2.5},
+            {"name": "Large", "price": 4.0},
+          ],
+        },
+      ],
+      selectedAddOns: [
+        {"name": "Extra Cheese", "price": 2.0},
+        {"name": "Extra Pepperoni", "price": 3.0},
+      ],
+      images: [
+        "https://www.moulinex.com.eg/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbXxhRFl5TDJneE9TOHhNekV4TVRjM01UVXlPVEkwTmk1aWFXNHw3NTkwMmNjYmFhZTUwZjYwNzk0ZmQyNjVmMjEzYjZiNGI3YzU1NGI3ZGNjYjM3YjYxZGY5Y2Y0ZTdjZmZkZmNj",
+        "https://www.tablefortwoblog.com/wp-content/uploads/2025/06/pepperoni-pizza-recipe-photos-tablefortwoblog-7.jpg",
+      ],
+    ),
+    ProductModel(
+      id: "139401",
+      name: "American Coffee",
+      description: "American Coffee description",
+      quantity: 20,
+      price: 3.25,
+      specifications: [
+        {
+          "How to Serve": [
+            {"name": "Hot", "price": 0.0},
+            {"name": "Iced", "price": 2.5},
+            {"name": "Decaf", "price": 4.0},
+          ],
+        },
+      ],
+      selectedAddOns: [
+        {"name": "Extra Milk", "price": 0.5},
+        {"name": "Whipped Cream", "price": 1.0},
+      ],
+      images: [
+        "https://pontevecchiosrl.it/wp-content/uploads/2021/03/caffe-americano-in-casa.jpg",
+      ],
+    ),
+  ];
 
   // Dummy multi-shop cart data
   List<Map<String, dynamic>> cartShops = [
@@ -93,7 +170,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
             ),
           ),
         ),
-        title: Text("My Cart"),
+        title: Text(S.current.my_cart),
         actions: [
           Padding(
             padding: EdgeInsets.only(
@@ -116,9 +193,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         ],
       ),
       body: cartShops.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
-                "Your cart is empty 😔",
+                "${S.current.your_cart_is_empty} 😔",
                 style: TextStyle(fontSize: 18),
               ),
             )
@@ -176,7 +253,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                   Row(
                                     children: [
                                       Text(
-                                        "${(shop['orders'] as List).length} items",
+                                        "${(shop['orders'] as List).length} ${S.current.items}",
                                         style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -219,27 +296,23 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                       borderRadius: BorderRadius.circular(
                                         radius,
                                       ),
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled:
-                                              true, // ✅ makes it fullscreen-like
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(sheetRadius),
-                                            ),
-                                          ),
-                                          builder: (_) {
-                                            return ProductDetailsSheet(
-                                              productName: order['name'],
-                                              productImage: order['image'],
-                                              productPrice: 12.99,
-                                              description:
-                                                  "This is a freshly prepared delicious item with high quality ingredients. Perfect for your cravings!",
-                                            );
-                                          },
-                                        );
-                                      },
+                                      // onTap: () {
+                                      //   showModalBottomSheet(
+                                      //     context: context,
+                                      //     isScrollControlled:
+                                      //         true, // ✅ makes it fullscreen-like
+                                      //     shape: RoundedRectangleBorder(
+                                      //       borderRadius: BorderRadius.vertical(
+                                      //         top: Radius.circular(sheetRadius),
+                                      //       ),
+                                      //     ),
+                                      //     builder: (_) {
+                                      //       return ProductDetailsSheet(
+                                      //         product: fakeProducts[index],
+                                      //       );
+                                      //     },
+                                      //   );
+                                      // },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -278,7 +351,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    "Price: \$${order['price']} x ${order['quantity']}",
+                                                    "${S.current.price}: SAR ${order['price']} x ${order['quantity']}",
                                                     style: const TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey,
@@ -409,7 +482,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$${totalPrice.toStringAsFixed(2)}',
+                    'SAR ${totalPrice.toStringAsFixed(2)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -417,9 +490,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                     ),
                   ),
                   Row(
-                    children: const [
+                    children: [
                       Text(
-                        "Place order",
+                        S.current.place_order,
                         style: TextStyle(
                           height: 0.8,
                           color: Colors.white,
@@ -427,7 +500,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 18,
@@ -438,7 +511,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                           child: Material(color: Colors.white24),
                         ),
                       ),
-                      Icon(IconlyLight.buy, color: Colors.white),
+                      const Icon(IconlyLight.buy, color: Colors.white),
                     ],
                   ),
                 ],

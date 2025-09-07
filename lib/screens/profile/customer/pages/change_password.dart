@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -11,8 +13,8 @@ class ChangePasswordPage extends StatefulWidget {
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
   final _confirmPassController = TextEditingController();
 
   @override
@@ -20,17 +22,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Change Password"),
-        leading: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(IconlyLight.arrow_left),
-          ),
-        ),
-      ),
+      appBar: AppBar(centerTitle: true, title: Text(S.current.change_password)),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -57,7 +49,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Change Your Password",
+                      S.current.change_your_password_title,
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey[900],
@@ -65,7 +57,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Update your password by entering your new password below.",
+                      S.current.change_your_password_subtitle,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[700],
                         height: 1.4,
@@ -82,26 +74,26 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    _buildTextField(
-                      controller: _emailController,
-                      title: "New Password",
-                      hint: "Enter your new password",
+                    CustomTextField(
+                      controller: _passwordController,
+                      title: S.current.password,
+                      hint: S.current.enter_your_password,
                       icon: IconlyLight.lock,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _passwordController,
-                      title: "Password",
-                      hint: "Enter your password",
+                    CustomTextField(
+                      controller: _newPasswordController,
+                      title: S.current.new_password_title,
+                      hint: S.current.new_password,
                       icon: IconlyLight.lock,
                       obscureText: true,
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
+                    CustomTextField(
                       controller: _confirmPassController,
-                      title: "Confirm Password",
-                      hint: "Re-enter your password",
+                      title: S.current.confirm_password_title,
+                      hint: S.current.confirm_password,
                       icon: IconlyLight.lock,
                       obscureText: true,
                     ),
@@ -137,8 +129,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 elevation: 4,
                 shadowColor: primaryBlue.withOpacity(0.4),
               ),
-              child: const Text(
-                "Submit",
+              child: Text(
+                S.current.submit,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -149,49 +141,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String title,
-    required String hint,
-    required IconData icon,
-    bool obscureText = false,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: primaryBlue),
-            filled: true,
-            fillColor: primaryBlue.withOpacity(0.04),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 14,
-              horizontal: 12,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

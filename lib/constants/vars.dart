@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/models/order_model.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:intl/intl.dart';
 
 double radius = 12;
 double sheetRadius = 25;
 late String lang;
 bool showProfileDetails = false; // toggle state for profile container
+late UserType currentUserType;
 
 const primaryBlue = Color(0xFF1B6BFF); // main brand blue
 const onPrimary = Colors.white;
@@ -19,11 +21,13 @@ Color statusColor(OrderStatus status) {
     case OrderStatus.delivered:
       return Colors.green;
     case OrderStatus.accepted:
-      return Colors.blue;
+      return primaryBlue;
     case OrderStatus.rejected:
       return Colors.red;
     case OrderStatus.pickup:
       return Colors.orange;
+    case OrderStatus.preparing:
+      return Colors.purple; // preparing state color
     default:
       return Colors.grey;
   }
@@ -33,45 +37,45 @@ Color statusColor(OrderStatus status) {
 final orders = [
   OrderModel(
     id: "#1021",
-    date: DateFormat("d MMM yyyy").parse("2 Sep 2025"),
+    date: DateTime(2025, 9, 2), // year, month, day
     status: OrderStatus.delivered,
-    totalPrice: "\$33.50",
+    totalPrice: "SAR 33.50",
     items: [
       OrderItem(
         name: "Black Coffee",
-        price: "\$20.00",
+        price: "SAR 20.00",
         extras: ["Medium", "Milk", "No Sugar"],
       ),
-      OrderItem(name: "Ice Cream", price: "\$13.50", extras: ["Vanilla"]),
+      OrderItem(name: "Ice Cream", price: "SAR 13.50", extras: ["Vanilla"]),
     ],
   ),
   OrderModel(
     id: "#1020",
-    date: DateFormat("d MMM yyyy").parse("28 Aug 2025"),
+    date: DateTime(2025, 8, 28), // year, month, day
     status: OrderStatus.accepted,
-    totalPrice: "\$99.90",
+    totalPrice: "SAR 99.90",
     items: [
       OrderItem(
         name: "Pizza",
-        price: "\$49.95",
+        price: "SAR 49.95",
         extras: ["Chicken Ranch", "Large", "Extra Cheese"],
       ),
       OrderItem(
         name: "Shrimp Pasta",
-        price: "\$49.95",
+        price: "SAR 49.95",
         extras: ["Mushrooms", "Extra Shrimp", "No Vegetables"],
       ),
     ],
   ),
   OrderModel(
     id: "#1019",
-    date: DateFormat("d MMM yyyy").parse("25 Aug 2025"),
+    date: DateTime(2025, 8, 25), // year, month, day
     status: OrderStatus.pending,
-    totalPrice: "\$12.00",
+    totalPrice: "SAR 12.00",
     items: [
       OrderItem(
         name: "Red Flowers",
-        price: "\$12.00",
+        price: "SAR 12.00",
         extras: ["Large Size", "Gift Wrapped"],
       ),
     ],

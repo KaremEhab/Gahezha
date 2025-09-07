@@ -23,8 +23,8 @@ class _OnboardingState extends State<Onboarding> {
     final List<Map<String, String>> onboardingData = [
       {
         "image": "assets/images/all-restaraunts.svg",
-        "title": S.of(context).discover_restaurants_title,
-        "subtitle": S.of(context).discover_restaurants_subtitle,
+        "title": S.of(context).discover_shops_title,
+        "subtitle": S.of(context).discover_shops_subtitle,
       },
       {
         "image": "assets/images/make-order.svg",
@@ -43,8 +43,8 @@ class _OnboardingState extends State<Onboarding> {
       },
       {
         "image": "assets/images/eat-order.svg",
-        "title": S.of(context).enjoy_your_meal_title,
-        "subtitle": S.of(context).enjoy_your_meal_subtitle,
+        "title": S.of(context).enjoy_your_order_title,
+        "subtitle": S.of(context).enjoy_your_order_subtitle,
       },
     ];
     return Scaffold(

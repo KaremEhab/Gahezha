@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:iconly/iconly.dart';
 
 class CustomNavBar extends StatelessWidget {
@@ -35,25 +36,63 @@ class CustomNavBar extends StatelessWidget {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           items: [
-            BottomNavigationBarItem(
-              icon: const Icon(IconlyLight.home, size: 24),
-              activeIcon: Icon(
-                IconlyBold.home,
-                size: 25, // bigger size when selected
-                color: primaryBlue,
+            if (currentUserType == UserType.shop)
+              BottomNavigationBarItem(
+                icon: const Icon(IconlyLight.paper, size: 22),
+                activeIcon: Icon(
+                  IconlyBold.paper,
+                  size: 25,
+                  color: primaryBlue,
+                ),
+                label: '',
               ),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(IconlyLight.bag, size: 22),
-              activeIcon: Icon(IconlyBold.bag, size: 25, color: primaryBlue),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(IconlyLight.paper, size: 22),
-              activeIcon: Icon(IconlyBold.paper, size: 25, color: primaryBlue),
-              label: '',
-            ),
+            if (currentUserType == UserType.shop)
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.restaurant_menu_outlined, size: 22),
+                activeIcon: Icon(
+                  Icons.restaurant_menu_rounded,
+                  size: 25,
+                  color: primaryBlue,
+                ),
+                label: '',
+              ),
+            if (currentUserType == UserType.customer ||
+                currentUserType == UserType.admin)
+              BottomNavigationBarItem(
+                icon: const Icon(IconlyLight.home, size: 24),
+                activeIcon: Icon(
+                  IconlyBold.home,
+                  size: 25, // bigger size when selected
+                  color: primaryBlue,
+                ),
+                label: '',
+              ),
+            if (currentUserType == UserType.customer)
+              BottomNavigationBarItem(
+                icon: const Icon(IconlyLight.bag, size: 22),
+                activeIcon: Icon(IconlyBold.bag, size: 25, color: primaryBlue),
+                label: '',
+              ),
+            if (currentUserType == UserType.customer)
+              BottomNavigationBarItem(
+                icon: const Icon(IconlyLight.paper, size: 22),
+                activeIcon: Icon(
+                  IconlyBold.paper,
+                  size: 25,
+                  color: primaryBlue,
+                ),
+                label: '',
+              ),
+            if (currentUserType == UserType.admin)
+              BottomNavigationBarItem(
+                icon: const Icon(IconlyLight.setting, size: 22),
+                activeIcon: Icon(
+                  IconlyBold.setting,
+                  size: 25,
+                  color: primaryBlue,
+                ),
+                label: '',
+              ),
             BottomNavigationBarItem(
               icon: const Icon(IconlyLight.profile, size: 22),
               activeIcon: Icon(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gahezha/generated/l10n.dart';
 
 class PreparingOrderPage extends StatelessWidget {
   const PreparingOrderPage({super.key});
@@ -9,11 +10,11 @@ class PreparingOrderPage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 20),
             Text(
-              "We are preparing your order...",
+              "${S.current.we_are_preparing_your_order}...",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ],

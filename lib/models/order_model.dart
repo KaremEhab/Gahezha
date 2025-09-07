@@ -1,4 +1,7 @@
-enum OrderStatus { pending, accepted, rejected, pickup, delivered }
+import 'package:flutter/material.dart';
+import 'package:gahezha/generated/l10n.dart';
+
+enum OrderStatus { pending, accepted, rejected, preparing, pickup, delivered }
 
 class OrderModel {
   final String id;
@@ -19,7 +22,7 @@ class OrderModel {
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       id: map['id'] ?? '',
-      status: _statusFromString(map['status'] ?? 'pending'),
+      status: statusFromString(map['status'] ?? 'pending'),
       date: map['date'] is DateTime
           ? map['date']
           : DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
@@ -42,7 +45,7 @@ class OrderModel {
   }
 
   // --- Helpers ---
-  static OrderStatus _statusFromString(String value) {
+  static OrderStatus statusFromString(String value) {
     switch (value.toLowerCase()) {
       case 'accepted':
         return OrderStatus.accepted;
@@ -56,6 +59,34 @@ class OrderModel {
       default:
         return OrderStatus.pending;
     }
+  }
+
+  static String getLocalizedStatus(BuildContext context, OrderStatus status) {
+    final locale = Localizations.localeOf(context).languageCode;
+    String value;
+
+    switch (status) {
+      case OrderStatus.accepted:
+        value = S.of(context).accepted;
+        break;
+      case OrderStatus.rejected:
+        value = S.of(context).rejected;
+        break;
+      case OrderStatus.preparing:
+        value = S.of(context).preparing;
+        break;
+        case OrderStatus.pickup:
+        value = S.of(context).pickup;
+        break;
+      case OrderStatus.delivered:
+        value = S.of(context).delivered;
+        break;
+      default:
+        value = S.of(context).pending;
+    }
+
+    // Uppercase only for English
+    return locale == 'en' ? value.toUpperCase() : value;
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/order_model.dart';
 import 'package:gahezha/screens/orders/widgets/order_card.dart';
 import 'package:iconly/iconly.dart';
@@ -14,28 +15,28 @@ class ActiveOrdersBottomSheet extends StatelessWidget {
         id: "#1023",
         status: OrderStatus.pickup,
         date: DateTime.now().copyWith(hour: 10, minute: 30),
-        totalPrice: "\$24.99",
+        totalPrice: "SAR 24.99",
         items: [
           OrderItem(
             name: "Latte",
-            price: "\$12.50",
+            price: "SAR 12.50",
             extras: ["Medium", "Extra Shot"],
           ),
-          OrderItem(name: "Croissant", price: "\$12.49", extras: ["Butter"]),
+          OrderItem(name: "Croissant", price: "SAR 12.49", extras: ["Butter"]),
         ],
       ),
       OrderModel(
         id: "#1024",
         status: OrderStatus.pickup,
         date: DateTime.now().copyWith(hour: 11, minute: 00),
-        totalPrice: "\$18.50",
+        totalPrice: "SAR 18.50",
         items: [
           OrderItem(
             name: "Cappuccino",
-            price: "\$9.50",
+            price: "SAR 9.50",
             extras: ["Small", "Oat Milk"],
           ),
-          OrderItem(name: "Muffin", price: "\$9.00", extras: ["Blueberry"]),
+          OrderItem(name: "Muffin", price: "SAR 9.00", extras: ["Blueberry"]),
         ],
       ),
     ];
@@ -66,7 +67,7 @@ class ActiveOrdersBottomSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Active Orders",
+                    S.current.active_orders,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

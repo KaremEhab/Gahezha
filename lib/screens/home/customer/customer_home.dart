@@ -6,22 +6,22 @@ import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
-import 'package:gahezha/screens/home/widgets/active_orders_sheet.dart';
-import 'package:gahezha/screens/home/widgets/home_shops_list.dart';
+import 'package:gahezha/screens/home/customer/widgets/active_orders_sheet.dart';
+import 'package:gahezha/screens/home/customer/widgets/home_shops_list.dart';
 import 'package:gahezha/screens/notifications/notifications.dart';
 import 'package:gahezha/screens/shops/shop_details.dart';
 import 'package:iconly/iconly.dart';
 import 'package:animate_do/animate_do.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class CustomerHomePage extends StatefulWidget {
+  const CustomerHomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<CustomerHomePage> createState() => _CustomerHomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with AutomaticKeepAliveClientMixin<HomePage> {
+class _CustomerHomePageState extends State<CustomerHomePage>
+    with AutomaticKeepAliveClientMixin<CustomerHomePage> {
   @override
   bool get wantKeepAlive => true;
 
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "🔥 Hot Dealers",
+                          "🔥 ${S.current.hot_dealers}",
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
@@ -252,7 +252,8 @@ class _HomePageState extends State<HomePage>
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ShopDetailsPage(
-                                          shopName: "Shop ${index + 1}",
+                                          shopName:
+                                              "${S.current.shop} ${index + 1}",
                                         ),
                                       ),
                                     );
@@ -261,16 +262,33 @@ class _HomePageState extends State<HomePage>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            const BorderRadius.vertical(
-                                              top: Radius.circular(16),
+                                      // widget.productImages == null || widget.productImages.isEmpty
+                                      //     ? Container(
+                                      //         width: double.infinity,
+                                      //         height: double.infinity,
+                                      //         decoration: BoxDecoration(
+                                      //           color: Colors.grey.shade200,
+                                      //           borderRadius:
+                                      //               const BorderRadius.vertical(
+                                      //                 top: Radius.circular(16),
+                                      //               ),
+                                      //         ),
+                                      //         child: Center(
+                                      //           child: Icon(
+                                      //             IconlyBroken.image,
+                                      //             size: 50,
+                                      //           ),
+                                      //         ),
+                                      //       )
+                                      //     :
+                                      CustomCachedImage(
+                                              borderRadius:
+                                                  const BorderRadius.vertical(
+                                                    top: Radius.circular(16),
+                                                  ),
+                                              imageUrl:
+                                                  "https://picsum.photos/200/150?random=$index",
                                             ),
-                                        child: CustomCachedImage(
-                                          imageUrl:
-                                              "https://picsum.photos/200/150?random=$index",
-                                        ),
-                                      ),
                                       Padding(
                                         padding: const EdgeInsets.all(10),
                                         child: Column(
@@ -278,15 +296,15 @@ class _HomePageState extends State<HomePage>
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Dealer ${index + 1}",
+                                              "${S.current.dealer} ${index + 1}",
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15,
                                               ),
                                             ),
                                             const SizedBox(height: 6),
-                                            const Text(
-                                              "Special Offer · Limited Time",
+                                            Text(
+                                              "${S.current.special_offer} · ${S.current.limited_time}",
                                               style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13,
@@ -310,7 +328,7 @@ class _HomePageState extends State<HomePage>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "⭐ Recommended",
+                          "⭐ ${S.current.recommended}",
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),

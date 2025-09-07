@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gahezha/constants/cache_helper.dart';
+import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
 import 'package:iconly/iconly.dart';
@@ -106,7 +109,15 @@ class _LoginState extends State<Login> {
                       ),
                       TextButton(
                         onPressed: () {
-                          // TODO: Forgot Password
+                          currentUserType = UserType.admin;
+                          CacheHelper.saveData(
+                            key: "currentUserType",
+                            value: currentUserType.name,
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const Layout()),
+                          );
                         },
                         child: Text(
                           S.current.forgot_password,
@@ -153,6 +164,11 @@ class _LoginState extends State<Login> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      currentUserType = UserType.customer;
+                      CacheHelper.saveData(
+                        key: "currentUserType",
+                        value: currentUserType.name,
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const Layout()),
@@ -222,7 +238,15 @@ class _LoginState extends State<Login> {
                       icon: "assets/icons/google-icon.svg",
                       text: S.current.continue_with_google,
                       onTap: () {
-                        // TODO: implement Google Sign-In
+                        currentUserType = UserType.shop;
+                        CacheHelper.saveData(
+                          key: "currentUserType",
+                          value: currentUserType.name,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const Layout()),
+                        );
                       },
                     ),
                   ),
