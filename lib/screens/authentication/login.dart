@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/authentication/login/login_cubit.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
@@ -24,92 +26,184 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final bool isiOS = Platform.isIOS;
 
-    return GestureDetector(
-      onTap: () =>
-          FocusScope.of(context).unfocus(), // 🔹 Unfocus on tap outside
-      child: Scaffold(
-        body: SafeArea(
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: SingleChildScrollView(
-              // 🔹 Make scrollable
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 50),
-
-                  /// Logo
-                  Center(
-                    child: SvgPicture.asset(
-                      'assets/images/logo.svg',
-                      height: 120,
-                    ),
-                  ),
-
-                  const SizedBox(height: 60),
-
-                  /// Welcome text
-                  Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          S.current.welcome_back,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          S.current.login_continue,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: Colors.grey[600]),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  /// Email Field
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: S.current.email,
-                      prefixIcon: const Icon(IconlyLight.message),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  /// Password + Forgot Password
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+    return BlocConsumer<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccessState) {
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const Layout()),
+            );
+          }
+        }
+      },
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () =>
+              FocusScope.of(context).unfocus(), // 🔹 Unfocus on tap outside
+          child: Scaffold(
+            body: SafeArea(
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: SingleChildScrollView(
+                  // 🔹 Make scrollable
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextFormField(
-                        obscureText: _obscurePassword,
-                        decoration: InputDecoration(
-                          labelText: S.current.password,
-                          prefixIcon: const Icon(IconlyLight.lock),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? IconlyLight.show
-                                  : IconlyLight.hide,
-                            ),
-                            onPressed: () {
-                              setState(
-                                () => _obscurePassword = !_obscurePassword,
-                              );
-                            },
-                          ),
+                      const SizedBox(height: 50),
+
+                      /// Logo
+                      Center(
+                        child: SvgPicture.asset(
+                          'assets/images/logo.svg',
+                          height: 120,
                         ),
                       ),
-                      TextButton(
+
+                      const SizedBox(height: 60),
+
+                      /// Welcome text
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              S.current.welcome_back,
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              S.current.login_continue,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      /// Email Field
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: S.current.email,
+                          prefixIcon: const Icon(IconlyLight.message),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      /// Password + Forgot Password
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          TextFormField(
+                            obscureText: _obscurePassword,
+                            decoration: InputDecoration(
+                              labelText: S.current.password,
+                              prefixIcon: const Icon(IconlyLight.lock),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? IconlyLight.show
+                                      : IconlyLight.hide,
+                                ),
+                                onPressed: () {
+                                  setState(
+                                    () => _obscurePassword = !_obscurePassword,
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              currentUserType = UserType.admin;
+                              CacheHelper.saveData(
+                                key: "currentUserType",
+                                value: currentUserType.name,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const Layout(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              S.current.forgot_password,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      /// Already have account → Login
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(S.of(context).dont_have_account),
+                          TextButton(
+                            onPressed: () {
+                              navigateTo(
+                                context: context,
+                                screen: const Signup(),
+                              );
+                            },
+                            child: Text(
+                              S.of(context).sign_up,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                decorationColor: primaryBlue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          Text("or"),
+                          TextButton(
+                            onPressed: () {
+                              navigateTo(
+                                context: context,
+                                screen: const Signup(isShop: true),
+                              );
+                            },
+                            child: Text(
+                              "Create a shop",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                decorationColor: primaryBlue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            bottomNavigationBar: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    /// Sign Up Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
                         onPressed: () {
-                          currentUserType = UserType.admin;
+                          currentUserType = UserType.customer;
                           CacheHelper.saveData(
                             key: "currentUserType",
                             value: currentUserType.name,
@@ -120,143 +214,96 @@ class _LoginState extends State<Login> {
                           );
                         },
                         child: Text(
-                          S.current.forgot_password,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                          S.current.login,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
 
-                  const SizedBox(height: 10),
+                    /// Divider with text
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              S.current.or,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                  /// Already have account → Login
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(S.of(context).dont_have_account),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => const Signup()),
-                          );
-                        },
-                        child: Text(
-                          S.of(context).sign_up,
-                          style: const TextStyle(fontWeight: FontWeight.w600),
+                    /// Social login buttons
+                    if (isiOS)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _SocialButton(
+                              icon: "assets/icons/google-icon.svg",
+                              text: S.current.google,
+                              onTap: () {
+                                // TODO: implement Google Sign-In
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _SocialButton(
+                              icon: "assets/icons/apple-icon.svg",
+                              text: S.current.apple,
+                              onTap: () {
+                                // TODO: implement Apple Sign-In
+                              },
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      SizedBox(
+                        width: double.infinity,
+                        child: _SocialButton(
+                          icon: "assets/icons/google-icon.svg",
+                          text: S.current.continue_with_google,
+                          onTap: () {
+                            currentUserType = UserType.shop;
+                            CacheHelper.saveData(
+                              key: "currentUserType",
+                              value: currentUserType.name,
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const Layout()),
+                            );
+                          },
                         ),
                       ),
-                    ],
-                  ),
-                ],
+
+                    SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        bottomNavigationBar: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                /// Sign Up Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      currentUserType = UserType.customer;
-                      CacheHelper.saveData(
-                        key: "currentUserType",
-                        value: currentUserType.name,
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const Layout()),
-                      );
-                    },
-                    child: Text(
-                      S.current.login,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-
-                /// Divider with text
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(thickness: 1, color: Colors.grey[300]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          S.current.or,
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(thickness: 1, color: Colors.grey[300]),
-                      ),
-                    ],
-                  ),
-                ),
-
-                /// Social login buttons
-                if (isiOS)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SocialButton(
-                          icon: "assets/icons/google-icon.svg",
-                          text: S.current.google,
-                          onTap: () {
-                            // TODO: implement Google Sign-In
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _SocialButton(
-                          icon: "assets/icons/apple-icon.svg",
-                          text: S.current.apple,
-                          onTap: () {
-                            // TODO: implement Apple Sign-In
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  SizedBox(
-                    width: double.infinity,
-                    child: _SocialButton(
-                      icon: "assets/icons/google-icon.svg",
-                      text: S.current.continue_with_google,
-                      onTap: () {
-                        currentUserType = UserType.shop;
-                        CacheHelper.saveData(
-                          key: "currentUserType",
-                          value: currentUserType.name,
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const Layout()),
-                        );
-                      },
-                    ),
-                  ),
-
-                SizedBox(height: 40),
-              ],
-            ),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

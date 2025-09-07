@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gahezha/constants/bloc_observer.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/authentication/signup/signup_cubit.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => LocaleCubit()),
+        BlocProvider(create: (_) => SignupCubit()),
         BlocProvider(create: (_) => ProfileToggleCubit()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(

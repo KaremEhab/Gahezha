@@ -6,8 +6,14 @@ import 'package:intl/intl.dart';
 double radius = 12;
 double sheetRadius = 25;
 late String lang;
-bool showProfileDetails = false; // toggle state for profile container
+bool isGuest = false;
+bool showProfileDetails = false;
 late UserType currentUserType;
+late GuestUserModel guestUserModel;
+late String uId;
+late UserModel currentUserModel;
+String? fcmDeviceToken;
+late String accessToken;
 
 const primaryBlue = Color(0xFF1B6BFF); // main brand blue
 const onPrimary = Colors.white;
@@ -88,4 +94,29 @@ IconData backIcon() {
 
 IconData forwardIcon() {
   return lang == 'en' ? Icons.keyboard_arrow_right : Icons.keyboard_arrow_left;
+}
+
+void navigateTo({required BuildContext context, required Widget screen}) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+}
+
+void navigateReplacement({
+  required BuildContext context,
+  required Widget screen,
+}) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => screen),
+  );
+}
+
+void navigateAndFinish({
+  required BuildContext context,
+  required Widget screen,
+}) {
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (builder) => screen),
+    (route) => false,
+  );
 }
