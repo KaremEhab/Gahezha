@@ -36,6 +36,7 @@ Future<void> main() async {
   // accessToken = await AccessTokenFirebase().getAccessToken();
   uId = await CacheHelper.getData(key: 'uId') ?? '';
   lang = await CacheHelper.getData(key: 'lang') ?? 'en';
+  skipOnboarding = await CacheHelper.getData(key: 'skipOnboarding') ?? false;
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

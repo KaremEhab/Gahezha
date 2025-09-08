@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
@@ -219,6 +220,13 @@ class _OnboardingState extends State<Onboarding> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_currentIndex == onboardingData.length - 1) {
+                      setState(() {
+                        skipOnboarding = true;
+                      });
+                      CacheHelper.saveData(
+                        key: 'skipOnboarding',
+                        value: skipOnboarding,
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const Login()),

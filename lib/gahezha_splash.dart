@@ -1,6 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
+import 'package:gahezha/firebase_options.dart';
+import 'package:gahezha/main.dart';
+import 'package:gahezha/screens/authentication/login.dart';
+import 'package:gahezha/screens/layout/layout.dart';
 import 'package:gahezha/screens/onboarding/onboarding_screen.dart';
 
 class GahezhaSplash extends StatefulWidget {
@@ -14,14 +21,31 @@ class _GahezhaSplashState extends State<GahezhaSplash> {
   @override
   void initState() {
     super.initState();
+    _setupAndNavigate();
+  }
 
-    // Delay 4 seconds then navigate
+  Future<void> _setupAndNavigate() async {
+    // ✅ Firebase already initialized in main()
+    await setupFCM();
+
+    // ✅ هات اليوزر لو في uid
+    if (uId.isNotEmpty) {
+      await UserCubit.instance.getCurrentUser();
+    }
+
+    // ✅ بعد 4 ثواني روح للـ screen المناسبة
     Future.delayed(const Duration(seconds: 4), () {
-      if (!mounted) return; // prevent calling after widget disposed
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Onboarding()),
-      );
+      if (!mounted) return;
+
+      if (skipOnboarding == false) {
+        navigateReplacement(context: context, screen: const Onboarding());
+      } else {
+        if (uId != null && uId.isNotEmpty) {
+          navigateReplacement(context: context, screen: const Layout());
+        } else {
+          navigateReplacement(context: context, screen: const Login());
+        }
+      }
     });
   }
 

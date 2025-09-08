@@ -31,22 +31,6 @@ class _LayoutState extends State<Layout> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeFirebaseStuff();
-  }
-
-  Future<void> _initializeFirebaseStuff() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    await setupFCM();
-
-    // ✅ بعد ما يخلص Firebase init → هات اليوزر
-    UserCubit.instance.getCurrentUser();
-  }
-
   void _onItemTapped(int index) {
     setState(() => _currentIndex = index);
     _pageController.jumpToPage(index);

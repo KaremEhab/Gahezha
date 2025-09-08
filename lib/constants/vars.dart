@@ -8,6 +8,7 @@ double sheetRadius = 25;
 late String lang;
 bool isGuest = false;
 bool showProfileDetails = false;
+bool skipOnboarding = false;
 late UserType currentUserType;
 late GuestUserModel guestUserModel;
 late String uId;
