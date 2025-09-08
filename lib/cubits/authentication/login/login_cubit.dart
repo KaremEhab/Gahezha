@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -44,36 +45,36 @@ class LoginCubit extends Cubit<LoginState> {
       UserType? type;
 
       /// Check "admins" collection
-      // final adminDoc = await FirebaseFirestore.instance
-      //     .collection('admins')
-      //     .doc(uId)
-      //     .get();
-      // if (adminDoc.exists) {
-      //   type = UserType.admin;
-      //   userDoc = adminDoc;
-      // }
-
-      /// Check "shops" collection
-      final shopDoc = await FirebaseFirestore.instance
-          .collection('shops')
+      final adminDoc = await FirebaseFirestore.instance
+          .collection('admins')
           .doc(uId)
           .get();
-      if (shopDoc.exists) {
-        type = UserType.shop;
-        userDoc = shopDoc;
-      }
-
-      /// Check "users" collection
-      final usersDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uId)
-          .get();
-      if (usersDoc.exists) {
-        type = UserType.values.firstWhere(
-          (e) => e.name == usersDoc.data()!['userType'], // customer / guest
-          orElse: () => UserType.customer,
-        );
-        userDoc = usersDoc;
+      if (adminDoc.exists) {
+        type = UserType.admin;
+        userDoc = adminDoc;
+      } else {
+        /// Check "shops" collection
+        final shopDoc = await FirebaseFirestore.instance
+            .collection('shops')
+            .doc(uId)
+            .get();
+        if (shopDoc.exists) {
+          type = UserType.shop;
+          userDoc = shopDoc;
+        } else {
+          /// Check "users" collection
+          final usersDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uId)
+              .get();
+          if (usersDoc.exists) {
+            type = UserType.values.firstWhere(
+              (e) => e.name == usersDoc.data()!['userType'], // customer / guest
+              orElse: () => UserType.customer,
+            );
+            userDoc = usersDoc;
+          }
+        }
       }
 
       if (userDoc == null) {
@@ -97,6 +98,8 @@ class LoginCubit extends Cubit<LoginState> {
       /// 4️⃣ Load proper model
       if (currentUserType == UserType.shop) {
         await ShopCubit.instance.getCurrentShop();
+      } else if (currentUserType == UserType.admin) {
+        await AdminCubit.instance.getCurrentAdmin();
       } else {
         await UserCubit.instance.getCurrentUser();
       }

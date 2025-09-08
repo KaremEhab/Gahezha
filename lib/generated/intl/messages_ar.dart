@@ -99,6 +99,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "decaf": MessageLookupByLibrary.simpleMessage("خالي من الكافيين"),
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "delete_account": MessageLookupByLibrary.simpleMessage("مسح الحساب"),
+    "delete_shop": MessageLookupByLibrary.simpleMessage("حذف متجري"),
     "deleted": MessageLookupByLibrary.simpleMessage("تم الحذف"),
     "delivered": MessageLookupByLibrary.simpleMessage("تم التسليم"),
     "disable": MessageLookupByLibrary.simpleMessage("تعطيل"),
@@ -116,6 +117,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_option": MessageLookupByLibrary.simpleMessage("تعديل الخيار"),
     "edit_product": MessageLookupByLibrary.simpleMessage("تعديل المنتج"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
+    "edit_shop": MessageLookupByLibrary.simpleMessage("تعديل المتجر"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
     "en": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
     "enjoy_your_order_subtitle": MessageLookupByLibrary.simpleMessage(

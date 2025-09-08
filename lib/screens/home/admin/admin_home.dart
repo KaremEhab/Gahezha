@@ -52,7 +52,7 @@ class AdminHomePage extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: 22,
                                 child: CustomCachedImage(
-                                  imageUrl: "https://i.pravatar.cc/300",
+                                  imageUrl: currentUserModel!.profileUrl,
                                   height: double.infinity,
                                   borderRadius: BorderRadius.circular(200),
                                 ),

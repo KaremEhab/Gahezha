@@ -273,5 +273,8 @@
   "add_specification": "Add Specification",
   "add_ons": "Add-ons",
   "edit_add_on": "Edit Add-On",
-  "add_add_ons": "Add Add-ons"
+  "add_add_ons": "Add Add-ons",
+
+  "edit_shop": "Edit Shop",
+  "delete_shop": "Delete My Shop"
 }

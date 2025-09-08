@@ -3,6 +3,7 @@ import 'package:cloudinary_api/uploader/cloudinary_uploader.dart';
 import 'package:cloudinary_api/src/request/model/uploader_params.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:intl/intl.dart';
 
 class CloudinaryService {
@@ -17,14 +18,25 @@ class CloudinaryService {
   }
 
   /// رفع صورة من [File] محلي
-  Future<String?> uploadImage(File file, {bool keepHistory = false}) async {
+  Future<String?> uploadImage(
+    File file, {
+    String folder = "profiles", // ✨ الفولدر الافتراضي
+    bool keepHistory = false,
+  }) async {
     try {
-      // 👇 تأكد إن الاسم آمن (شيل المسافات والرموز)
-      final safeName = currentUserModel!.fullName
+      // ✅ اختار الاسم بناءً على نوع المستخدم
+      String baseName;
+      if (currentUserType == UserType.shop) {
+        baseName = currentShopModel?.shopName ?? "shop";
+      } else {
+        baseName = currentUserModel?.fullName ?? "user";
+      }
+
+      // 👇 خلي الاسم آمن
+      final safeName = baseName
           .replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_')
           .toLowerCase();
 
-      // 👇 لو عايزين نضيف التاريخ/الوقت للملف
       String publicId = safeName;
       if (keepHistory) {
         final timestamp = DateFormat(
@@ -37,10 +49,10 @@ class CloudinaryService {
         file,
         params: UploadParams(
           resourceType: 'image',
-          folder: "profiles", // ✨ الفولدر اللي الصور هتتخزن فيه
-          publicId: publicId, // ✨ الاسم (ثابت أو بتاريخ/وقت)
-          uniqueFilename: false, // ما يضيفش hash تلقائي
-          overwrite: !keepHistory, // ✨ لو keepHistory=false → يستبدل القديم
+          folder: folder, // ✨ الفولدر حسب النوع
+          publicId: publicId,
+          uniqueFilename: false,
+          overwrite: !keepHistory,
         ),
       );
       return response?.data?.secureUrl;

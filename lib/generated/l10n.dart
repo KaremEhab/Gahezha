@@ -1983,6 +1983,21 @@ class S {
   String get add_add_ons {
     return Intl.message('Add Add-ons', name: 'add_add_ons', desc: '', args: []);
   }
+
+  /// `Edit Shop`
+  String get edit_shop {
+    return Intl.message('Edit Shop', name: 'edit_shop', desc: '', args: []);
+  }
+
+  /// `Delete My Shop`
+  String get delete_shop {
+    return Intl.message(
+      'Delete My Shop',
+      name: 'delete_shop',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -109,7 +109,137 @@ class _SignupState extends State<Signup> {
                         controller: _shopCategory,
                         title: S.current.shop_category,
                         hint: S.current.enter_shop_category,
-                        icon: IconlyLight.category,
+                        icon: IconlyLight.buy,
+                        onTap: () async {
+                          final selected = await showModalBottomSheet<String>(
+                            context: context,
+                            isScrollControlled: true, // مهم للسحب الكامل
+                            showDragHandle: true,
+                            backgroundColor: Colors.white,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
+                            ),
+                            builder: (context) {
+                              final currentCategory = _shopCategory.text;
+
+                              return DraggableScrollableSheet(
+                                expand: false,
+                                initialChildSize: 0.5, // يبدأ نص الشاشة
+                                minChildSize: 0.3,
+                                maxChildSize: 0.9, // يصل لأعلى الشاشة عند السحب
+                                builder: (context, scrollController) {
+                                  return SafeArea(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Title
+                                          const Text(
+                                            "Choose a Category",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+
+                                          // Categories Grid
+                                          Expanded(
+                                            child: GridView.builder(
+                                              controller:
+                                                  scrollController, // مهم للتمرير
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2,
+                                                    mainAxisSpacing: 16,
+                                                    crossAxisSpacing: 16,
+                                                    childAspectRatio: 2,
+                                                  ),
+                                              itemCount: categories.length,
+                                              itemBuilder: (context, index) {
+                                                final c = categories[index];
+                                                final isSelected =
+                                                    c["name"] ==
+                                                    currentCategory;
+
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.pop(
+                                                      context,
+                                                      c["name"] as String,
+                                                    );
+                                                    FocusScope.of(
+                                                      context,
+                                                    ).unfocus();
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: isSelected
+                                                          ? primaryBlue
+                                                          : primaryBlue
+                                                                .withOpacity(
+                                                                  0.08,
+                                                                ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
+                                                    ),
+                                                    child: Column(
+                                                      spacing: 8,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          c["icon"] as IconData,
+                                                          color: isSelected
+                                                              ? Colors.white
+                                                              : primaryBlue,
+                                                        ),
+                                                        Text(
+                                                          c["name"] as String,
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: isSelected
+                                                                ? Colors.white
+                                                                : Colors
+                                                                      .black87,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+
+                          if (selected != null) {
+                            setState(() {
+                              _shopCategory.text = selected;
+                            });
+                          }
+                        },
                       ),
 
                       const SizedBox(height: 16),
@@ -220,6 +350,7 @@ class _SignupState extends State<Signup> {
                         title: S.current.password,
                         hint: S.current.enter_your_password,
                         icon: IconlyLight.lock,
+                        obscureText: true, // initial obscure state
                         keyboardType: TextInputType.text,
                       ),
 
@@ -231,6 +362,7 @@ class _SignupState extends State<Signup> {
                         title: S.current.confirm_password_title,
                         hint: S.current.reEnter_password,
                         icon: IconlyLight.lock,
+                        obscureText: true, // initial obscure state
                         keyboardType: TextInputType.text,
                       ),
                     ] else
@@ -395,47 +527,24 @@ class _SignupState extends State<Signup> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
-                          final firstName = _firstName.text.trim();
-                          final lastName = _lastName.text.trim();
-                          final email = _email.text.trim();
-                          final phoneNumber = _phoneNumber.text.trim();
-                          final password = _password.text;
-                          final confirmPassword = _confirmPassword.text;
+                          if (!widget.isShop) {
+                            // Normal user signup
+                            final firstName = _firstName.text.trim();
+                            final lastName = _lastName.text.trim();
+                            final email = _email.text.trim();
+                            final phoneNumber = _phoneNumber.text.trim();
+                            final password = _password.text;
+                            final confirmPassword = _confirmPassword.text;
 
-                          if (password != confirmPassword) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Passwords do not match"),
-                              ),
-                            );
-                            return;
-                          }
-
-                          if (widget.isShop) {
-                            final shopName = _shopName.text.trim();
-                            final shopEmail = _shopEmail.text.trim();
-
-                            // Sign up user first
-                            SignupCubit.instance.userSignup(
-                              email: email,
-                              password: password,
-                              firstName: firstName,
-                              lastName: lastName,
-                              phoneNumber: phoneNumber,
-                              gender: selectedGender,
-                            );
-
-                            // Navigate to layout after success
-                            if (context.mounted) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const Layout(),
+                            if (password != confirmPassword) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Passwords do not match"),
                                 ),
                               );
+                              return;
                             }
-                          } else {
-                            // Normal user signup
+
                             SignupCubit.instance.userSignup(
                               email: email,
                               password: password,
@@ -443,6 +552,45 @@ class _SignupState extends State<Signup> {
                               lastName: lastName,
                               phoneNumber: phoneNumber,
                               gender: selectedGender,
+                            );
+                          } else {
+                            // Shop signup
+                            final shopName = _shopName.text.trim();
+                            final shopCategory = _shopCategory.text.trim();
+                            final shopLocation = _shopLocation.text.trim();
+                            final preparingFrom =
+                                int.tryParse(_preparingTimeFrom.text) ?? 0;
+                            final preparingTo =
+                                int.tryParse(_preparingTimeTo.text) ?? 0;
+                            final openingFrom =
+                                int.tryParse(_openingHoursFrom.text) ?? 0;
+                            final openingTo =
+                                int.tryParse(_openingHoursTo.text) ?? 0;
+                            final shopPhone = _shopPhoneNumber.text.trim();
+                            final shopEmail = _shopEmail.text.trim();
+                            final password = _shopPassword.text;
+                            final confirmPassword = _shopConfirmPassword.text;
+
+                            if (password != confirmPassword) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Passwords do not match"),
+                                ),
+                              );
+                              return;
+                            }
+
+                            SignupCubit.instance.shopSignup(
+                              email: shopEmail,
+                              password: password,
+                              shopName: shopName,
+                              shopCategory: shopCategory,
+                              shopLocation: shopLocation,
+                              preparingTimeFrom: preparingFrom,
+                              preparingTimeTo: preparingTo,
+                              openingHoursFrom: openingFrom,
+                              openingHoursTo: openingTo,
+                              shopPhoneNumber: shopPhone,
                             );
                           }
                         },

@@ -12,7 +12,7 @@ class ShopModel {
   final int openingHoursTo;
   final String shopPhoneNumber;
   final String shopEmail;
-  final ShopStatus shopStatus;
+  final bool shopStatus;
   final bool notificationsEnabled;
   final DateTime createdAt;
 
@@ -46,7 +46,7 @@ class ShopModel {
       'openingHoursTo': openingHoursTo,
       'shopPhoneNumber': shopPhoneNumber,
       'shopEmail': shopEmail,
-      'shopStatus': shopStatus.name,
+      'shopStatus': shopStatus,
       'notificationsEnabled': notificationsEnabled,
       'createdAt': createdAt.millisecondsSinceEpoch,
     };
@@ -65,10 +65,7 @@ class ShopModel {
       openingHoursTo: map['openingHoursTo']?.toInt() ?? 0,
       shopPhoneNumber: map['shopPhoneNumber'] ?? '',
       shopEmail: map['shopEmail'] ?? '',
-      shopStatus: ShopStatus.values.firstWhere(
-        (e) => e.name == map['shopStatus'],
-        orElse: () => ShopStatus.closed,
-      ),
+      shopStatus: map['shopStatus'] ?? false,
       notificationsEnabled: map['notificationsEnabled'] ?? false,
       createdAt: DateTime.fromMillisecondsSinceEpoch(
         map['createdAt'] ?? DateTime.now().millisecondsSinceEpoch,

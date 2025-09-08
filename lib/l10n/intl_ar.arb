@@ -273,5 +273,9 @@
   "add_specification": "إضافة مواصفة",
   "add_ons": "الإضافات",
   "edit_add_on": "تعديل الإضافة",
-  "add_add_ons": "إضافة إضافات"
+  "add_add_ons": "إضافة إضافات",
+
+  "edit_shop": "تعديل المتجر",
+  "delete_shop": "حذف متجري"
+
 }

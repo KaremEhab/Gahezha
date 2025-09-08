@@ -213,7 +213,7 @@ class SignupCubit extends Cubit<SignupState> {
       openingHoursTo: openingHoursTo,
       shopPhoneNumber: shopPhoneNumber,
       shopEmail: shopEmail,
-      shopStatus: ShopStatus.closed, // يبدأ مغلق مثلاً
+      shopStatus: false, // يبدأ مغلق مثلاً
       notificationsEnabled: true,
       createdAt: DateTime.now(),
     );

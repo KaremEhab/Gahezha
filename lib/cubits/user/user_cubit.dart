@@ -111,7 +111,7 @@ class UserCubit extends Cubit<UserState> {
     Gender? gender,
     bool? notificationsEnabled,
     UserType? userType,
-    bool silentUpdate = true, // ✅ جديد: يمنع emit لو true
+    bool silentUpdate = true,
   }) async {
     try {
       if (uId == null) {
@@ -137,8 +137,12 @@ class UserCubit extends Cubit<UserState> {
         return;
       }
 
-      // ✅ Update Firestore
-      await _firestore.collection("users").doc(uId).update(updatedData);
+      // ✅ Pick the right collection
+      final collectionName = (currentUserType == UserType.admin)
+          ? "admins"
+          : "users";
+
+      await _firestore.collection(collectionName).doc(uId).update(updatedData);
 
       // ✅ Update local model
       currentUserModel = currentUserModel!.copyWith(
@@ -161,7 +165,6 @@ class UserCubit extends Cubit<UserState> {
       currentUserType = currentUserModel!.userType;
       CacheHelper.saveData(key: "currentUserType", value: currentUserType.name);
 
-      // 🔄 Emit فقط لو التحديث مش silent
       if (!silentUpdate) {
         emit(UserUpdated(currentUserModel!));
       }
@@ -228,10 +231,11 @@ class UserCubit extends Cubit<UserState> {
         CacheHelper.removeData(key: 'currentUserModel'),
         CacheHelper.removeData(key: 'currentGuestModel'),
 
-        // Replace all old tokens with the new one
-        FirebaseFirestore.instance.collection('users').doc(savedUid).update({
-          'fcmTokens': [],
-        }),
+        // ✅ Replace all old tokens with the new one
+        FirebaseFirestore.instance
+            .collection(currentUserType == UserType.shop ? 'shops' : 'users')
+            .doc(savedUid)
+            .update({'fcmTokens': []}),
       ]);
 
       log("Logged out successfully");

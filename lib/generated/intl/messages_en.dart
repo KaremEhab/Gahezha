@@ -99,6 +99,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "decaf": MessageLookupByLibrary.simpleMessage("Decaf"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "delete_account": MessageLookupByLibrary.simpleMessage("Delete Account"),
+    "delete_shop": MessageLookupByLibrary.simpleMessage("Delete My Shop"),
     "deleted": MessageLookupByLibrary.simpleMessage("Deleted"),
     "delivered": MessageLookupByLibrary.simpleMessage("Delivered"),
     "disable": MessageLookupByLibrary.simpleMessage("Disable"),
@@ -118,6 +119,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit_option": MessageLookupByLibrary.simpleMessage("Edit Option"),
     "edit_product": MessageLookupByLibrary.simpleMessage("Edit Product"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
+    "edit_shop": MessageLookupByLibrary.simpleMessage("Edit Shop"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "email_change_submitted": MessageLookupByLibrary.simpleMessage(
       "Your email change request has been submitted successfully.",

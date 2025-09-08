@@ -58,23 +58,25 @@ class HomeProfilePopup extends StatelessWidget {
 
                               // Profile picture
                               CircleAvatar(
-                                radius: 36,
-                                child: currentUserModel == null
-                                    ? Icon(IconlyBold.profile)
-                                    : CustomCachedImage(
-                                        imageUrl: currentUserModel!.profileUrl,
-                                        height: double.infinity,
-                                        borderRadius: BorderRadius.circular(
-                                          200,
-                                        ),
-                                      ),
+                                radius: 38,
+                                backgroundColor: Colors.grey.shade300,
+                                child: CircleAvatar(
+                                  radius: 36,
+                                  child: CustomCachedImage(
+                                    imageUrl: currentUserModel == null
+                                        ? currentShopModel!.shopLogo
+                                        : currentUserModel!.profileUrl,
+                                    height: double.infinity,
+                                    borderRadius: BorderRadius.circular(200),
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 12),
 
                               // Name
                               Text(
                                 currentUserModel == null
-                                    ? "Undefined name"
+                                    ? currentShopModel!.shopName
                                     : currentUserType == UserType.guest
                                     ? S.current.guest_account
                                     : currentUserModel!.fullName,
@@ -83,13 +85,14 @@ class HomeProfilePopup extends StatelessWidget {
                                   fontSize: 18,
                                 ),
                               ),
-                              if (currentUserType != UserType.guest) ...[
+                              if (currentUserType != UserType.guest &&
+                                  currentUserType != UserType.admin) ...[
                                 const SizedBox(height: 6),
 
                                 // Email
                                 Text(
                                   currentUserModel == null
-                                      ? "Undefined email"
+                                      ? currentShopModel!.shopEmail
                                       : currentUserModel!.email,
                                   style: TextStyle(fontSize: 14),
                                 ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/profile/customer/pages/change_email.dart';
@@ -18,8 +20,8 @@ class ShopProfilePage extends StatefulWidget {
 }
 
 class _ShopProfilePageState extends State<ShopProfilePage> {
-  bool notifications = false;
-  bool shopStatus = true;
+  bool notifications = currentShopModel!.notificationsEnabled;
+  bool shopStatus = currentShopModel!.shopStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,9 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
               borderRadius: BorderRadius.circular(radius),
               child: InkWell(
                 borderRadius: BorderRadius.circular(radius),
-                onTap: () {},
+                onTap: () {
+                  UserCubit.instance.logout(context);
+                },
                 child: const Padding(
                   padding: EdgeInsets.all(13),
                   child: Icon(IconlyBold.logout, size: 18, color: Colors.red),
@@ -64,7 +68,7 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
             child: Stack(
               children: [
                 CustomCachedImage(
-                  imageUrl: "https://picsum.photos/600/300",
+                  imageUrl: currentShopModel!.shopBanner,
                   height: double.infinity,
                 ),
                 Container(color: Colors.black.withOpacity(0.5)),
@@ -72,15 +76,15 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 50,
                         backgroundImage: NetworkImage(
-                          "https://picsum.photos/200/200?random=12",
+                          currentShopModel!.shopLogo,
                         ),
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "John Doe",
+                        currentShopModel!.shopName,
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -88,7 +92,7 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "johndoe@gmail.com",
+                        currentShopModel!.shopEmail,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.white,
                         ),
@@ -114,8 +118,8 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                           color: primaryBlue,
                           size: 20,
                         ),
-                        label: const Text(
-                          "Edit Shop",
+                        label: Text(
+                          S.current.edit_shop,
                           style: TextStyle(
                             color: primaryBlue,
                             fontWeight: FontWeight.w600,
@@ -177,12 +181,19 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                   : IconlyLight.notification,
               color: primaryBlue,
             ),
-            onChanged: (val) => setState(() => notifications = val),
+            onChanged: (val) async {
+              setState(() => notifications = val);
+
+              // ✅ استدعاء التحديث
+              await ShopCubit.instance.editShopData(notificationsEnabled: val);
+            },
           ),
           SwitchListTile(
             value: shopStatus,
             contentPadding: EdgeInsets.symmetric(horizontal: 10),
-            title: Text(shopStatus ? "Shop Status: ON" : "Shop Status: OFF"),
+            title: Text(
+              shopStatus ? "Shop Status: Open" : "Shop Status: Closed",
+            ),
             secondary: Padding(
               padding: EdgeInsetsGeometry.directional(start: 2),
               child: CircleAvatar(
@@ -198,7 +209,12 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
                 ),
               ),
             ),
-            onChanged: (val) => setState(() => shopStatus = val),
+            onChanged: (val) async {
+              setState(() => shopStatus = val);
+
+              // ✅ استدعاء التحديث
+              await ShopCubit.instance.editShopData(shopStatus: val);
+            },
           ),
           _buildListTile(
             icon: IconlyLight.message,
@@ -262,7 +278,7 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
             child: ElevatedButton.icon(
               onPressed: () {},
               icon: Icon(IconlyBold.delete),
-              label: Text("Delete My Shop"),
+              label: Text(S.current.delete_shop),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,

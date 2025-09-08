@@ -177,12 +177,19 @@ class ShopHomePage extends StatelessWidget {
                                     ProfileToggleCubit.instance
                                         .homeProfileButtonToggle();
                                   },
-                                  child: CircleAvatar(
-                                    radius: 22,
-                                    child: CustomCachedImage(
-                                      imageUrl: "https://i.pravatar.cc/300",
-                                      height: double.infinity,
-                                      borderRadius: BorderRadius.circular(200),
+                                  child: // Profile picture
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: Colors.grey.shade300,
+                                    child: CircleAvatar(
+                                      radius: 22,
+                                      child: CustomCachedImage(
+                                        imageUrl: currentShopModel!.shopLogo,
+                                        height: double.infinity,
+                                        borderRadius: BorderRadius.circular(
+                                          200,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 );
