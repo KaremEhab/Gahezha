@@ -30,15 +30,42 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+  DateTime? _lastBackPressTime;
 
   void _onItemTapped(int index) {
     setState(() => _currentIndex = index);
     _pageController.jumpToPage(index);
   }
 
+  Future<bool> _onWillPop() async {
+    // لو المستخدم مش في الصفحة الرئيسية (index 0) نرجعه للصفحة الرئيسية
+    if (_currentIndex != 0) {
+      _onItemTapped(0);
+      return false; // مانع الخروج من التطبيق
+    }
+
+    // لو هو في الصفحة الرئيسية
+    DateTime now = DateTime.now();
+    if (_lastBackPressTime == null ||
+        now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+      _lastBackPressTime = now;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Click back again to exit."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return false; // مانع الخروج لأول مرة
+    }
+
+    return true; // يسمح بالخروج إذا ضغط مرتين خلال ثانيتين
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = currentUserType == UserType.customer
+    final List<Widget> _pages =
+        currentUserType == UserType.customer ||
+            currentUserType == UserType.guest
         ? [
             const CustomerHomePage(),
             const CartPage(),
@@ -52,22 +79,25 @@ class _LayoutState extends State<Layout> {
             const UsersAndShopsPage(),
             const CustomerProfilePage(),
           ];
-    return Stack(
-      children: [
-        Scaffold(
-          body: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: _pages,
+
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Stack(
+        children: [
+          Scaffold(
+            body: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: _pages,
+            ),
+            bottomNavigationBar: CustomNavBar(
+              currentIndex: _currentIndex,
+              onItemTapped: _onItemTapped,
+            ),
           ),
-          bottomNavigationBar: CustomNavBar(
-            currentIndex: _currentIndex,
-            onItemTapped: _onItemTapped,
-          ),
-        ),
-        // ================= Profile Pop-up Container =================
-        Material(color: Colors.transparent, child: HomeProfilePopup()),
-      ],
+          Material(color: Colors.transparent, child: HomeProfilePopup()),
+        ],
+      ),
     );
   }
 }

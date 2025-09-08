@@ -9,6 +9,7 @@ import 'package:gahezha/main.dart';
 import 'package:gahezha/screens/authentication/login.dart';
 import 'package:gahezha/screens/layout/layout.dart';
 import 'package:gahezha/screens/onboarding/onboarding_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class GahezhaSplash extends StatefulWidget {
   const GahezhaSplash({super.key});
@@ -25,28 +26,25 @@ class _GahezhaSplashState extends State<GahezhaSplash> {
   }
 
   Future<void> _setupAndNavigate() async {
-    // ✅ Firebase already initialized in main()
     await setupFCM();
 
-    // ✅ هات اليوزر لو في uid
+    // لو في uid موجود مسبقاً
     if (uId.isNotEmpty) {
       await UserCubit.instance.getCurrentUser();
     }
 
-    // ✅ بعد 4 ثواني روح للـ screen المناسبة
-    Future.delayed(const Duration(seconds: 4), () {
-      if (!mounted) return;
+    await Future.delayed(const Duration(seconds: 4));
 
-      if (skipOnboarding == false) {
-        navigateReplacement(context: context, screen: const Onboarding());
-      } else {
-        if (uId != null && uId.isNotEmpty) {
-          navigateReplacement(context: context, screen: const Layout());
-        } else {
-          navigateReplacement(context: context, screen: const Login());
-        }
-      }
-    });
+    if (!mounted) return;
+
+    if (uId.isEmpty && !skipOnboarding) {
+      navigateAndFinish(context: context, screen: const Onboarding());
+    } else if (uId.isEmpty && skipOnboarding) {
+      navigateAndFinish(context: context, screen: const Login());
+      await GoogleSignIn().signOut();
+    } else {
+      navigateAndFinish(context: context, screen: const Layout());
+    }
   }
 
   @override

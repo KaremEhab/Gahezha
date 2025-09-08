@@ -60,10 +60,10 @@ class CheckoutPage extends StatelessWidget {
                               ),
                               title: Text(order['name']),
                               subtitle: Text(
-                                "${order['quantity']} × SAR ${order['price']}",
+                                "${order['quantity']} × ${S.current.sar} ${order['price']}",
                               ),
                               trailing: Text(
-                                "SAR ${(order['price'] * order['quantity']).toStringAsFixed(2)}",
+                                "${S.current.sar} ${(order['price'] * order['quantity']).toStringAsFixed(2)}",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -102,7 +102,7 @@ class CheckoutPage extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "SAR ${total.toStringAsFixed(2)}",
+                    "${S.current.sar} ${total.toStringAsFixed(2)}",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,

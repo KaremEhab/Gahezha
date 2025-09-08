@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/shops/widgets/shop_card.dart';
 import 'package:gahezha/screens/accounts/widgets/account_settings_card.dart';
@@ -18,13 +19,13 @@ class UsersAndShopsPage extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               // --- SliverAppBar ---
-              const SliverAppBar(
+              SliverAppBar(
                 pinned: true,
                 floating: true,
                 elevation: 0,
                 title: Text(
-                  "Customers & Shops",
-                  style: TextStyle(
+                  S.current.gahezha_accounts,
+                  style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
                   ),
@@ -41,9 +42,9 @@ class UsersAndShopsPage extends StatelessWidget {
                     indicatorColor: primaryBlue,
                     dividerColor: Colors.transparent,
                     indicatorSize: TabBarIndicatorSize.tab,
-                    tabs: const [
-                      Tab(text: "Customers"),
-                      Tab(text: "Shops"),
+                    tabs: [
+                      Tab(text: S.current.customers),
+                      Tab(text: S.current.shops),
                     ],
                   ),
                 ),
@@ -78,11 +79,11 @@ class _UsersTab extends StatelessWidget {
                 indicatorColor: primaryBlue,
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
-                tabs: const [
-                  Tab(text: "All"),
-                  Tab(text: "Blocked"),
-                  Tab(text: "Reported"),
-                  Tab(text: "Disabled"),
+                tabs: [
+                  Tab(text: S.current.all),
+                  Tab(text: S.current.blocked),
+                  Tab(text: S.current.reported),
+                  Tab(text: S.current.disabled),
                 ],
               ),
             ),
@@ -90,11 +91,11 @@ class _UsersTab extends StatelessWidget {
           // --- TabBar content ---
           SliverFillRemaining(
             child: TabBarView(
-              children: const [
-                _UsersList(tabType: "All"),
-                _UsersList(tabType: "Blocked"),
-                _UsersList(tabType: "Reported"),
-                _UsersList(tabType: "Disabled"),
+              children: [
+                _UsersList(tabType: S.current.all),
+                _UsersList(tabType: S.current.blocked),
+                _UsersList(tabType: S.current.reported),
+                _UsersList(tabType: S.current.disabled),
               ],
             ),
           ),
@@ -124,11 +125,11 @@ class _ShopsTab extends StatelessWidget {
                 indicatorColor: primaryBlue,
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
-                tabs: const [
-                  Tab(text: "All"),
-                  Tab(text: "Blocked"),
-                  Tab(text: "Reported"),
-                  Tab(text: "Disabled"),
+                tabs: [
+                  Tab(text: S.current.all),
+                  Tab(text: S.current.blocked),
+                  Tab(text: S.current.reported),
+                  Tab(text: S.current.disabled),
                 ],
               ),
             ),
@@ -136,11 +137,11 @@ class _ShopsTab extends StatelessWidget {
           // --- TabBar content ---
           SliverFillRemaining(
             child: TabBarView(
-              children: const [
-                _ShopsList(tabType: "All"),
-                _ShopsList(tabType: "Blocked"),
-                _ShopsList(tabType: "Reported"),
-                _ShopsList(tabType: "Disabled"),
+              children: [
+                _ShopsList(tabType: S.current.all),
+                _ShopsList(tabType: S.current.blocked),
+                _ShopsList(tabType: S.current.reported),
+                _ShopsList(tabType: S.current.disabled),
               ],
             ),
           ),

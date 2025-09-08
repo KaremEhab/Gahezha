@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/products/customer/widgets/product_details_sheet.dart';
@@ -103,7 +104,7 @@ class ShopMenuPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Shop Menu"),
+        title: Text(S.current.shop_menu),
         backgroundColor: Colors.white,
         forceMaterialTransparency: true,
         automaticallyImplyLeading: false,
@@ -111,7 +112,7 @@ class ShopMenuPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: fakeProducts.isEmpty
-          ? const Center(child: Text("No products yet."))
+          ? Center(child: Text(S.current.no_products_yet))
           : ListView.builder(
               padding: const EdgeInsets.only(top: 10, bottom: 80),
               itemCount: fakeProducts.length,
@@ -153,13 +154,13 @@ class _ProductCard extends StatelessWidget {
             onPressed: (c) async {
               // TODO: implement delete product
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("${product.name} deleted")),
+                SnackBar(content: Text("${product.name} ${S.current.deleted}")),
               );
             },
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             icon: IconlyLight.delete,
-            label: "Delete",
+            label: S.current.delete,
           ),
         ],
       ),
@@ -180,7 +181,7 @@ class _ProductCard extends StatelessWidget {
             backgroundColor: primaryBlue,
             foregroundColor: Colors.white,
             icon: Icons.edit,
-            label: "Edit",
+            label: S.current.edit,
           ),
         ],
       ),
@@ -225,7 +226,7 @@ class _ProductCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         trailing: Text(
-          "SAR ${product.price.toStringAsFixed(2)}",
+          "${S.current.sar} ${product.price.toStringAsFixed(2)}",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),

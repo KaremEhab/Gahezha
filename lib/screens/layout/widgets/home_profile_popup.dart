@@ -4,8 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:iconly/iconly.dart';
 
 class HomeProfilePopup extends StatelessWidget {
   const HomeProfilePopup({super.key});
@@ -56,62 +59,74 @@ class HomeProfilePopup extends StatelessWidget {
                               // Profile picture
                               CircleAvatar(
                                 radius: 36,
-                                child: CustomCachedImage(
-                                  imageUrl: currentUserModel.profileUrl,
-                                  height: double.infinity,
-                                  borderRadius: BorderRadius.circular(200),
-                                ),
+                                child: currentUserModel == null
+                                    ? Icon(IconlyBold.profile)
+                                    : CustomCachedImage(
+                                        imageUrl: currentUserModel!.profileUrl,
+                                        height: double.infinity,
+                                        borderRadius: BorderRadius.circular(
+                                          200,
+                                        ),
+                                      ),
                               ),
                               const SizedBox(height: 12),
 
                               // Name
                               Text(
-                                currentUserModel.fullName,
+                                currentUserModel == null
+                                    ? "Undefined name"
+                                    : currentUserType == UserType.guest
+                                    ? S.current.guest_account
+                                    : currentUserModel!.fullName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              if (currentUserType != UserType.guest) ...[
+                                const SizedBox(height: 6),
 
-                              // Email
-                              Text(
-                                currentUserModel.email,
-                                style: TextStyle(fontSize: 14),
-                              ),
-
-                              const SizedBox(height: 16),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
+                                // Email
+                                Text(
+                                  currentUserModel == null
+                                      ? "Undefined email"
+                                      : currentUserModel!.email,
+                                  style: TextStyle(fontSize: 14),
                                 ),
-                                child: Divider(
-                                  height: 1,
-                                  color: Colors.grey.withOpacity(0.3),
+
+                                const SizedBox(height: 16),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  child: Divider(
+                                    height: 1,
+                                    color: Colors.grey.withOpacity(0.3),
+                                  ),
                                 ),
-                              ),
 
-                              const SizedBox(height: 16),
+                                const SizedBox(height: 16),
 
-                              // Stats
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  FadeInLeft(
-                                    child: _buildProfileStat(
-                                      S.current.orders,
-                                      "120",
+                                // Stats
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    FadeInLeft(
+                                      child: _buildProfileStat(
+                                        S.current.orders,
+                                        "120",
+                                      ),
                                     ),
-                                  ),
-                                  FadeInRight(
-                                    child: _buildProfileStat(
-                                      S.current.cart,
-                                      "3",
+                                    FadeInRight(
+                                      child: _buildProfileStat(
+                                        S.current.cart,
+                                        "3",
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                              ],
 
                               const SizedBox(height: 20),
 
@@ -122,24 +137,37 @@ class HomeProfilePopup extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    _buildActionButton(
-                                      context,
-                                      Icons.settings,
-                                      S.current.settings,
-                                      () {},
-                                    ),
-                                    _buildActionButton(
-                                      context,
-                                      Icons.edit,
-                                      S.current.edit,
-                                      () {},
-                                    ),
-                                    _buildActionButton(
-                                      context,
-                                      Icons.logout,
-                                      S.current.logout,
-                                      () {},
-                                    ),
+                                    if (currentUserType != UserType.guest) ...[
+                                      _buildActionButton(
+                                        context,
+                                        Icons.edit,
+                                        S.current.edit_profile,
+                                        () {},
+                                      ),
+                                      _buildActionButton(
+                                        context,
+                                        Icons.logout,
+                                        S.current.logout,
+                                        () {
+                                          Navigator.pop(context);
+                                          UserCubit.instance.logout(context);
+                                        },
+                                      ),
+                                    ] else
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            UserCubit.instance.logout(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            shadowColor: Colors.transparent,
+                                            backgroundColor: Colors.red,
+                                          ),
+                                          child: Text(S.current.logout),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),

@@ -20,7 +20,7 @@ class CloudinaryService {
   Future<String?> uploadImage(File file, {bool keepHistory = false}) async {
     try {
       // 👇 تأكد إن الاسم آمن (شيل المسافات والرموز)
-      final safeName = currentUserModel.fullName
+      final safeName = currentUserModel!.fullName
           .replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_')
           .toLowerCase();
 

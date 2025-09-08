@@ -49,7 +49,7 @@ class OrderDetailsSheet extends StatelessWidget {
           actions: [
             Container(
               height: 27,
-              margin: const EdgeInsets.only(right: 10),
+              margin: EdgeInsetsGeometry.directional(end: 10),
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: statusColor(order.status).withOpacity(0.12),
@@ -86,7 +86,7 @@ class OrderDetailsSheet extends StatelessWidget {
               ],
 
               Text(
-                "Order Details",
+                S.current.order_details,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -324,7 +324,7 @@ class OrderDetailsSheet extends StatelessWidget {
             child: _buildAdminButtonAction(
               context,
               icon: IconlyBold.delete,
-              label: "Delete",
+              label: S.current.delete,
               color: Colors.red,
               onTap: () {
                 // TODO: delete order logic
@@ -378,8 +378,8 @@ class OrderDetailsSheet extends StatelessWidget {
                   onPressed: () {
                     // TODO: reject order
                   },
-                  child: const Text(
-                    "REJECT",
+                  child: Text(
+                    S.current.reject,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -397,8 +397,8 @@ class OrderDetailsSheet extends StatelessWidget {
                   onPressed: () {
                     // TODO: accept order
                   },
-                  child: const Text(
-                    "ACCEPT",
+                  child: Text(
+                    S.current.accept,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -509,7 +509,7 @@ class OrderDetailsSheet extends StatelessWidget {
         children: [
           Flexible(
             child: Text(
-              "BLOCK",
+              S.current.block,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
             ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/notifications/notifications.dart';
 import 'package:gahezha/screens/orders/orders.dart';
@@ -108,7 +109,7 @@ class AdminHomePage extends StatelessWidget {
                 // Section: Pending Shops
                 const SizedBox(height: 10),
                 SectionHeader(
-                  title: "Pending Shops",
+                  title: S.current.pending_shops,
                   onSeeAll: () {
                     Navigator.push(
                       context,
@@ -135,7 +136,7 @@ class AdminHomePage extends StatelessWidget {
 
                 // Section: Reports
                 SectionHeader(
-                  title: "Reports",
+                  title: S.current.reports,
                   onSeeAll: () {
                     Navigator.push(
                       context,
@@ -163,7 +164,7 @@ class AdminHomePage extends StatelessWidget {
 
                 // Section: Orders
                 SectionHeader(
-                  title: "Recent Orders",
+                  title: S.current.recent_orders,
                   onSeeAll: () {
                     Navigator.push(
                       context,
@@ -222,14 +223,20 @@ class SectionHeader extends StatelessWidget {
               child: Row(
                 spacing: 5,
                 children: [
-                  const Text(
-                    "See all",
+                  Text(
+                    S.current.see_all,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: primaryBlue,
                     ),
                   ),
-                  Icon(IconlyLight.arrow_right_3, color: primaryBlue, size: 16),
+                  Icon(
+                    lang == "en"
+                        ? IconlyLight.arrow_right_3
+                        : IconlyLight.arrow_left_3,
+                    color: primaryBlue,
+                    size: 16,
+                  ),
                 ],
               ),
             ),

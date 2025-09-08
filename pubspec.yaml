@@ -66,6 +66,7 @@ dependencies:
   animate_do: ^4.2.0
   cloudinary_api: ^1.1.1
   cloudinary_url_gen: ^1.8.0
+  image_cropper: ^9.1.0
 
 dev_dependencies:
   flutter_test:

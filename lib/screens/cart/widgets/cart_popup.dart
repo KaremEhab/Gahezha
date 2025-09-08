@@ -2,7 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:gahezha/screens/authentication/signup.dart';
+import 'package:iconly/iconly.dart';
 
 class CartPopup extends StatelessWidget {
   const CartPopup({super.key});
@@ -17,55 +20,44 @@ class CartPopup extends StatelessWidget {
           child: Material(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.85,
-              height: MediaQuery.of(context).size.height * 0.75,
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+              width: MediaQuery.of(context).size.width * 0.95,
+              height: MediaQuery.of(context).size.height * 0.85,
+              padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Scaffold(
-                appBar: AppBar(
-                  automaticallyImplyLeading: false,
-                  forceMaterialTransparency: true,
-                  titleSpacing: 0,
-                  toolbarHeight: 43,
-                  title: Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            S.current.your_cart,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          S.current.your_cart,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(Icons.close),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Colors.grey.withOpacity(0.5)),
-                    ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.close),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                body: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListView.builder(
+                  if (currentUserType != UserType.guest) ...[
+                    Expanded(
+                      flex: 11,
+                      child: ListView.builder(
                         itemCount: 13,
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
-                        physics: const NeverScrollableScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
@@ -83,21 +75,74 @@ class CartPopup extends StatelessWidget {
                           );
                         },
                       ),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-                bottomNavigationBar: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryBlue,
-                    minimumSize: const Size.fromHeight(48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  child: Text(S.current.checkout),
-                ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryBlue,
+                          minimumSize: const Size.fromHeight(48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(S.current.checkout),
+                      ),
+                    ),
+                  ] else ...[
+                    Expanded(
+                      flex: 11,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  IconlyLight.lock,
+                                  size: 80,
+                                  color: Colors.grey.shade400,
+                                ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  'You need an account to see your cart items',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    navigateTo(
+                                      context: context,
+                                      screen: Signup(isGuestMode: true),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(S.current.create_account),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: SizedBox()),
+                  ],
+                ],
               ),
             ),
           ),

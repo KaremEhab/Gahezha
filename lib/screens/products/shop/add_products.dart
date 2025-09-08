@@ -4,6 +4,7 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
+import 'package:gahezha/generated/l10n.dart'; // for S.current
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -79,7 +80,7 @@ class _AddProductPageState extends State<AddProductPage> {
           backgroundColor: Colors.white,
           forceMaterialTransparency: true,
           elevation: 0,
-          title: const Text("Add Product"),
+          title: Text(S.current.add_product),
           centerTitle: true,
         ),
         body: Form(
@@ -96,9 +97,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Images",
-                          style: TextStyle(
+                        Text(
+                          S.current.images,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -200,8 +201,8 @@ class _AddProductPageState extends State<AddProductPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(Icons.add, color: primaryBlue),
-                                const Text(
-                                  "Add your product's images",
+                                Text(
+                                  S.current.add_your_product_images,
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -226,32 +227,32 @@ class _AddProductPageState extends State<AddProductPage> {
                   children: [
                     CustomTextField(
                       controller: _nameController,
-                      title: "Product Name",
-                      hint: "Enter product's name",
+                      title: S.current.product_name,
+                      hint: S.current.enter_product_name,
                       icon: IconlyLight.document,
                       keyboardType: TextInputType.text,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _descriptionController,
-                      title: "Product Description",
-                      hint: "Enter product's description",
+                      title: S.current.product_description,
+                      hint: S.current.enter_product_description,
                       icon: IconlyLight.document,
                       keyboardType: TextInputType.text,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _priceController,
-                      title: "Product Price",
-                      hint: "Enter product's price",
+                      title: S.current.product_price,
+                      hint: S.current.enter_product_price,
                       icon: Icons.monetization_on_outlined,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _quantityController,
-                      title: "Product Quantity",
-                      hint: "Enter product's quantity",
+                      title: S.current.product_quantity,
+                      hint: S.current.enter_product_quantity,
                       icon: IconlyLight.bag,
                       keyboardType: TextInputType.number,
                     ),
@@ -269,9 +270,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Specifications",
-                          style: TextStyle(
+                        Text(
+                          S.current.specifications,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -310,14 +311,13 @@ class _AddProductPageState extends State<AddProductPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Editable Spec Name + Delete whole spec
                               SizedBox(
                                 width: double.infinity,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Name",
+                                      S.current.name,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -332,8 +332,9 @@ class _AddProductPageState extends State<AddProductPage> {
                                             keyboardType: TextInputType.text,
                                             initialValue: specName,
                                             decoration: InputDecoration(
-                                              hintText:
-                                                  "Enter specification name",
+                                              hintText: S
+                                                  .current
+                                                  .enter_specification_name,
                                               prefixIcon: Icon(
                                                 IconlyLight.bookmark,
                                                 color: primaryBlue,
@@ -376,7 +377,6 @@ class _AddProductPageState extends State<AddProductPage> {
                               ),
                               const SizedBox(height: 8),
 
-                              // Options
                               Wrap(
                                 spacing: 6,
                                 children: options.asMap().entries.map((
@@ -396,76 +396,91 @@ class _AddProductPageState extends State<AddProductPage> {
                                             text: opt["price"].toString(),
                                           );
 
-                                      Map<String, dynamic>?
-                                      newValue = await showDialog<Map<String, dynamic>>(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text("Edit Option"),
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                TextField(
-                                                  controller: nameController,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                        hintText:
-                                                            "Enter option name",
-                                                        labelText: "Name",
+                                      Map<String, dynamic>? newValue =
+                                          await showDialog<
+                                            Map<String, dynamic>
+                                          >(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                  S.current.edit_option,
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    TextField(
+                                                      controller:
+                                                          nameController,
+                                                      decoration: InputDecoration(
+                                                        hintText: S
+                                                            .current
+                                                            .enter_option_name,
+                                                        labelText:
+                                                            S.current.name,
                                                       ),
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    TextField(
+                                                      controller:
+                                                          priceController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      decoration: InputDecoration(
+                                                        hintText: S
+                                                            .current
+                                                            .enter_extra_price,
+                                                        labelText: S
+                                                            .current
+                                                            .extra_price,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                const SizedBox(height: 12),
-                                                TextField(
-                                                  controller: priceController,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  decoration: const InputDecoration(
-                                                    hintText:
-                                                        "Enter extra price (0 for none)",
-                                                    labelText: "Extra Price",
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: Text(
+                                                      S.current.cancel,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text("Cancel"),
-                                              ),
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: primaryBlue,
-                                                ),
-                                                onPressed: () {
-                                                  final name = nameController
-                                                      .text
-                                                      .trim();
-                                                  final price =
-                                                      double.tryParse(
-                                                        priceController.text
-                                                            .trim(),
-                                                      ) ??
-                                                      0.0;
+                                                  ElevatedButton(
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              primaryBlue,
+                                                        ),
+                                                    onPressed: () {
+                                                      final name =
+                                                          nameController.text
+                                                              .trim();
+                                                      final price =
+                                                          double.tryParse(
+                                                            priceController.text
+                                                                .trim(),
+                                                          ) ??
+                                                          0.0;
 
-                                                  if (name.isNotEmpty) {
-                                                    Navigator.pop(context, {
-                                                      "name": name,
-                                                      "price": price,
-                                                    });
-                                                  }
-                                                },
-                                                child: const Text(
-                                                  "Save",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
+                                                      if (name.isNotEmpty) {
+                                                        Navigator.pop(context, {
+                                                          "name": name,
+                                                          "price": price,
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      S.current.save,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                            ],
+                                                ],
+                                              );
+                                            },
                                           );
-                                        },
-                                      );
 
                                       if (newValue != null) {
                                         setState(() {
@@ -528,9 +543,9 @@ class _AddProductPageState extends State<AddProductPage> {
                                     Icons.add,
                                     color: primaryBlue,
                                   ),
-                                  label: const Text(
-                                    "Add Option",
-                                    style: TextStyle(
+                                  label: Text(
+                                    S.current.add_option,
+                                    style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                       color: primaryBlue,
@@ -560,9 +575,9 @@ class _AddProductPageState extends State<AddProductPage> {
                             ),
                           ),
                           icon: const Icon(Icons.add, color: primaryBlue),
-                          label: const Text(
-                            "Add Specification",
-                            style: TextStyle(
+                          label: Text(
+                            S.current.add_specification,
+                            style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: primaryBlue,
@@ -589,9 +604,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Add-ons",
-                          style: TextStyle(
+                        Text(
+                          S.current.add_ons,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -637,22 +652,22 @@ class _AddProductPageState extends State<AddProductPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: const Text("Edit Add-On"),
+                                      title: Text(S.current.edit_add_on),
                                       content: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           TextField(
                                             controller: nameController,
-                                            decoration: const InputDecoration(
-                                              labelText: "Name",
+                                            decoration: InputDecoration(
+                                              labelText: S.current.name,
                                             ),
                                           ),
                                           const SizedBox(height: 12),
                                           TextField(
                                             controller: priceController,
                                             keyboardType: TextInputType.number,
-                                            decoration: const InputDecoration(
-                                              labelText: "Extra Price",
+                                            decoration: InputDecoration(
+                                              labelText: S.current.extra_price,
                                             ),
                                           ),
                                         ],
@@ -661,7 +676,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child: const Text("Cancel"),
+                                          child: Text(S.current.cancel),
                                         ),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -683,9 +698,9 @@ class _AddProductPageState extends State<AddProductPage> {
                                               });
                                             }
                                           },
-                                          child: const Text(
-                                            "Save",
-                                            style: TextStyle(
+                                          child: Text(
+                                            S.current.save,
+                                            style: const TextStyle(
                                               color: Colors.white,
                                             ),
                                           ),
@@ -728,9 +743,9 @@ class _AddProductPageState extends State<AddProductPage> {
                             ),
                           ),
                           icon: const Icon(Icons.add, color: primaryBlue),
-                          label: const Text(
-                            "Add Add-ons",
-                            style: TextStyle(
+                          label: Text(
+                            S.current.add_add_ons,
+                            style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: primaryBlue,
@@ -774,9 +789,9 @@ class _AddProductPageState extends State<AddProductPage> {
                   Navigator.pop(context, newProduct);
                 }
               },
-              child: const Text(
-                "Add Product",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+              child: Text(
+                S.current.add_product,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           ),

@@ -6,7 +6,9 @@ import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/home/customer/widgets/active_orders_sheet.dart';
 import 'package:gahezha/screens/home/customer/widgets/home_shops_list.dart';
 import 'package:gahezha/screens/notifications/notifications.dart';
@@ -33,7 +35,6 @@ class _CustomerHomePageState extends State<CustomerHomePage>
     return Scaffold(
       body: Stack(
         children: [
-          // ================= Scroll Body =================
           CustomScrollView(
             slivers: [
               // ---------------- SliverAppBar ----------------
@@ -69,7 +70,7 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                                           radius: 22,
                                           child: CustomCachedImage(
                                             imageUrl:
-                                                currentUserModel.profileUrl,
+                                                currentUserModel!.profileUrl,
                                             height: double.infinity,
                                             borderRadius: BorderRadius.circular(
                                               200,
@@ -177,18 +178,38 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(18),
                                 onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(sheetRadius),
+                                  if (currentUserType == UserType.guest) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text(
+                                          "Create an account first",
+                                        ),
+                                        action: SnackBarAction(
+                                          label: "Sign Up",
+                                          textColor: primaryBlue,
+                                          onPressed: () {
+                                            navigateTo(
+                                              context: context,
+                                              screen: Signup(isGuestMode: true),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    builder: (context) =>
-                                        const ActiveOrdersBottomSheet(),
-                                  );
+                                    );
+                                  } else {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(sheetRadius),
+                                        ),
+                                      ),
+                                      builder: (context) =>
+                                          const ActiveOrdersBottomSheet(),
+                                    );
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(18),
@@ -202,7 +223,11 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                                       const SizedBox(width: 14),
                                       Expanded(
                                         child: Text(
-                                          S.current.home_active_orders,
+                                          currentUserType == UserType.guest
+                                              ? "See your active orders"
+                                              : S
+                                                    .current
+                                                    .home_active_orders, // replaced text
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 17,

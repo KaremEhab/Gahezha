@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/report_model.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
 import 'package:gahezha/constants/vars.dart';
@@ -9,7 +11,7 @@ class ReportDetailsSheet extends StatefulWidget {
   final String type;
   final String description;
   final String date;
-  final String status;
+  final ReportType status;
   final String reporter;
 
   const ReportDetailsSheet({
@@ -29,13 +31,7 @@ class ReportDetailsSheet extends StatefulWidget {
 
 class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
   final TextEditingController responseCtrl = TextEditingController();
-  String selectedStatus = "Pending";
-
-  @override
-  void initState() {
-    super.initState();
-    selectedStatus = widget.status;
-  }
+  late ReportType selectedStatus = widget.status;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +54,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      "Report #${widget.reportId} • ${widget.type}",
+                      "${S.current.report} #${widget.reportId} • ${widget.type}",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -103,13 +99,13 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
 
               // --- Status Dropdown ---
               Text(
-                "Report Status",
+                S.current.report_status,
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<ReportType>(
                 value: selectedStatus,
                 icon: const Icon(
                   IconlyBold.arrow_down_2,
@@ -134,35 +130,31 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
-                items: ["Pending", "Resolved", "Dismissed"].map((status) {
+                items: ReportType.values.map((status) {
                   Color textColor;
+                  IconData iconData;
                   switch (status) {
-                    case "Resolved":
+                    case ReportType.resolved:
                       textColor = Colors.green.shade700;
+                      iconData = IconlyLight.tick_square;
                       break;
-                    case "Dismissed":
+                    case ReportType.dismissed:
                       textColor = Colors.grey.shade700;
+                      iconData = IconlyLight.close_square;
                       break;
-                    default: // Pending
+                    default:
                       textColor = Colors.orange.shade700;
+                      iconData = IconlyLight.time_circle;
                   }
 
                   return DropdownMenuItem(
                     value: status,
                     child: Row(
                       children: [
-                        Icon(
-                          status == "Resolved"
-                              ? IconlyLight.tick_square
-                              : status == "Dismissed"
-                              ? IconlyLight.close_square
-                              : IconlyLight.time_circle,
-                          color: textColor,
-                          size: 18,
-                        ),
+                        Icon(iconData, color: textColor, size: 18),
                         const SizedBox(width: 8),
                         Text(
-                          status,
+                          ReportModel.getLocalizedReportStatus(context, status),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: textColor,
@@ -172,7 +164,8 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                     ),
                   );
                 }).toList(),
-                onChanged: (val) => setState(() => selectedStatus = val!),
+                onChanged: (val) =>
+                    setState(() => selectedStatus = val ?? ReportType.pending),
               ),
               const SizedBox(height: 20),
 
@@ -184,28 +177,11 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                 child: CustomTextField(
                   controller: responseCtrl,
                   maxLines: 4,
-                  title: "Respond to Reporter",
-                  hint: "Type your response here...",
+                  title: S.current.respond_to_reporter,
+                  hint: S.current.type_response_here,
                   keyboardType: TextInputType.text,
                 ),
               ),
-              // Text(
-              //   "Respond to Reporter",
-              //   style: Theme.of(
-              //     context,
-              //   ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
-              // ),
-              // const SizedBox(height: 8),
-              // TextField(
-              //   controller: responseCtrl,
-              //   maxLines: 4,
-              //   decoration: InputDecoration(
-              //     hintText: "Type your response here...",
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //   ),
-              // ),
               const SizedBox(height: 80),
             ],
           ),
@@ -230,8 +206,8 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                 ),
               ),
               icon: const Icon(IconlyBold.send, color: Colors.white),
-              label: const Text(
-                "Send Response & Update",
+              label: Text(
+                S.current.send_response_and_update,
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),

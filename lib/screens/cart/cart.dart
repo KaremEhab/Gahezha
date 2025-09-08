@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/cart/checkout.dart';
 import 'package:gahezha/screens/products/customer/widgets/product_details_sheet.dart';
 import 'package:iconly/iconly.dart';
@@ -151,55 +153,141 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         centerTitle: true,
         forceMaterialTransparency: true,
         leadingWidth: 53,
-        leading: Padding(
-          padding: EdgeInsets.fromLTRB(
-            lang == 'en' ? 7 : 0,
-            6,
-            lang == 'ar' ? 7 : 0,
-            6,
-          ),
-          child: Material(
-            color: Colors.grey.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(radius),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(radius),
-              onTap: () {},
-              child: Center(
-                child: Icon(IconlyBold.delete, color: Colors.red, size: 20),
+        leading: currentUserType == UserType.guest
+            ? null
+            : Padding(
+                padding: EdgeInsets.fromLTRB(
+                  lang == 'en' ? 7 : 0,
+                  6,
+                  lang == 'ar' ? 7 : 0,
+                  6,
+                ),
+                child: Material(
+                  color: Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(radius),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(radius),
+                    onTap: () {},
+                    child: Center(
+                      child: Icon(
+                        IconlyBold.delete,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
         title: Text(S.current.my_cart),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(
-              right: lang == 'en' ? 7 : 0,
-              left: lang == 'ar' ? 7 : 0,
-            ),
-            child: Material(
-              color: Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(radius),
-              child: InkWell(
+          if (currentUserType != UserType.guest)
+            Padding(
+              padding: EdgeInsets.only(
+                right: lang == 'en' ? 7 : 0,
+                left: lang == 'ar' ? 7 : 0,
+              ),
+              child: Material(
+                color: Colors.grey.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(radius),
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.all(13),
-                  child: Icon(Icons.add_shopping_cart_rounded, size: 16),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(radius),
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(13),
+                    child: Icon(Icons.add_shopping_cart_rounded, size: 16),
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
-      body: cartShops.isEmpty
-          ? Center(
-              child: Text(
-                "${S.current.your_cart_is_empty} 😔",
-                style: TextStyle(fontSize: 18),
+      body: Builder(
+        builder: (context) {
+          if (currentUserType == UserType.guest) {
+            // Guest view with signup button
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      IconlyLight.lock,
+                      size: 80,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'You need an account to add items to cart',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        navigateTo(
+                          context: context,
+                          screen: Signup(isGuestMode: true),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(S.current.create_account),
+                    ),
+                  ],
+                ),
               ),
-            )
-          : SingleChildScrollView(
+            );
+          } else if (cartShops.isEmpty) {
+            // Logged-in user but cart is empty
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      IconlyLight.bag,
+                      size: 80,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "${S.current.your_cart_is_empty} 😔",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Add products to your cart to see them here.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            // Show cart content
+            return SingleChildScrollView(
               controller: scrollController,
               physics: const BouncingScrollPhysics(),
               child: Padding(
@@ -218,7 +306,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                               borderRadius: BorderRadius.circular(radius),
                               onTap: () {
                                 setState(() {
-                                  shop['expanded'] = !(shop['expanded'] as bool);
+                                  shop['expanded'] =
+                                      !(shop['expanded'] as bool);
                                 });
                               },
                               child: Padding(
@@ -293,7 +382,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                     ),
                                     child: Material(
                                       color: Colors.grey.shade100,
-                                      borderRadius: BorderRadius.circular(radius),
+                                      borderRadius: BorderRadius.circular(
+                                        radius,
+                                      ),
                                       child: InkWell(
                                         borderRadius: BorderRadius.circular(
                                           radius,
@@ -335,7 +426,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                                 width: 60,
                                                 height: 60,
                                                 borderRadius:
-                                                    BorderRadius.circular(radius),
+                                                    BorderRadius.circular(
+                                                      radius,
+                                                    ),
                                               ),
                                               const SizedBox(width: 12),
                                               Expanded(
@@ -353,7 +446,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                                     ),
                                                     const SizedBox(height: 4),
                                                     Text(
-                                                      "${S.current.price}: SAR ${order['price']} x ${order['quantity']}",
+                                                      "${S.current.price}: ${order['quantity']} x ${S.current.sar} ${order['price']}",
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         color: Colors.grey,
@@ -372,7 +465,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                                       ),
                                                 ),
                                                 child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
                                                     // Decrement Button
                                                     InkWell(
@@ -459,7 +553,10 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                   }).toList(),
                 ),
               ),
-            ),
+            );
+          }
+        },
+      ),
 
       // Total & Checkout
       bottomNavigationBar: Container(
@@ -471,38 +568,56 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
           child: InkWell(
             borderRadius: BorderRadius.circular(radius),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      CheckoutPage(total: totalPrice, cartShops: cartShops),
-                ),
-              );
+              if (currentUserType == UserType.guest) {
+                navigateTo(context: context, screen: Signup(isGuestMode: true));
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        CheckoutPage(total: totalPrice, cartShops: cartShops),
+                  ),
+                );
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'SAR ${totalPrice.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  currentUserType == UserType.guest
+                      ? Flexible(
+                          child: Text(
+                            "Create account to place your first order",
+                            maxLines: 2,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          '${S.current.sar} ${totalPrice.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                   Row(
                     children: [
-                      Text(
-                        S.current.place_order,
-                        style: TextStyle(
-                          height: 0.8,
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      currentUserType == UserType.guest
+                          ? SizedBox.shrink()
+                          : Text(
+                              S.current.place_order,
+                              style: TextStyle(
+                                height: 0.8,
+                                color: Colors.white,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                       const Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 10,

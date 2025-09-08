@@ -18,6 +18,16 @@ class LoginErrorState extends LoginState {
   LoginErrorState({required this.error});
 }
 
+class LoginCreateGuestLoadingState extends LoginState {}
+
+class LoginCreateGuestSuccessState extends LoginState {}
+
+class LoginCreateGuestErrorState extends LoginState {
+  final String error;
+
+  LoginCreateGuestErrorState(this.error);
+}
+
 class LoginForgetPasswordLoadingState extends LoginState {}
 
 class LoginForgetPasswordSuccessState extends LoginState {}

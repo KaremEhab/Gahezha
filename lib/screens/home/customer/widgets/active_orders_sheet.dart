@@ -15,28 +15,28 @@ class ActiveOrdersBottomSheet extends StatelessWidget {
         id: "#1023",
         status: OrderStatus.pickup,
         date: DateTime.now().copyWith(hour: 10, minute: 30),
-        totalPrice: "SAR 24.99",
+        totalPrice: "${S.current.sar} 24.99",
         items: [
           OrderItem(
             name: "Latte",
-            price: "SAR 12.50",
+            price: "${S.current.sar} 12.50",
             extras: ["Medium", "Extra Shot"],
           ),
-          OrderItem(name: "Croissant", price: "SAR 12.49", extras: ["Butter"]),
+          OrderItem(name: "Croissant", price: "${S.current.sar} 12.49", extras: ["Butter"]),
         ],
       ),
       OrderModel(
         id: "#1024",
         status: OrderStatus.pickup,
         date: DateTime.now().copyWith(hour: 11, minute: 00),
-        totalPrice: "SAR 18.50",
+        totalPrice: "${S.current.sar} 18.50",
         items: [
           OrderItem(
             name: "Cappuccino",
-            price: "SAR 9.50",
+            price: "${S.current.sar} 9.50",
             extras: ["Small", "Oat Milk"],
           ),
-          OrderItem(name: "Muffin", price: "SAR 9.00", extras: ["Blueberry"]),
+          OrderItem(name: "Muffin", price: "${S.current.sar} 9.00", extras: ["Blueberry"]),
         ],
       ),
     ];

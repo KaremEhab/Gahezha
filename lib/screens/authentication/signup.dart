@@ -14,9 +14,9 @@ import 'package:gahezha/generated/l10n.dart';
 import 'login.dart';
 
 class Signup extends StatefulWidget {
-  const Signup({super.key, this.isShop = false});
+  const Signup({super.key, this.isShop = false, this.isGuestMode = false});
 
-  final bool isShop;
+  final bool isShop, isGuestMode;
 
   @override
   State<Signup> createState() => _SignupState();
@@ -34,6 +34,8 @@ class _SignupState extends State<Signup> {
 
   TextEditingController _shopName = TextEditingController();
   TextEditingController _shopEmail = TextEditingController();
+  TextEditingController _shopPassword = TextEditingController();
+  TextEditingController _shopConfirmPassword = TextEditingController();
   TextEditingController _shopCategory = TextEditingController();
   TextEditingController _shopLocation = TextEditingController();
   TextEditingController _preparingTimeFrom = TextEditingController();
@@ -64,42 +66,40 @@ class _SignupState extends State<Signup> {
         return GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Scaffold(
+            appBar: widget.isGuestMode
+                ? AppBar(
+                    backgroundColor: Colors.white,
+                    forceMaterialTransparency: true,
+                    elevation: 0,
+                    title: Text(S.current.sign_up),
+                  )
+                : null,
             body: SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 50),
+                    SizedBox(height: widget.isGuestMode ? 10 : 50),
 
                     /// Logo
-                    Center(
-                      child: SvgPicture.asset(
-                        'assets/images/logo.svg',
-                        height: 100,
+                    if (!widget.isGuestMode)
+                      Center(
+                        child: SvgPicture.asset(
+                          'assets/images/logo.svg',
+                          height: 100,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 50),
+                    if (!widget.isGuestMode) const SizedBox(height: 50),
 
                     if (widget.isShop) ...[
                       /// Shop Name
                       CustomTextField(
                         controller: _shopName,
-                        title: "Shop Name",
-                        hint: "Enter your shop name",
+                        title: S.current.shop_name,
+                        hint: S.current.enter_shop_name,
                         icon: Icons.storefront,
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      /// Shop Email
-                      CustomTextField(
-                        controller: _shopEmail,
-                        title: "Shop Email",
-                        hint: "Enter your shop email",
-                        icon: IconlyLight.message,
-                        keyboardType: TextInputType.emailAddress,
                       ),
 
                       const SizedBox(height: 16),
@@ -107,8 +107,8 @@ class _SignupState extends State<Signup> {
                       /// Shop Category
                       CustomTextField(
                         controller: _shopCategory,
-                        title: "Category",
-                        hint: "Enter shop category",
+                        title: S.current.shop_category,
+                        hint: S.current.enter_shop_category,
                         icon: IconlyLight.category,
                       ),
 
@@ -117,8 +117,8 @@ class _SignupState extends State<Signup> {
                       /// Shop Location
                       CustomTextField(
                         controller: _shopLocation,
-                        title: "Location",
-                        hint: "Enter shop location",
+                        title: S.current.shop_location,
+                        hint: S.current.enter_shop_location,
                         icon: IconlyLight.location,
                       ),
 
@@ -126,7 +126,7 @@ class _SignupState extends State<Signup> {
 
                       /// Preparing Time (From - To)
                       Text(
-                        "Preparing Time",
+                        "${S.current.preparing_time} (${S.current.minuets})",
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -138,7 +138,7 @@ class _SignupState extends State<Signup> {
                             child: CustomTextField(
                               controller: _preparingTimeFrom,
                               title: "",
-                              hint: "e.g. 24",
+                              hint: "24",
                               icon: IconlyLight.time_circle,
                               keyboardType: TextInputType.number,
                             ),
@@ -148,7 +148,7 @@ class _SignupState extends State<Signup> {
                             child: CustomTextField(
                               controller: _preparingTimeTo,
                               title: "",
-                              hint: "e.g. 38",
+                              hint: "38",
                               icon: IconlyLight.time_circle,
                               keyboardType: TextInputType.number,
                             ),
@@ -160,7 +160,7 @@ class _SignupState extends State<Signup> {
 
                       /// Opening Hours (From - To)
                       Text(
-                        "Opening Hours",
+                        S.current.opening_hours,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -172,9 +172,9 @@ class _SignupState extends State<Signup> {
                             child: CustomTextField(
                               controller: _openingHoursFrom,
                               title: "",
-                              hint: "e.g. 10 AM",
+                              hint: "10 ${S.current.am}",
                               icon: IconlyLight.time_circle,
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -182,9 +182,9 @@ class _SignupState extends State<Signup> {
                             child: CustomTextField(
                               controller: _openingHoursTo,
                               title: "",
-                              hint: "e.g. 11 PM",
+                              hint: "11 ${S.current.pm}",
                               icon: IconlyLight.time_circle,
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ],
@@ -195,10 +195,43 @@ class _SignupState extends State<Signup> {
                       /// Shop Phone Number
                       CustomTextField(
                         controller: _shopPhoneNumber,
-                        title: "Phone Number",
-                        hint: "Enter shop phone number",
+                        title: S.current.phone_number,
+                        hint: "+20 111 219 0563",
                         icon: IconlyLight.call,
                         keyboardType: TextInputType.phone,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      /// Shop Email
+                      CustomTextField(
+                        controller: _shopEmail,
+                        title: S.current.email,
+                        hint: S.current.enter_your_email,
+                        icon: IconlyLight.message,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      /// Shop Password
+                      CustomTextField(
+                        controller: _shopPassword,
+                        title: S.current.password,
+                        hint: S.current.enter_your_password,
+                        icon: IconlyLight.lock,
+                        keyboardType: TextInputType.text,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      /// Shop Confirm Password
+                      CustomTextField(
+                        controller: _shopConfirmPassword,
+                        title: S.current.confirm_password_title,
+                        hint: S.current.reEnter_password,
+                        icon: IconlyLight.lock,
+                        keyboardType: TextInputType.text,
                       ),
                     ] else
                       Column(
@@ -286,7 +319,11 @@ class _SignupState extends State<Signup> {
                                   return DropdownMenuItem<Gender>(
                                     value: gender,
                                     child: Text(
-                                      gender.name.toUpperCase(),
+                                      lang == "en"
+                                          ? gender.name.toUpperCase()
+                                          : gender == Gender.male
+                                          ? S.current.male
+                                          : S.current.female,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black87,
@@ -300,12 +337,13 @@ class _SignupState extends State<Signup> {
                             ],
                           ),
 
-                          /// Password
+                          /// Phone Number
                           CustomTextField(
                             controller: _phoneNumber,
                             title: "Phone Number",
                             hint: "+20 111 219 0563",
                             icon: IconlyLight.call,
+                            keyboardType: TextInputType.phone,
                           ),
 
                           /// Password
@@ -337,7 +375,7 @@ class _SignupState extends State<Signup> {
                         Text(S.of(context).already_have_account),
                         TextButton(
                           onPressed: () {
-                            navigateReplacement(
+                            navigateAndFinish(
                               context: context,
                               screen: const Login(),
                             );
@@ -360,6 +398,7 @@ class _SignupState extends State<Signup> {
                           final firstName = _firstName.text.trim();
                           final lastName = _lastName.text.trim();
                           final email = _email.text.trim();
+                          final phoneNumber = _phoneNumber.text.trim();
                           final password = _password.text;
                           final confirmPassword = _confirmPassword.text;
 
@@ -382,40 +421,9 @@ class _SignupState extends State<Signup> {
                               password: password,
                               firstName: firstName,
                               lastName: lastName,
+                              phoneNumber: phoneNumber,
                               gender: selectedGender,
                             );
-
-                            // Then create shop document
-                            final uid = FirebaseAuth.instance.currentUser?.uid;
-                            if (uid != null) {
-                              //   await FirebaseFirestore.instance
-                              //       .collection('shops')
-                              //       .doc(uid)
-                              //       .set({
-                              //         'shopName': shopName,
-                              //         'shopEmail': shopEmail,
-                              //         'shopStatus': selectedShopStatus,
-                              //         'shopProfileUrl': _shopProfileUrl.text,
-                              //         'shopBannerUrl': _shopBannerUrl.text,
-                              //         'shopCategory': _shopCategory.text,
-                              //         'shopLocation': _shopLocation.text,
-                              //         'shopPreparingTime': _shopPreparingTime.text,
-                              //         'shopOpeningHours': _shopOpeningHours.text,
-                              //         'shopPhoneNumber': _shopPhoneNumber.text,
-                              //         'ownerId': uid,
-                              //         'createdAt': FieldValue.serverTimestamp(),
-                              //       });
-                              // }
-                            } else {
-                              // Normal user signup
-                              SignupCubit.instance.userSignup(
-                                email: email,
-                                password: password,
-                                firstName: firstName,
-                                lastName: lastName,
-                                gender: selectedGender,
-                              );
-                            }
 
                             // Navigate to layout after success
                             if (context.mounted) {
@@ -433,6 +441,7 @@ class _SignupState extends State<Signup> {
                               password: password,
                               firstName: firstName,
                               lastName: lastName,
+                              phoneNumber: phoneNumber,
                               gender: selectedGender,
                             );
                           }

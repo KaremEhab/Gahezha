@@ -22,13 +22,28 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
+    "account": MessageLookupByLibrary.simpleMessage("Account"),
     "account_settings": MessageLookupByLibrary.simpleMessage(
       "Account Settings",
     ),
     "active_orders": MessageLookupByLibrary.simpleMessage("Active Orders"),
     "add": MessageLookupByLibrary.simpleMessage("Add"),
+    "add_add_ons": MessageLookupByLibrary.simpleMessage("Add Add-ons"),
     "add_extras": MessageLookupByLibrary.simpleMessage("Add Extras"),
+    "add_ons": MessageLookupByLibrary.simpleMessage("Add-ons"),
+    "add_option": MessageLookupByLibrary.simpleMessage("Add Option"),
+    "add_product": MessageLookupByLibrary.simpleMessage("Add Product"),
+    "add_specification": MessageLookupByLibrary.simpleMessage(
+      "Add Specification",
+    ),
+    "add_your_product_images": MessageLookupByLibrary.simpleMessage(
+      "Add your product\'s images",
+    ),
+    "all": MessageLookupByLibrary.simpleMessage("All"),
+    "all_reports": MessageLookupByLibrary.simpleMessage("All Reports"),
+    "all_shops": MessageLookupByLibrary.simpleMessage("All Shops"),
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "Already have an account?",
     ),
@@ -36,7 +51,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "app_settings": MessageLookupByLibrary.simpleMessage("App Settings"),
     "apple": MessageLookupByLibrary.simpleMessage("Apple"),
     "ar": MessageLookupByLibrary.simpleMessage("AR"),
+    "block": MessageLookupByLibrary.simpleMessage("Block"),
+    "blocked": MessageLookupByLibrary.simpleMessage("Blocked"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cart": MessageLookupByLibrary.simpleMessage("Cart"),
+    "category": MessageLookupByLibrary.simpleMessage("Category"),
     "change_email": MessageLookupByLibrary.simpleMessage("Change Email"),
     "change_password": MessageLookupByLibrary.simpleMessage("Change Password"),
     "change_your_email_subtitle": MessageLookupByLibrary.simpleMessage(
@@ -68,19 +87,36 @@ class MessageLookup extends MessageLookupByLibrary {
       "Continue with Google",
     ),
     "create_account": MessageLookupByLibrary.simpleMessage("Create Account"),
+    "create_account_first": MessageLookupByLibrary.simpleMessage(
+      "Create an account first",
+    ),
+    "create_account_to_place_first_order": MessageLookupByLibrary.simpleMessage(
+      "Create account to place your first order",
+    ),
+    "create_shop": MessageLookupByLibrary.simpleMessage("Create Shop"),
+    "customers": MessageLookupByLibrary.simpleMessage("Customers"),
     "dealer": MessageLookupByLibrary.simpleMessage("Dealer"),
+    "decaf": MessageLookupByLibrary.simpleMessage("Decaf"),
+    "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "delete_account": MessageLookupByLibrary.simpleMessage("Delete Account"),
+    "deleted": MessageLookupByLibrary.simpleMessage("Deleted"),
     "delivered": MessageLookupByLibrary.simpleMessage("Delivered"),
+    "disable": MessageLookupByLibrary.simpleMessage("Disable"),
+    "disabled": MessageLookupByLibrary.simpleMessage("Disabled"),
     "discover_shops_subtitle": MessageLookupByLibrary.simpleMessage(
       "Find the best shops and restaurants near you with just a few taps.",
     ),
     "discover_shops_title": MessageLookupByLibrary.simpleMessage(
       "Discover Shops & Restaurants",
     ),
+    "dismissed": MessageLookupByLibrary.simpleMessage("Dismissed"),
     "dont_have_account": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account?",
     ),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "edit_add_on": MessageLookupByLibrary.simpleMessage("Edit Add-On"),
+    "edit_option": MessageLookupByLibrary.simpleMessage("Edit Option"),
+    "edit_product": MessageLookupByLibrary.simpleMessage("Edit Product"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "email_change_submitted": MessageLookupByLibrary.simpleMessage(
@@ -93,6 +129,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "enjoy_your_order_title": MessageLookupByLibrary.simpleMessage(
       "Enjoy Your Order",
     ),
+    "enter_extra_price": MessageLookupByLibrary.simpleMessage(
+      "Enter extra Price (0 for none)",
+    ),
+    "enter_option_name": MessageLookupByLibrary.simpleMessage(
+      "Enter option name",
+    ),
+    "enter_product_description": MessageLookupByLibrary.simpleMessage(
+      "Enter product\'s description",
+    ),
+    "enter_product_name": MessageLookupByLibrary.simpleMessage(
+      "Enter product\'s name",
+    ),
+    "enter_product_price": MessageLookupByLibrary.simpleMessage(
+      "Enter product\'s price",
+    ),
+    "enter_product_quantity": MessageLookupByLibrary.simpleMessage(
+      "Enter product\'s quantity",
+    ),
+    "enter_shop_category": MessageLookupByLibrary.simpleMessage(
+      "Enter your shop category",
+    ),
+    "enter_shop_location": MessageLookupByLibrary.simpleMessage(
+      "Enter your shop location",
+    ),
+    "enter_shop_name": MessageLookupByLibrary.simpleMessage(
+      "Enter your shop name",
+    ),
+    "enter_specification_name": MessageLookupByLibrary.simpleMessage(
+      "Enter specification name",
+    ),
     "enter_your_email": MessageLookupByLibrary.simpleMessage(
       "Enter your email",
     ),
@@ -100,15 +166,32 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your password",
     ),
     "extra_cheese": MessageLookupByLibrary.simpleMessage("Extra Cheese"),
+    "extra_milk": MessageLookupByLibrary.simpleMessage("Extra Milk"),
+    "extra_mushrooms": MessageLookupByLibrary.simpleMessage("Extra Mushrooms"),
+    "extra_pepperoni": MessageLookupByLibrary.simpleMessage("Extra Pepperoni"),
+    "extra_pickles": MessageLookupByLibrary.simpleMessage("Extra Pickles"),
+    "extra_price": MessageLookupByLibrary.simpleMessage("Extra Price"),
+    "female": MessageLookupByLibrary.simpleMessage("Female"),
+    "first_name": MessageLookupByLibrary.simpleMessage("First Name"),
     "flowers_gifts": MessageLookupByLibrary.simpleMessage("Flowers & Gifts"),
     "forgot_password": MessageLookupByLibrary.simpleMessage("Forgot Password?"),
+    "fraudulent_activity": MessageLookupByLibrary.simpleMessage(
+      "Fraudulent Activity",
+    ),
     "fresh_items_quick_delivery": MessageLookupByLibrary.simpleMessage(
       "Fresh items & Quick delivery",
     ),
     "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
+    "gahezha": MessageLookupByLibrary.simpleMessage("Gahezha"),
+    "gahezha_accounts": MessageLookupByLibrary.simpleMessage(
+      "Gahezha Accounts",
+    ),
+    "gender": MessageLookupByLibrary.simpleMessage("Gender"),
     "get_started": MessageLookupByLibrary.simpleMessage("Get Started"),
     "gift_wrap": MessageLookupByLibrary.simpleMessage("Gift Wrap"),
     "google": MessageLookupByLibrary.simpleMessage("Google"),
+    "guest": MessageLookupByLibrary.simpleMessage("Guest"),
+    "guest_account": MessageLookupByLibrary.simpleMessage("Guest Account"),
     "home_active_orders": MessageLookupByLibrary.simpleMessage(
       "You have 2 orders to pickup",
     ),
@@ -118,12 +201,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "home_restaurant_subtitle": MessageLookupByLibrary.simpleMessage(
       "Fast food • 20 mins",
     ),
+    "hot": MessageLookupByLibrary.simpleMessage("Hot"),
     "hot_dealers": MessageLookupByLibrary.simpleMessage("Hot Dealers"),
+    "iced": MessageLookupByLibrary.simpleMessage("Iced"),
+    "images": MessageLookupByLibrary.simpleMessage("Images"),
     "info": MessageLookupByLibrary.simpleMessage("Info"),
     "item": MessageLookupByLibrary.simpleMessage("item"),
     "items": MessageLookupByLibrary.simpleMessage("items"),
     "large": MessageLookupByLibrary.simpleMessage("Large"),
+    "last_name": MessageLookupByLibrary.simpleMessage("Last Name"),
     "limited_time": MessageLookupByLibrary.simpleMessage("Limited Time"),
+    "location": MessageLookupByLibrary.simpleMessage("Location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "login_continue": MessageLookupByLibrary.simpleMessage(
       "Login to continue using Gahezha",
@@ -135,11 +223,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "make_your_order_title": MessageLookupByLibrary.simpleMessage(
       "Make Your Order",
     ),
+    "male": MessageLookupByLibrary.simpleMessage("Male"),
     "medium": MessageLookupByLibrary.simpleMessage("Medium"),
     "menu": MessageLookupByLibrary.simpleMessage("Menu"),
     "min": MessageLookupByLibrary.simpleMessage("min"),
     "minuets": MessageLookupByLibrary.simpleMessage("Minuets"),
     "my_cart": MessageLookupByLibrary.simpleMessage("My Cart"),
+    "name": MessageLookupByLibrary.simpleMessage("Name"),
     "new_email": MessageLookupByLibrary.simpleMessage("Enter your new email"),
     "new_email_title": MessageLookupByLibrary.simpleMessage("New email"),
     "new_orders": MessageLookupByLibrary.simpleMessage("New Orders"),
@@ -148,6 +238,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "new_password_title": MessageLookupByLibrary.simpleMessage("New password"),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
+    "no_products_yet": MessageLookupByLibrary.simpleMessage("No products yet."),
+    "no_vegetables": MessageLookupByLibrary.simpleMessage("No Vegetables"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "old_email": MessageLookupByLibrary.simpleMessage("Enter your old email"),
     "old_email_title": MessageLookupByLibrary.simpleMessage("Old email"),
@@ -155,6 +247,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your old password",
     ),
     "open": MessageLookupByLibrary.simpleMessage("Open"),
+    "opening_hours": MessageLookupByLibrary.simpleMessage("Opening Hours"),
     "or": MessageLookupByLibrary.simpleMessage("or"),
     "order": MessageLookupByLibrary.simpleMessage("Order"),
     "order_accepted": MessageLookupByLibrary.simpleMessage(
@@ -169,6 +262,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "order_delivered": MessageLookupByLibrary.simpleMessage(
       "Your order has been delivered",
     ),
+    "order_details": MessageLookupByLibrary.simpleMessage("Order Details"),
     "order_pickup": MessageLookupByLibrary.simpleMessage(
       "Your order is ready for pickup, come and get it.",
     ),
@@ -179,6 +273,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "orders": MessageLookupByLibrary.simpleMessage("Orders"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "pending": MessageLookupByLibrary.simpleMessage("Pending"),
+    "pending_shops": MessageLookupByLibrary.simpleMessage("Pending Shops"),
+    "phone_number": MessageLookupByLibrary.simpleMessage("Phone Number"),
     "pickup": MessageLookupByLibrary.simpleMessage("Pickup"),
     "pickup_instructions": MessageLookupByLibrary.simpleMessage(
       "Pickup Instructions",
@@ -199,6 +295,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Prepare Your Order",
     ),
     "preparing": MessageLookupByLibrary.simpleMessage("PREPARING"),
+    "preparing_time": MessageLookupByLibrary.simpleMessage("Preparing Time"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
     "privacy_contact_desc": MessageLookupByLibrary.simpleMessage(
       "If you have any questions about this Privacy Policy, please contact us at support@gahezha.com",
@@ -245,18 +342,55 @@ class MessageLookup extends MessageLookupByLibrary {
       "6. Changes to This Policy",
     ),
     "product": MessageLookupByLibrary.simpleMessage("Product"),
+    "product_description": MessageLookupByLibrary.simpleMessage(
+      "Product Description",
+    ),
+    "product_name": MessageLookupByLibrary.simpleMessage("Product Name"),
+    "product_price": MessageLookupByLibrary.simpleMessage("Product Price"),
+    "product_quantity": MessageLookupByLibrary.simpleMessage(
+      "Product Quantity",
+    ),
     "products": MessageLookupByLibrary.simpleMessage("Products"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "quantity": MessageLookupByLibrary.simpleMessage("Qty"),
+    "reEnter_password": MessageLookupByLibrary.simpleMessage(
+      "Re-enter your password",
+    ),
+    "recent_orders": MessageLookupByLibrary.simpleMessage("Recent Orders"),
+    "recent_reports": MessageLookupByLibrary.simpleMessage("Recent Reports"),
     "recommended": MessageLookupByLibrary.simpleMessage("Recommended"),
     "regular": MessageLookupByLibrary.simpleMessage("Regular"),
+    "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),
+    "report": MessageLookupByLibrary.simpleMessage("Report"),
+    "report_status": MessageLookupByLibrary.simpleMessage("Report Status"),
+    "reported": MessageLookupByLibrary.simpleMessage("Reported"),
+    "reports": MessageLookupByLibrary.simpleMessage("Reports"),
+    "resolved": MessageLookupByLibrary.simpleMessage("Resolved"),
+    "respond_to_reporter": MessageLookupByLibrary.simpleMessage(
+      "Respond To Reporter",
+    ),
     "restaurant": MessageLookupByLibrary.simpleMessage("Restaurant"),
     "restaurants": MessageLookupByLibrary.simpleMessage("Restaurants"),
+    "sar": MessageLookupByLibrary.simpleMessage("SAR"),
+    "save": MessageLookupByLibrary.simpleMessage("Save"),
     "save_changes": MessageLookupByLibrary.simpleMessage("Save Changes"),
+    "see_all": MessageLookupByLibrary.simpleMessage("See all"),
+    "see_your_active_orders": MessageLookupByLibrary.simpleMessage(
+      "See your active orders",
+    ),
+    "send_response_and_update": MessageLookupByLibrary.simpleMessage(
+      "Send Response & Update",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "shop": MessageLookupByLibrary.simpleMessage("Shop"),
+    "shop_category": MessageLookupByLibrary.simpleMessage("Shop Category"),
     "shop_info": MessageLookupByLibrary.simpleMessage("Shop Info"),
+    "shop_location": MessageLookupByLibrary.simpleMessage("Shop Location"),
+    "shop_menu": MessageLookupByLibrary.simpleMessage("Shop Menu"),
+    "shop_name": MessageLookupByLibrary.simpleMessage("Shop Name"),
+    "shop_products": MessageLookupByLibrary.simpleMessage("Shop Products"),
+    "shops": MessageLookupByLibrary.simpleMessage("Shops"),
     "sign_up": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "signup_continue": MessageLookupByLibrary.simpleMessage(
       "Sign up to start using Gahezha",
@@ -264,6 +398,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
     "small": MessageLookupByLibrary.simpleMessage("Small"),
     "special_offer": MessageLookupByLibrary.simpleMessage("Special Offer"),
+    "specifications": MessageLookupByLibrary.simpleMessage("Specifications"),
     "spicy": MessageLookupByLibrary.simpleMessage("Spicy"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "take_a_picture": MessageLookupByLibrary.simpleMessage("Take a picture"),
@@ -273,8 +408,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "thanks_for_joining": MessageLookupByLibrary.simpleMessage(
       "Thanks for joining Gahezha",
     ),
+    "this_account_has_been_blocked": MessageLookupByLibrary.simpleMessage(
+      "This account has been blocked",
+    ),
+    "this_account_has_been_blocked_and_reported":
+        MessageLookupByLibrary.simpleMessage(
+          "This account has been blocked and reported",
+        ),
+    "this_account_has_been_disabled": MessageLookupByLibrary.simpleMessage(
+      "This account has been disabled",
+    ),
+    "this_account_has_been_reported": MessageLookupByLibrary.simpleMessage(
+      "This account has been reported",
+    ),
+    "time": MessageLookupByLibrary.simpleMessage("time"),
+    "times": MessageLookupByLibrary.simpleMessage("times"),
     "to_cart": MessageLookupByLibrary.simpleMessage("to Cart"),
     "total_price": MessageLookupByLibrary.simpleMessage("Total Price"),
+    "type_response_here": MessageLookupByLibrary.simpleMessage(
+      "Type your response here...",
+    ),
+    "unblock": MessageLookupByLibrary.simpleMessage("Unblock"),
     "viewing_details_of_order": MessageLookupByLibrary.simpleMessage(
       "Viewing details of order",
     ),
@@ -283,6 +437,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
     "welcome_back": MessageLookupByLibrary.simpleMessage("Welcome Back"),
+    "whipped_cream": MessageLookupByLibrary.simpleMessage("Whipped Cream"),
+    "you_need_account_to_add_items_cart": MessageLookupByLibrary.simpleMessage(
+      "You need an account to add items to cart",
+    ),
+    "you_need_account_to_see_cart_items": MessageLookupByLibrary.simpleMessage(
+      "You need an account to see your cart items",
+    ),
+    "you_need_account_to_view_orders": MessageLookupByLibrary.simpleMessage(
+      "You need an account to view orders",
+    ),
     "your_cart": MessageLookupByLibrary.simpleMessage("Your Cart"),
     "your_cart_is_empty": MessageLookupByLibrary.simpleMessage(
       "Your cart is empty",

@@ -9,6 +9,7 @@ class UserModel {
   final String lastName;
   final Gender gender;
   final String email;
+  final String phoneNumber; // ✨ جديد
   final bool notificationsEnabled;
   final UserType userType;
   final DateTime createdAt;
@@ -19,6 +20,7 @@ class UserModel {
     required this.firstName,
     required this.lastName,
     required this.email,
+    required this.phoneNumber, // ✨ مطلوب
     this.gender = Gender.male,
     this.notificationsEnabled = true,
     this.userType = UserType.customer,
@@ -35,6 +37,7 @@ class UserModel {
       'lastName': lastName,
       'gender': gender.name,
       'email': email,
+      'phoneNumber': phoneNumber, // ✨
       'notificationsEnabled': notificationsEnabled,
       'userType': userType.name,
       'createdAt': createdAt.toIso8601String(),
@@ -54,6 +57,7 @@ class UserModel {
             )
           : Gender.male,
       email: map['email'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
       notificationsEnabled: map['notificationsEnabled'] ?? true,
       userType: map['userType'] != null
           ? UserType.values.firstWhere(
@@ -75,6 +79,7 @@ class UserModel {
     String? lastName,
     Gender? gender,
     String? email,
+    String? phoneNumber, // ✨
     bool? notificationsEnabled,
     UserType? userType,
     DateTime? createdAt,
@@ -86,6 +91,7 @@ class UserModel {
       lastName: lastName ?? this.lastName,
       gender: gender ?? this.gender,
       email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber, // ✨
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       userType: userType ?? this.userType,
       createdAt: createdAt ?? this.createdAt,
@@ -95,7 +101,7 @@ class UserModel {
 
 class GuestUserModel extends UserModel {
   static const String defaultProfileUrl =
-      "https://example.com/assets/guest_avatar.png";
+      "https://res.cloudinary.com/dl0wayiab/image/upload/v1757279005/samples/people/kitchen-bar.jpg";
 
   final String guestId;
 
@@ -104,6 +110,7 @@ class GuestUserModel extends UserModel {
     super.firstName = "Guest",
     super.lastName = "Account",
     super.email = "",
+    super.phoneNumber = "", // ✨ جديد
     super.gender = Gender.male,
     super.notificationsEnabled = true,
     super.createdAt,
@@ -122,6 +129,7 @@ class GuestUserModel extends UserModel {
       'lastName': lastName,
       'gender': gender.name,
       'email': email,
+      'phoneNumber': phoneNumber, // ✨
       'notificationsEnabled': notificationsEnabled,
       'userType': userType.name,
       'createdAt': createdAt.toIso8601String(),
@@ -133,7 +141,8 @@ class GuestUserModel extends UserModel {
       guestId: map['userId'] ?? '',
       firstName: map['firstName'] ?? "Guest",
       lastName: map['lastName'] ?? "User",
-      email: map['email'] ?? "",
+      email: map['email'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
       gender: map['gender'] != null
           ? Gender.values.firstWhere(
               (e) => e.name == map['gender'],
@@ -154,6 +163,7 @@ class GuestUserModel extends UserModel {
     String? lastName,
     Gender? gender,
     String? email,
+    String? phoneNumber, // ✨
     bool? notificationsEnabled,
     DateTime? createdAt,
   }) {
@@ -163,6 +173,7 @@ class GuestUserModel extends UserModel {
       lastName: lastName ?? this.lastName,
       gender: gender ?? this.gender,
       email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber, // ✨
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       createdAt: createdAt ?? this.createdAt,
     );

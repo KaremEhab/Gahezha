@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/screens/shops/widgets/shop_card.dart';
 
 class ShopListPage extends StatelessWidget {
@@ -22,8 +23,8 @@ class ShopListPage extends StatelessWidget {
                 pinned: true,
                 floating: true,
                 elevation: 0,
-                title: const Text(
-                  "Shops",
+                title: Text(
+                  S.current.shops,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
@@ -42,9 +43,9 @@ class ShopListPage extends StatelessWidget {
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: primaryBlue,
                     labelColor: Colors.black,
-                    tabs: const [
-                      Tab(text: "All Shops"),
-                      Tab(text: "Pending Shops"),
+                    tabs: [
+                      Tab(text: S.current.all_shops),
+                      Tab(text: S.current.pending_shops),
                     ],
                   ),
                 ),

@@ -57,6 +57,7 @@ class CustomNavBar extends StatelessWidget {
                 label: '',
               ),
             if (currentUserType == UserType.customer ||
+                currentUserType == UserType.guest ||
                 currentUserType == UserType.admin)
               BottomNavigationBarItem(
                 icon: const Icon(IconlyLight.home, size: 24),
@@ -67,13 +68,15 @@ class CustomNavBar extends StatelessWidget {
                 ),
                 label: '',
               ),
-            if (currentUserType == UserType.customer)
+            if (currentUserType == UserType.customer ||
+                currentUserType == UserType.guest)
               BottomNavigationBarItem(
                 icon: const Icon(IconlyLight.bag, size: 22),
                 activeIcon: Icon(IconlyBold.bag, size: 25, color: primaryBlue),
                 label: '',
               ),
-            if (currentUserType == UserType.customer)
+            if (currentUserType == UserType.customer ||
+                currentUserType == UserType.guest)
               BottomNavigationBarItem(
                 icon: const Icon(IconlyLight.paper, size: 22),
                 activeIcon: Icon(

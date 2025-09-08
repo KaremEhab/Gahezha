@@ -4,9 +4,12 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/models/user_model.dart';
+import 'package:gahezha/screens/authentication/login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 
 part 'user_state.dart';
@@ -43,17 +46,17 @@ class UserCubit extends Cubit<UserState> {
 
       currentUserModel = UserModel.fromMap(doc.data()!);
 
-      currentUserType = currentUserModel.userType;
+      currentUserType = currentUserModel!.userType;
       CacheHelper.saveData(key: "currentUserType", value: currentUserType.name);
 
       await CacheHelper.saveData(
         key: 'currentUserModel',
-        value: currentUserModel.toMap(),
+        value: currentUserModel!.toMap(),
       );
 
-      log(currentUserModel.toMap().toString());
+      log(currentUserModel!.toMap().toString());
 
-      emit(UserLoaded(currentUserModel));
+      emit(UserLoaded(currentUserModel!));
     } catch (e) {
       emit(UserError(e.toString()));
     }
@@ -88,12 +91,12 @@ class UserCubit extends Cubit<UserState> {
         return;
       }
 
-      guestUserModel = GuestUserModel.fromMap(doc.data()!);
+      currentGuestModel = GuestUserModel.fromMap(doc.data()!);
       await CacheHelper.saveData(
         key: 'GuestUserModel',
-        value: guestUserModel.toMap(),
+        value: currentGuestModel!.toMap(),
       );
-      emit(GuestLoaded(guestUserModel));
+      emit(GuestLoaded(currentGuestModel!));
     } catch (e) {
       emit(UserError(e.toString()));
     }
@@ -104,6 +107,7 @@ class UserCubit extends Cubit<UserState> {
     String? firstName,
     String? lastName,
     String? email,
+    String? phoneNumber,
     Gender? gender,
     bool? notificationsEnabled,
     UserType? userType,
@@ -121,6 +125,7 @@ class UserCubit extends Cubit<UserState> {
       if (firstName != null) updatedData['firstName'] = firstName;
       if (lastName != null) updatedData['lastName'] = lastName;
       if (email != null) updatedData['email'] = email;
+      if (phoneNumber != null) updatedData['phoneNumber'] = phoneNumber;
       if (gender != null) updatedData['gender'] = gender.name;
       if (notificationsEnabled != null) {
         updatedData['notificationsEnabled'] = notificationsEnabled;
@@ -136,12 +141,13 @@ class UserCubit extends Cubit<UserState> {
       await _firestore.collection("users").doc(uId).update(updatedData);
 
       // ✅ Update local model
-      currentUserModel = currentUserModel.copyWith(
+      currentUserModel = currentUserModel!.copyWith(
         profileUrl: profileUrl,
         firstName: firstName,
         lastName: lastName,
         email: email,
         gender: gender,
+        phoneNumber: phoneNumber,
         notificationsEnabled: notificationsEnabled,
         userType: userType,
       );
@@ -149,15 +155,15 @@ class UserCubit extends Cubit<UserState> {
       // ✅ Save to cache
       await CacheHelper.saveData(
         key: 'currentUserModel',
-        value: currentUserModel.toMap(),
+        value: currentUserModel!.toMap(),
       );
 
-      currentUserType = currentUserModel.userType;
+      currentUserType = currentUserModel!.userType;
       CacheHelper.saveData(key: "currentUserType", value: currentUserType.name);
 
       // 🔄 Emit فقط لو التحديث مش silent
       if (!silentUpdate) {
-        emit(UserUpdated(currentUserModel));
+        emit(UserUpdated(currentUserModel!));
       }
     } catch (e) {
       if (!silentUpdate) emit(UserUpdatingError(e.toString()));
@@ -197,6 +203,40 @@ class UserCubit extends Cubit<UserState> {
       } catch (e) {
         log("⚠️ Error uploading image: $e");
       }
+    }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final savedUid = uId;
+
+    currentShopModel = null;
+    currentUserModel = null;
+    currentGuestModel = null;
+
+    navigateAndFinish(context: context, screen: const Login());
+    await GoogleSignIn().signOut(); // force account picker
+
+    if (savedUid == null || savedUid.isEmpty) {
+      log("No valid uId found, skipping FCM update");
+      return;
+    }
+
+    try {
+      await Future.wait([
+        CacheHelper.removeData(key: 'uId'),
+        CacheHelper.removeData(key: 'currentShopModel'),
+        CacheHelper.removeData(key: 'currentUserModel'),
+        CacheHelper.removeData(key: 'currentGuestModel'),
+
+        // Replace all old tokens with the new one
+        FirebaseFirestore.instance.collection('users').doc(savedUid).update({
+          'fcmTokens': [],
+        }),
+      ]);
+
+      log("Logged out successfully");
+    } catch (e) {
+      log('Logout error: $e');
     }
   }
 }

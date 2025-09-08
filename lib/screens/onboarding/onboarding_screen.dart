@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -218,19 +220,19 @@ class _OnboardingState extends State<Onboarding> {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_currentIndex == onboardingData.length - 1) {
-                      setState(() {
-                        skipOnboarding = true;
-                      });
-                      CacheHelper.saveData(
+                      skipOnboarding = true;
+                      await CacheHelper.saveData(
                         key: 'skipOnboarding',
                         value: skipOnboarding,
                       );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const Login()),
-                      );
+                      if (context.mounted) {
+                        navigateAndFinish(
+                          context: context,
+                          screen: const Login(),
+                        );
+                      }
                     } else {
                       _controller.nextPage(
                         duration: const Duration(milliseconds: 400),

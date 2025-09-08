@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/order_model.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:intl/intl.dart';
 
 double radius = 12;
 double sheetRadius = 25;
 late String lang;
-bool isGuest = false;
 bool showProfileDetails = false;
 bool skipOnboarding = false;
 late UserType currentUserType;
-late GuestUserModel guestUserModel;
+UserModel? currentUserModel;
+late ShopModel? currentShopModel;
+late GuestUserModel? currentGuestModel;
 late String uId;
-late UserModel currentUserModel;
 String? fcmDeviceToken;
 late String accessToken;
 
@@ -46,30 +48,34 @@ final orders = [
     id: "#1021",
     date: DateTime(2025, 9, 2), // year, month, day
     status: OrderStatus.delivered,
-    totalPrice: "SAR 33.50",
+    totalPrice: "${S.current.sar} 33.50",
     items: [
       OrderItem(
         name: "Black Coffee",
-        price: "SAR 20.00",
+        price: "${S.current.sar} 20.00",
         extras: ["Medium", "Milk", "No Sugar"],
       ),
-      OrderItem(name: "Ice Cream", price: "SAR 13.50", extras: ["Vanilla"]),
+      OrderItem(
+        name: "Ice Cream",
+        price: "${S.current.sar} 13.50",
+        extras: ["Vanilla"],
+      ),
     ],
   ),
   OrderModel(
     id: "#1020",
     date: DateTime(2025, 8, 28), // year, month, day
     status: OrderStatus.accepted,
-    totalPrice: "SAR 99.90",
+    totalPrice: "${S.current.sar} 99.90",
     items: [
       OrderItem(
         name: "Pizza",
-        price: "SAR 49.95",
+        price: "${S.current.sar} 49.95",
         extras: ["Chicken Ranch", "Large", "Extra Cheese"],
       ),
       OrderItem(
         name: "Shrimp Pasta",
-        price: "SAR 49.95",
+        price: "${S.current.sar} 49.95",
         extras: ["Mushrooms", "Extra Shrimp", "No Vegetables"],
       ),
     ],
@@ -78,11 +84,11 @@ final orders = [
     id: "#1019",
     date: DateTime(2025, 8, 25), // year, month, day
     status: OrderStatus.pending,
-    totalPrice: "SAR 12.00",
+    totalPrice: "${S.current.sar} 12.00",
     items: [
       OrderItem(
         name: "Red Flowers",
-        price: "SAR 12.00",
+        price: "${S.current.sar} 12.00",
         extras: ["Large Size", "Gift Wrapped"],
       ),
     ],

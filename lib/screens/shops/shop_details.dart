@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/products/customer/widgets/product_details_sheet.dart';
 import 'package:gahezha/screens/cart/widgets/cart_popup.dart';
 import 'package:iconly/iconly.dart';
@@ -146,17 +148,24 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        floatingActionButton: Hero(
-          tag: "cartHero",
-          child: FloatingActionButton.extended(
-            heroTag: null, // ✅ disable default FAB Hero
-            elevation: 0,
-            onPressed: _openCartPopup,
-            backgroundColor: primaryBlue,
-            icon: const Icon(IconlyLight.buy, color: Colors.white),
-            label: Text(S.current.cart, style: TextStyle(color: Colors.white)),
-          ),
-        ),
+        floatingActionButton:
+            currentUserType == UserType.customer ||
+                currentUserType == UserType.guest
+            ? Hero(
+                tag: "cartHero",
+                child: FloatingActionButton.extended(
+                  heroTag: null, // ✅ disable default FAB Hero
+                  elevation: 0,
+                  onPressed: _openCartPopup,
+                  backgroundColor: primaryBlue,
+                  icon: const Icon(IconlyLight.buy, color: Colors.white),
+                  label: Text(
+                    S.current.cart,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            : null,
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
@@ -431,7 +440,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                     Row(
                                       children: [
                                         Text(
-                                          "SAR ${fakeProducts[index].price}",
+                                          "${S.current.sar} ${fakeProducts[index].price}",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
@@ -453,7 +462,32 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                               ),
                                             ),
                                           ),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            if (currentUserType ==
+                                                UserType.guest) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: const Text(
+                                                    "Create an account first",
+                                                  ),
+                                                  action: SnackBarAction(
+                                                    label: "Sign Up",
+                                                    textColor: primaryBlue,
+                                                    onPressed: () {
+                                                      navigateTo(
+                                                        context: context,
+                                                        screen: Signup(
+                                                          isGuestMode: true,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
                                           child: Text(S.current.add),
                                         ),
                                       ],

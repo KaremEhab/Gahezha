@@ -4,6 +4,7 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/profile/customer/pages/change_email.dart';
 import 'package:gahezha/screens/profile/customer/pages/change_password.dart';
@@ -19,7 +20,8 @@ class CustomerProfilePage extends StatefulWidget {
 }
 
 class _CustomerProfilePageState extends State<CustomerProfilePage> {
-  bool notifications = currentUserModel.notificationsEnabled;
+  bool notifications = true;
+  // bool notifications = currentUserModel!.notificationsEnabled ?? true;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,9 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
               borderRadius: BorderRadius.circular(radius),
               child: InkWell(
                 borderRadius: BorderRadius.circular(radius),
-                onTap: () {},
+                onTap: () {
+                  UserCubit.instance.logout(context);
+                },
                 child: const Padding(
                   padding: EdgeInsets.all(13),
                   child: Icon(IconlyBold.logout, size: 18, color: Colors.red),
@@ -57,6 +61,7 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
         children: [
           // Profile Header
           Container(
+            height: currentUserType != UserType.guest ? null : 270,
             padding: const EdgeInsets.all(20),
             margin: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
@@ -71,27 +76,39 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: 50,
-                  child: CustomCachedImage(
-                    imageUrl: currentUserModel.profileUrl,
-                    height: double.infinity,
-                    borderRadius: BorderRadius.circular(200),
-                  ),
+                  child: currentUserModel == null
+                      ? Icon(IconlyBold.profile, size: 40)
+                      : CustomCachedImage(
+                          imageUrl: currentUserModel!.profileUrl ?? '',
+                          height: double.infinity,
+                          borderRadius: BorderRadius.circular(200),
+                        ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  currentUserModel.fullName,
+                  currentUserModel == null
+                      ? "Undefined name"
+                      : currentUserModel!.fullName,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.blueGrey[900],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(currentUserModel.email, style: theme.textTheme.bodyMedium),
-                const SizedBox(height: 16),
-                GradientBorderButton(),
+                if (currentUserType != UserType.guest) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    currentUserModel == null
+                        ? "Undefined email"
+                        : currentUserModel!.email,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  if (currentUserModel != null) const SizedBox(height: 16),
+                  if (currentUserModel != null) GradientBorderButton(),
+                ],
               ],
             ),
           ),
@@ -137,30 +154,32 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
               await UserCubit.instance.editUserData(notificationsEnabled: val);
             },
           ),
-          _buildListTile(
-            icon: IconlyLight.message,
-            title: S.current.change_email,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChangeEmailPage(),
-                ),
-              );
-            },
-          ),
-          _buildListTile(
-            icon: IconlyLight.lock,
-            title: S.current.change_password,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChangePasswordPage(),
-                ),
-              );
-            },
-          ),
+          if (currentUserType != UserType.guest) ...[
+            _buildListTile(
+              icon: IconlyLight.message,
+              title: S.current.change_email,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChangeEmailPage(),
+                  ),
+                );
+              },
+            ),
+            _buildListTile(
+              icon: IconlyLight.lock,
+              title: S.current.change_password,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChangePasswordPage(),
+                  ),
+                );
+              },
+            ),
+          ],
           _buildListTile(
             icon: IconlyLight.shield_done,
             title: S.current.privacy_policy,
@@ -274,6 +293,7 @@ class GradientBorderButton extends StatelessWidget {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
+            showDragHandle: true,
             backgroundColor: Colors.white,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(

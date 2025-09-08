@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
@@ -92,7 +93,7 @@ class _EditProductPageState extends State<EditProductPage> {
           backgroundColor: Colors.white,
           forceMaterialTransparency: true,
           elevation: 0,
-          title: const Text("Edit Product"),
+          title: Text(S.current.edit_product),
           centerTitle: true,
         ),
         body: Form(
@@ -109,8 +110,8 @@ class _EditProductPageState extends State<EditProductPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Images",
+                        Text(
+                          S.current.images,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -218,8 +219,8 @@ class _EditProductPageState extends State<EditProductPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(Icons.add, color: primaryBlue),
-                                const Text(
-                                  "Add your product's images",
+                                Text(
+                                  S.current.add_your_product_images,
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -244,32 +245,32 @@ class _EditProductPageState extends State<EditProductPage> {
                   children: [
                     CustomTextField(
                       controller: _nameController,
-                      title: "Product Name",
-                      hint: "Enter product's name",
+                      title: S.current.product_name,
+                      hint: S.current.enter_product_name,
                       icon: IconlyLight.document,
                       keyboardType: TextInputType.text,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _descriptionController,
-                      title: "Product Description",
-                      hint: "Enter product's description",
+                      title: S.current.product_description,
+                      hint: S.current.enter_product_description,
                       icon: IconlyLight.document,
                       keyboardType: TextInputType.text,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _priceController,
-                      title: "Product Price",
-                      hint: "Enter product's price",
+                      title: S.current.product_price,
+                      hint: S.current.enter_product_price,
                       icon: Icons.monetization_on_outlined,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _quantityController,
-                      title: "Product Quantity",
-                      hint: "Enter product's quantity",
+                      title: S.current.product_quantity,
+                      hint: S.current.enter_product_quantity,
                       icon: IconlyLight.bag,
                       keyboardType: TextInputType.number,
                     ),
@@ -286,8 +287,8 @@ class _EditProductPageState extends State<EditProductPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Specifications",
+                        Text(
+                          S.current.specifications,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -334,7 +335,7 @@ class _EditProductPageState extends State<EditProductPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Name",
+                                      S.current.name,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -349,8 +350,9 @@ class _EditProductPageState extends State<EditProductPage> {
                                             keyboardType: TextInputType.text,
                                             initialValue: specName,
                                             decoration: InputDecoration(
-                                              hintText:
-                                                  "Enter specification name",
+                                              hintText: S
+                                                  .current
+                                                  .enter_specification_name,
                                               prefixIcon: Icon(
                                                 IconlyLight.bookmark,
                                                 color: primaryBlue,
@@ -413,76 +415,91 @@ class _EditProductPageState extends State<EditProductPage> {
                                             text: opt["price"].toString(),
                                           );
 
-                                      Map<String, dynamic>?
-                                      newValue = await showDialog<Map<String, dynamic>>(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text("Edit Option"),
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                TextField(
-                                                  controller: nameController,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                        hintText:
-                                                            "Enter option name",
-                                                        labelText: "Name",
+                                      Map<String, dynamic>? newValue =
+                                          await showDialog<
+                                            Map<String, dynamic>
+                                          >(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                  S.current.edit_option,
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    TextField(
+                                                      controller:
+                                                          nameController,
+                                                      decoration: InputDecoration(
+                                                        hintText: S
+                                                            .current
+                                                            .enter_option_name,
+                                                        labelText:
+                                                            S.current.name,
                                                       ),
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    TextField(
+                                                      controller:
+                                                          priceController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      decoration: InputDecoration(
+                                                        hintText: S
+                                                            .current
+                                                            .enter_extra_price,
+                                                        labelText: S
+                                                            .current
+                                                            .extra_price,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                const SizedBox(height: 12),
-                                                TextField(
-                                                  controller: priceController,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  decoration: const InputDecoration(
-                                                    hintText:
-                                                        "Enter extra price (0 for none)",
-                                                    labelText: "Extra Price",
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: Text(
+                                                      S.current.cancel,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text("Cancel"),
-                                              ),
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: primaryBlue,
-                                                ),
-                                                onPressed: () {
-                                                  final name = nameController
-                                                      .text
-                                                      .trim();
-                                                  final price =
-                                                      double.tryParse(
-                                                        priceController.text
-                                                            .trim(),
-                                                      ) ??
-                                                      0.0;
+                                                  ElevatedButton(
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              primaryBlue,
+                                                        ),
+                                                    onPressed: () {
+                                                      final name =
+                                                          nameController.text
+                                                              .trim();
+                                                      final price =
+                                                          double.tryParse(
+                                                            priceController.text
+                                                                .trim(),
+                                                          ) ??
+                                                          0.0;
 
-                                                  if (name.isNotEmpty) {
-                                                    Navigator.pop(context, {
-                                                      "name": name,
-                                                      "price": price,
-                                                    });
-                                                  }
-                                                },
-                                                child: const Text(
-                                                  "Save",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
+                                                      if (name.isNotEmpty) {
+                                                        Navigator.pop(context, {
+                                                          "name": name,
+                                                          "price": price,
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      S.current.save,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                            ],
+                                                ],
+                                              );
+                                            },
                                           );
-                                        },
-                                      );
 
                                       if (newValue != null) {
                                         setState(() {
@@ -545,8 +562,8 @@ class _EditProductPageState extends State<EditProductPage> {
                                     Icons.add,
                                     color: primaryBlue,
                                   ),
-                                  label: const Text(
-                                    "Add Option",
+                                  label: Text(
+                                    S.current.add_option,
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
@@ -577,8 +594,8 @@ class _EditProductPageState extends State<EditProductPage> {
                             ),
                           ),
                           icon: const Icon(Icons.add, color: primaryBlue),
-                          label: const Text(
-                            "Add Specification",
+                          label: Text(
+                            S.current.add_specification,
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -604,8 +621,8 @@ class _EditProductPageState extends State<EditProductPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Add-ons",
+                        Text(
+                          S.current.add_ons,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -652,22 +669,22 @@ class _EditProductPageState extends State<EditProductPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: const Text("Edit Add-On"),
+                                      title: Text(S.current.edit_add_on),
                                       content: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           TextField(
                                             controller: nameController,
-                                            decoration: const InputDecoration(
-                                              labelText: "Name",
+                                            decoration: InputDecoration(
+                                              labelText: S.current.name,
                                             ),
                                           ),
                                           const SizedBox(height: 12),
                                           TextField(
                                             controller: priceController,
                                             keyboardType: TextInputType.number,
-                                            decoration: const InputDecoration(
-                                              labelText: "Extra Price",
+                                            decoration: InputDecoration(
+                                              labelText: S.current.extra_price,
                                             ),
                                           ),
                                         ],
@@ -676,7 +693,7 @@ class _EditProductPageState extends State<EditProductPage> {
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child: const Text("Cancel"),
+                                          child: Text(S.current.cancel),
                                         ),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -698,8 +715,8 @@ class _EditProductPageState extends State<EditProductPage> {
                                               });
                                             }
                                           },
-                                          child: const Text(
-                                            "Save",
+                                          child: Text(
+                                            S.current.save,
                                             style: TextStyle(
                                               color: Colors.white,
                                             ),
@@ -743,8 +760,8 @@ class _EditProductPageState extends State<EditProductPage> {
                             ),
                           ),
                           icon: const Icon(Icons.add, color: primaryBlue),
-                          label: const Text(
-                            "Add Add-ons",
+                          label: Text(
+                            S.current.add_add_ons,
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -789,8 +806,8 @@ class _EditProductPageState extends State<EditProductPage> {
                   Navigator.pop(context, updatedProduct);
                 }
               },
-              child: const Text(
-                "Save Changes",
+              child: Text(
+                S.current.save_changes,
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),

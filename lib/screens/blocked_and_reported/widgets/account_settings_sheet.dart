@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/profile/customer/pages/edit_profile.dart';
@@ -204,12 +205,12 @@ class AccountDetailsSheet extends StatelessWidget {
                               ),
                               Text(
                                 isBlocked && isReported
-                                    ? "This account has been blocked and reported ${reportedCount > 1 ? "($reportedCount) times" : ""}"
+                                    ? "${S.current.this_account_has_been_blocked_and_reported} ${reportedCount > 1 ? "($reportedCount) ${S.current.times}" : ""}"
                                     : isDisabled
-                                    ? "This account has been disabled"
+                                    ? S.current.this_account_has_been_disabled
                                     : isBlocked
-                                    ? "This account has been blocked"
-                                    : "This account has been reported ${reportedCount > 1 ? "($reportedCount) times" : ""}",
+                                    ? S.current.this_account_has_been_blocked
+                                    : "${S.current.this_account_has_been_reported} ${reportedCount > 1 ? "($reportedCount) ${S.current.times}" : ""}",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -230,7 +231,7 @@ class AccountDetailsSheet extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Recent Reports",
+                            S.current.recent_reports,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -256,15 +257,17 @@ class AccountDetailsSheet extends StatelessWidget {
                               child: Row(
                                 spacing: 5,
                                 children: [
-                                  const Text(
-                                    "See all",
+                                  Text(
+                                    S.current.see_all,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: primaryBlue,
                                     ),
                                   ),
                                   Icon(
-                                    IconlyLight.arrow_right_3,
+                                    lang == "en"
+                                        ? IconlyLight.arrow_right_3
+                                        : IconlyLight.arrow_left_3,
                                     color: primaryBlue,
                                     size: 16,
                                   ),
@@ -314,7 +317,9 @@ class AccountDetailsSheet extends StatelessWidget {
                           debugPrint("Block pressed");
                         },
                         icon: const Icon(Icons.block),
-                        label: Text(isBlocked ? "Unblock" : "Block"),
+                        label: Text(
+                          isBlocked ? S.current.unblock : S.current.block,
+                        ),
                         style: OutlinedButton.styleFrom(
                           shadowColor: Colors.transparent,
                           side: BorderSide(color: Colors.red),
@@ -333,7 +338,7 @@ class AccountDetailsSheet extends StatelessWidget {
                           debugPrint("Disable pressed");
                         },
                         icon: const Icon(IconlyBold.lock),
-                        label: const Text("Disable"),
+                        label: Text(S.current.disable),
                         style: ElevatedButton.styleFrom(
                           shadowColor: Colors.transparent,
                           backgroundColor: Colors.grey.shade200,
@@ -352,7 +357,7 @@ class AccountDetailsSheet extends StatelessWidget {
                           debugPrint("Delete pressed");
                         },
                         icon: const Icon(IconlyBold.delete),
-                        label: const Text("Delete"),
+                        label: Text(S.current.delete),
                         style: ElevatedButton.styleFrom(
                           shadowColor: Colors.transparent,
                           backgroundColor: Colors.red,

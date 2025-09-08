@@ -22,11 +22,24 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accepted": MessageLookupByLibrary.simpleMessage("مقبول"),
+    "account": MessageLookupByLibrary.simpleMessage("الحساب"),
     "account_settings": MessageLookupByLibrary.simpleMessage("إعدادات الحساب"),
     "active_orders": MessageLookupByLibrary.simpleMessage("الطلبات النشطة"),
     "add": MessageLookupByLibrary.simpleMessage("إضافة"),
+    "add_add_ons": MessageLookupByLibrary.simpleMessage("إضافة إضافات"),
     "add_extras": MessageLookupByLibrary.simpleMessage("إضافة إضافات"),
+    "add_ons": MessageLookupByLibrary.simpleMessage("الإضافات"),
+    "add_option": MessageLookupByLibrary.simpleMessage("إضافة خيار"),
+    "add_product": MessageLookupByLibrary.simpleMessage("اضف منتج"),
+    "add_specification": MessageLookupByLibrary.simpleMessage("إضافة مواصفة"),
+    "add_your_product_images": MessageLookupByLibrary.simpleMessage(
+      "أضف صور منتجك",
+    ),
+    "all": MessageLookupByLibrary.simpleMessage("الكل"),
+    "all_reports": MessageLookupByLibrary.simpleMessage("كل التقارير"),
+    "all_shops": MessageLookupByLibrary.simpleMessage("كل المتاجر"),
     "already_have_account": MessageLookupByLibrary.simpleMessage(
       "هل لديك حساب بالفعل؟",
     ),
@@ -34,7 +47,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "app_settings": MessageLookupByLibrary.simpleMessage("إعدادات التطبيق"),
     "apple": MessageLookupByLibrary.simpleMessage("آبل"),
     "ar": MessageLookupByLibrary.simpleMessage("العربية"),
+    "block": MessageLookupByLibrary.simpleMessage("حظر"),
+    "blocked": MessageLookupByLibrary.simpleMessage("محظور"),
+    "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "cart": MessageLookupByLibrary.simpleMessage("السلة"),
+    "category": MessageLookupByLibrary.simpleMessage("الفئة"),
     "change_email": MessageLookupByLibrary.simpleMessage(
       "تغيير البريد الإلكتروني",
     ),
@@ -70,17 +87,34 @@ class MessageLookup extends MessageLookupByLibrary {
       "تابع باستخدام جوجل",
     ),
     "create_account": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
+    "create_account_first": MessageLookupByLibrary.simpleMessage(
+      "أنشئ حسابك أولاً",
+    ),
+    "create_account_to_place_first_order": MessageLookupByLibrary.simpleMessage(
+      "أنشئ حسابك لتقديم أول طلب",
+    ),
+    "create_shop": MessageLookupByLibrary.simpleMessage("إنشاء متجر"),
+    "customers": MessageLookupByLibrary.simpleMessage("العملاء"),
     "dealer": MessageLookupByLibrary.simpleMessage("تاجر"),
+    "decaf": MessageLookupByLibrary.simpleMessage("خالي من الكافيين"),
+    "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "delete_account": MessageLookupByLibrary.simpleMessage("مسح الحساب"),
+    "deleted": MessageLookupByLibrary.simpleMessage("تم الحذف"),
     "delivered": MessageLookupByLibrary.simpleMessage("تم التسليم"),
+    "disable": MessageLookupByLibrary.simpleMessage("تعطيل"),
+    "disabled": MessageLookupByLibrary.simpleMessage("معطل"),
     "discover_shops_subtitle": MessageLookupByLibrary.simpleMessage(
       "اعثر على أفضل المتاجر والمطاعم القريبة منك بخطوات بسيطة.",
     ),
     "discover_shops_title": MessageLookupByLibrary.simpleMessage(
       "اكتشف المتاجر والمطاعم",
     ),
+    "dismissed": MessageLookupByLibrary.simpleMessage("تم رفضه"),
     "dont_have_account": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
+    "edit_add_on": MessageLookupByLibrary.simpleMessage("تعديل الإضافة"),
+    "edit_option": MessageLookupByLibrary.simpleMessage("تعديل الخيار"),
+    "edit_product": MessageLookupByLibrary.simpleMessage("تعديل المنتج"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
     "en": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
@@ -90,6 +124,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "enjoy_your_order_title": MessageLookupByLibrary.simpleMessage(
       "استمتع بطلبك",
     ),
+    "enter_extra_price": MessageLookupByLibrary.simpleMessage(
+      "أدخل السعر الإضافي (0 إذا لم يكن هناك)",
+    ),
+    "enter_option_name": MessageLookupByLibrary.simpleMessage(
+      "أدخل اسم الخيار",
+    ),
+    "enter_product_description": MessageLookupByLibrary.simpleMessage(
+      "أدخل وصف المنتج",
+    ),
+    "enter_product_name": MessageLookupByLibrary.simpleMessage(
+      "أدخل اسم المنتج",
+    ),
+    "enter_product_price": MessageLookupByLibrary.simpleMessage(
+      "أدخل سعر المنتج",
+    ),
+    "enter_product_quantity": MessageLookupByLibrary.simpleMessage(
+      "أدخل كمية المنتج",
+    ),
+    "enter_shop_category": MessageLookupByLibrary.simpleMessage(
+      "أدخل فئة متجرك",
+    ),
+    "enter_shop_location": MessageLookupByLibrary.simpleMessage(
+      "أدخل موقع متجرك",
+    ),
+    "enter_shop_name": MessageLookupByLibrary.simpleMessage("أدخل اسم متجرك"),
+    "enter_specification_name": MessageLookupByLibrary.simpleMessage(
+      "أدخل اسم المواصفة",
+    ),
     "enter_your_email": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدك الإلكتروني",
     ),
@@ -97,17 +159,30 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل كلمة المرور",
     ),
     "extra_cheese": MessageLookupByLibrary.simpleMessage("جبنة إضافية"),
+    "extra_milk": MessageLookupByLibrary.simpleMessage("حليب إضافي"),
+    "extra_mushrooms": MessageLookupByLibrary.simpleMessage("فطر إضافي"),
+    "extra_pepperoni": MessageLookupByLibrary.simpleMessage("بيبروني إضافي"),
+    "extra_pickles": MessageLookupByLibrary.simpleMessage("مخلل إضافي"),
+    "extra_price": MessageLookupByLibrary.simpleMessage("السعر الإضافي"),
+    "female": MessageLookupByLibrary.simpleMessage("أنثى"),
+    "first_name": MessageLookupByLibrary.simpleMessage("الاسم الأول"),
     "flowers_gifts": MessageLookupByLibrary.simpleMessage("زهور وهدايا"),
     "forgot_password": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
+    "fraudulent_activity": MessageLookupByLibrary.simpleMessage("نشاط احتيالي"),
     "fresh_items_quick_delivery": MessageLookupByLibrary.simpleMessage(
       "منتجات طازجة وتوصيل سريع",
     ),
     "full_name": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
+    "gahezha": MessageLookupByLibrary.simpleMessage("جهزها"),
+    "gahezha_accounts": MessageLookupByLibrary.simpleMessage("حسابات جهزها"),
+    "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
     "get_started": MessageLookupByLibrary.simpleMessage("ابدأ الآن"),
     "gift_wrap": MessageLookupByLibrary.simpleMessage("تغليف هدية"),
     "google": MessageLookupByLibrary.simpleMessage("جوجل"),
+    "guest": MessageLookupByLibrary.simpleMessage("زائر"),
+    "guest_account": MessageLookupByLibrary.simpleMessage("حساب زائر"),
     "home_active_orders": MessageLookupByLibrary.simpleMessage(
       "لديك طلبان للإستلام",
     ),
@@ -117,12 +192,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "home_restaurant_subtitle": MessageLookupByLibrary.simpleMessage(
       "وجبات سريعة • ٢٠ دقيقة",
     ),
+    "hot": MessageLookupByLibrary.simpleMessage("ساخن"),
     "hot_dealers": MessageLookupByLibrary.simpleMessage("عروض ساخنة"),
+    "iced": MessageLookupByLibrary.simpleMessage("مثلج"),
+    "images": MessageLookupByLibrary.simpleMessage("الصور"),
     "info": MessageLookupByLibrary.simpleMessage("معلومات"),
     "item": MessageLookupByLibrary.simpleMessage("عنصر"),
     "items": MessageLookupByLibrary.simpleMessage("عناصر"),
     "large": MessageLookupByLibrary.simpleMessage("كبير"),
+    "last_name": MessageLookupByLibrary.simpleMessage("اسم العائلة"),
     "limited_time": MessageLookupByLibrary.simpleMessage("لفترة محدودة"),
+    "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "login_continue": MessageLookupByLibrary.simpleMessage(
       "سجل الدخول للمتابعة في استخدام جهزها",
@@ -132,11 +212,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "اختر منتجاتك أو وجباتك المفضلة واطلبها فوراً.",
     ),
     "make_your_order_title": MessageLookupByLibrary.simpleMessage("قم بطلبك"),
+    "male": MessageLookupByLibrary.simpleMessage("ذكر"),
     "medium": MessageLookupByLibrary.simpleMessage("متوسط"),
     "menu": MessageLookupByLibrary.simpleMessage("القائمة"),
     "min": MessageLookupByLibrary.simpleMessage("دقيقة"),
     "minuets": MessageLookupByLibrary.simpleMessage("دقائق"),
     "my_cart": MessageLookupByLibrary.simpleMessage("سلة مشترياتي"),
+    "name": MessageLookupByLibrary.simpleMessage("الاسم"),
     "new_email": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدك الإلكتروني الجديد",
     ),
@@ -149,6 +231,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "كلمة مرور جديدة",
     ),
     "next": MessageLookupByLibrary.simpleMessage("التالي"),
+    "no_products_yet": MessageLookupByLibrary.simpleMessage(
+      "لا توجد منتجات بعد.",
+    ),
+    "no_vegetables": MessageLookupByLibrary.simpleMessage("بدون خضروات"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "old_email": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدك الإلكتروني القديم",
@@ -158,6 +244,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل كلمة المرور القديمة",
     ),
     "open": MessageLookupByLibrary.simpleMessage("مفتوح"),
+    "opening_hours": MessageLookupByLibrary.simpleMessage("ساعات العمل"),
     "or": MessageLookupByLibrary.simpleMessage("أو"),
     "order": MessageLookupByLibrary.simpleMessage("طلب"),
     "order_accepted": MessageLookupByLibrary.simpleMessage("تم قبول طلبك"),
@@ -168,6 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم تأكيد الطلب",
     ),
     "order_delivered": MessageLookupByLibrary.simpleMessage("تم تسليم طلبك"),
+    "order_details": MessageLookupByLibrary.simpleMessage("تفاصيل الطلب"),
     "order_pickup": MessageLookupByLibrary.simpleMessage(
       "طلبك جاهز للاستلام، تفضل بالحضور.",
     ),
@@ -176,6 +264,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "orders": MessageLookupByLibrary.simpleMessage("الطلبات"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "pending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
+    "pending_shops": MessageLookupByLibrary.simpleMessage("المتاجر المعلقة"),
+    "phone_number": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
     "pickup": MessageLookupByLibrary.simpleMessage("استلام"),
     "pickup_instructions": MessageLookupByLibrary.simpleMessage(
       "تعليمات الاستلام",
@@ -196,6 +286,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "جارٍ تجهيز طلبك",
     ),
     "preparing": MessageLookupByLibrary.simpleMessage("يتم التجهيز"),
+    "preparing_time": MessageLookupByLibrary.simpleMessage("مدة التحضير"),
     "price": MessageLookupByLibrary.simpleMessage("السعر"),
     "privacy_contact_desc": MessageLookupByLibrary.simpleMessage(
       "إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى التواصل معنا عبر support@gahezha.com",
@@ -240,18 +331,51 @@ class MessageLookup extends MessageLookupByLibrary {
       "٦. التغييرات على هذه السياسة",
     ),
     "product": MessageLookupByLibrary.simpleMessage("المنتج"),
+    "product_description": MessageLookupByLibrary.simpleMessage("وصف المنتج"),
+    "product_name": MessageLookupByLibrary.simpleMessage("اسم المنتج"),
+    "product_price": MessageLookupByLibrary.simpleMessage("سعر المنتج"),
+    "product_quantity": MessageLookupByLibrary.simpleMessage("كمية المنتج"),
     "products": MessageLookupByLibrary.simpleMessage("المنتجات"),
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
+    "reEnter_password": MessageLookupByLibrary.simpleMessage(
+      "أعد إدخال كلمة المرور",
+    ),
+    "recent_orders": MessageLookupByLibrary.simpleMessage("الطلبات الأخيرة"),
+    "recent_reports": MessageLookupByLibrary.simpleMessage("التقارير الأخيرة"),
     "recommended": MessageLookupByLibrary.simpleMessage("موصى به"),
     "regular": MessageLookupByLibrary.simpleMessage("عادي"),
+    "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "rejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
+    "report": MessageLookupByLibrary.simpleMessage("تقرير"),
+    "report_status": MessageLookupByLibrary.simpleMessage("حالة التقرير"),
+    "reported": MessageLookupByLibrary.simpleMessage("تم التبليغ"),
+    "reports": MessageLookupByLibrary.simpleMessage("التقارير"),
+    "resolved": MessageLookupByLibrary.simpleMessage("تم الحل"),
+    "respond_to_reporter": MessageLookupByLibrary.simpleMessage(
+      "الرد على المبلغ",
+    ),
     "restaurant": MessageLookupByLibrary.simpleMessage("المطعم"),
     "restaurants": MessageLookupByLibrary.simpleMessage("المطاعم"),
+    "sar": MessageLookupByLibrary.simpleMessage("ر.س"),
+    "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "save_changes": MessageLookupByLibrary.simpleMessage("حفظ التغييرات"),
+    "see_all": MessageLookupByLibrary.simpleMessage("عرض الكل"),
+    "see_your_active_orders": MessageLookupByLibrary.simpleMessage(
+      "عرض طلباتك النشطة",
+    ),
+    "send_response_and_update": MessageLookupByLibrary.simpleMessage(
+      "إرسال الرد وتحديث",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "shop": MessageLookupByLibrary.simpleMessage("المتجر"),
+    "shop_category": MessageLookupByLibrary.simpleMessage("فئة المتجر"),
     "shop_info": MessageLookupByLibrary.simpleMessage("معلومات المتجر"),
+    "shop_location": MessageLookupByLibrary.simpleMessage("موقع المتجر"),
+    "shop_menu": MessageLookupByLibrary.simpleMessage("منيو المتجر"),
+    "shop_name": MessageLookupByLibrary.simpleMessage("اسم المتجر"),
+    "shop_products": MessageLookupByLibrary.simpleMessage("منتجات المتجر"),
+    "shops": MessageLookupByLibrary.simpleMessage("المتاجر"),
     "sign_up": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "signup_continue": MessageLookupByLibrary.simpleMessage(
       "سجل لبدء استخدام جهزها",
@@ -259,6 +383,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
     "small": MessageLookupByLibrary.simpleMessage("صغير"),
     "special_offer": MessageLookupByLibrary.simpleMessage("عرض خاص"),
+    "specifications": MessageLookupByLibrary.simpleMessage("المواصفات"),
     "spicy": MessageLookupByLibrary.simpleMessage("حار"),
     "submit": MessageLookupByLibrary.simpleMessage("إرسال"),
     "take_a_picture": MessageLookupByLibrary.simpleMessage("التقط صورة"),
@@ -268,8 +393,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "thanks_for_joining": MessageLookupByLibrary.simpleMessage(
       "شكراً لانضمامك إلى جهزها",
     ),
+    "this_account_has_been_blocked": MessageLookupByLibrary.simpleMessage(
+      "تم حظر هذا الحساب",
+    ),
+    "this_account_has_been_blocked_and_reported":
+        MessageLookupByLibrary.simpleMessage("تم حظر هذا الحساب والتبليغ عنه"),
+    "this_account_has_been_disabled": MessageLookupByLibrary.simpleMessage(
+      "تم تعطيل هذا الحساب",
+    ),
+    "this_account_has_been_reported": MessageLookupByLibrary.simpleMessage(
+      "تم التبليغ عن هذا الحساب",
+    ),
+    "time": MessageLookupByLibrary.simpleMessage("مرة"),
+    "times": MessageLookupByLibrary.simpleMessage("مرات"),
     "to_cart": MessageLookupByLibrary.simpleMessage("إلى السلة"),
     "total_price": MessageLookupByLibrary.simpleMessage("السعر الإجمالي"),
+    "type_response_here": MessageLookupByLibrary.simpleMessage(
+      "اكتب ردك هنا...",
+    ),
+    "unblock": MessageLookupByLibrary.simpleMessage("رفع الحظر"),
     "viewing_details_of_order": MessageLookupByLibrary.simpleMessage(
       "عرض تفاصيل الطلب",
     ),
@@ -278,6 +420,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "welcome": MessageLookupByLibrary.simpleMessage("مرحباً"),
     "welcome_back": MessageLookupByLibrary.simpleMessage("مرحباً بعودتك"),
+    "whipped_cream": MessageLookupByLibrary.simpleMessage("كريمة مخفوقة"),
+    "you_need_account_to_add_items_cart": MessageLookupByLibrary.simpleMessage(
+      "تحتاج إلى حساب لإضافة منتجات إلى السلة",
+    ),
+    "you_need_account_to_see_cart_items": MessageLookupByLibrary.simpleMessage(
+      "تحتاج إلى حساب لرؤية محتويات السلة",
+    ),
+    "you_need_account_to_view_orders": MessageLookupByLibrary.simpleMessage(
+      "تحتاج إلى حساب لعرض الطلبات",
+    ),
     "your_cart": MessageLookupByLibrary.simpleMessage("سلة مشترياتك"),
     "your_cart_is_empty": MessageLookupByLibrary.simpleMessage(
       "سلة التسوق الخاصة بك فارغة",

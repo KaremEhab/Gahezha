@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/screens/reports/widgets/report_card.dart';
 
 class ReportsListPage extends StatelessWidget {
@@ -24,8 +25,8 @@ class ReportsListPage extends StatelessWidget {
                 pinned: true,
                 floating: true,
                 elevation: 0,
-                title: const Text(
-                  "Reports",
+                title: Text(
+                  S.current.reports,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
@@ -39,18 +40,16 @@ class ReportsListPage extends StatelessWidget {
                 pinned: true,
                 delegate: _SliverTabBarDelegate(
                   TabBar(
-                    isScrollable: true,
                     labelColor: Colors.black,
                     dividerColor: Colors.transparent,
                     indicatorSize: TabBarIndicatorSize.tab,
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: Colors.blue,
-                    tabAlignment: TabAlignment.center,
-                    tabs: const [
-                      Tab(text: "All Reports"),
-                      Tab(text: "Pending"),
-                      Tab(text: "Resolved"),
-                      Tab(text: "Dismissed"),
+                    tabs: [
+                      Tab(text: S.current.all_reports),
+                      Tab(text: S.current.pending),
+                      Tab(text: S.current.resolved),
+                      Tab(text: S.current.dismissed),
                     ],
                   ),
                 ),

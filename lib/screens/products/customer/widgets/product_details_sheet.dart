@@ -3,6 +3,7 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/models/user_model.dart';
+import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/products/customer/widgets/images_carousel.dart';
 import 'package:iconly/iconly.dart';
 
@@ -118,7 +119,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "SAR ${widget.product.price.toStringAsFixed(2)}",
+                      "${S.current.sar} ${widget.product.price.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -163,7 +164,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                                     ),
                                     if (optionPrice > 0)
                                       Text(
-                                        "(+SAR ${optionPrice.toStringAsFixed(2)})",
+                                        "(+${S.current.sar} ${optionPrice.toStringAsFixed(2)})",
                                         style: const TextStyle(
                                           color: primaryBlue,
                                           fontWeight: FontWeight.w500,
@@ -207,7 +208,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                               Flexible(child: Text(addonName)),
                               if (addonPrice > 0)
                                 Text(
-                                  "(+SAR ${addonPrice.toStringAsFixed(2)})",
+                                  "(+${S.current.sar} ${addonPrice.toStringAsFixed(2)})",
                                   style: const TextStyle(
                                     color: primaryBlue,
                                     fontWeight: FontWeight.w500,
@@ -310,15 +311,33 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      final selectedAddOnList = addOns.entries
-                          .where((e) => e.value)
-                          .map((e) => e.key)
-                          .toList();
+                      if (currentUserType == UserType.guest) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text("Create an account first"),
+                            action: SnackBarAction(
+                              label: "Sign Up",
+                              textColor: primaryBlue,
+                              onPressed: () {
+                                navigateTo(
+                                  context: context,
+                                  screen: Signup(isGuestMode: true),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        final selectedAddOnList = addOns.entries
+                            .where((e) => e.value)
+                            .map((e) => e.key)
+                            .toList();
 
-                      debugPrint("Added to cart:");
-                      debugPrint("Quantity: $quantity");
-                      debugPrint("Specifications: $selectedSpecs");
-                      debugPrint("Add-ons: $selectedAddOnList");
+                        debugPrint("Added to cart:");
+                        debugPrint("Quantity: $quantity");
+                        debugPrint("Specifications: $selectedSpecs");
+                        debugPrint("Add-ons: $selectedAddOnList");
+                      }
 
                       Navigator.pop(context);
                     },

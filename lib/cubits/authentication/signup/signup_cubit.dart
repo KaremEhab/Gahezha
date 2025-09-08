@@ -12,6 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
@@ -34,6 +37,7 @@ class SignupCubit extends Cubit<SignupState> {
     required String firstName,
     required String lastName,
     required String password,
+    required String phoneNumber,
     DateTime? birthdate,
     String? emirate,
     int? age,
@@ -54,11 +58,14 @@ class SignupCubit extends Cubit<SignupState> {
         userId: uid,
         firstName: firstName,
         lastName: lastName,
+        phoneNumber: phoneNumber,
         gender: gender,
         email: email,
       );
 
       await CacheHelper.saveData(key: 'uId', value: uid);
+
+      await UserCubit.instance.getCurrentUser();
 
       emit(SignupSuccessState(uid)); // <-- emit only AFTER Firestore succeeds
     } on FirebaseAuthException catch (error) {
@@ -79,6 +86,7 @@ class SignupCubit extends Cubit<SignupState> {
     required String firstName,
     required String lastName,
     required String email,
+    required String phoneNumber,
     required Gender gender,
   }) async {
     emit(SignupCreateUserLoadingState());
@@ -94,6 +102,7 @@ class SignupCubit extends Cubit<SignupState> {
       email: email,
       gender: gender,
       profileUrl: profileUrl,
+      phoneNumber: phoneNumber,
       userType: UserType.customer,
       notificationsEnabled: true,
     );
@@ -104,10 +113,123 @@ class SignupCubit extends Cubit<SignupState> {
 
       await FirebaseFirestore.instance.collection('users').doc(userId).set({
         ...model.toMap(),
-        'fcmTokens': fcmToken != null ? [fcmToken] : [],
+        'fcmTokens': [fcmToken],
       });
 
       await CacheHelper.saveData(key: 'uId', value: userId);
+      emit(SignupCreateUserSuccessState());
+    } catch (e) {
+      emit(SignupCreateUserErrorState(e.toString()));
+    }
+  }
+
+  /// ✅ Shop Signup
+  void shopSignup({
+    required String email,
+    required String password,
+    required String shopName,
+    required String shopCategory,
+    required String shopLocation,
+    required int preparingTimeFrom,
+    required int preparingTimeTo,
+    required int openingHoursFrom,
+    required int openingHoursTo,
+    required String shopPhoneNumber,
+  }) async {
+    emit(SignupLoadingState());
+
+    try {
+      // FirebaseAuth signup
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      final uid = userCredential.user?.uid;
+      if (uid == null) {
+        emit(SignupErrorState(error: 'Failed to create shop'));
+        return;
+      }
+
+      await shopCreate(
+        shopId: uid,
+        shopName: shopName,
+        shopCategory: shopCategory,
+        shopLocation: shopLocation,
+        preparingTimeFrom: preparingTimeFrom,
+        preparingTimeTo: preparingTimeTo,
+        openingHoursFrom: openingHoursFrom,
+        openingHoursTo: openingHoursTo,
+        shopPhoneNumber: shopPhoneNumber,
+        shopEmail: email,
+      );
+
+      uId = uid;
+      await CacheHelper.saveData(key: 'uId', value: uId);
+
+      await ShopCubit.instance.getCurrentShop();
+
+      emit(SignupSuccessState(uId));
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'weak-password') {
+        emit(SignupErrorState(error: 'كلمه السر ضعيفه'));
+      } else if (error.code == 'email-already-in-use') {
+        emit(SignupErrorState(error: 'Shop Email already in use'));
+      } else {
+        emit(SignupErrorState(error: 'An error occurred, try again later'));
+      }
+    } catch (e) {
+      emit(SignupErrorState(error: 'An error occurred: $e'));
+    }
+  }
+
+  /// ✅ Create Shop Document in Firestore
+  Future<void> shopCreate({
+    required String shopId,
+    required String shopName,
+    required String shopCategory,
+    required String shopLocation,
+    required int preparingTimeFrom,
+    required int preparingTimeTo,
+    required int openingHoursFrom,
+    required int openingHoursTo,
+    required String shopPhoneNumber,
+    required String shopEmail,
+  }) async {
+    emit(SignupCreateUserLoadingState());
+
+    final shopLogo =
+        "https://res.cloudinary.com/dl0wayiab/image/upload/v1757279013/samples/breakfast.jpg";
+    final shopBanner =
+        "https://res.cloudinary.com/dl0wayiab/image/upload/v1757279016/cld-sample-4.jpg";
+
+    final model = ShopModel(
+      shopName: shopName,
+      shopLogo: shopLogo,
+      shopBanner: shopBanner,
+      shopCategory: shopCategory,
+      shopLocation: shopLocation,
+      preparingTimeFrom: preparingTimeFrom,
+      preparingTimeTo: preparingTimeTo,
+      openingHoursFrom: openingHoursFrom,
+      openingHoursTo: openingHoursTo,
+      shopPhoneNumber: shopPhoneNumber,
+      shopEmail: shopEmail,
+      shopStatus: ShopStatus.closed, // يبدأ مغلق مثلاً
+      notificationsEnabled: true,
+      createdAt: DateTime.now(),
+    );
+
+    try {
+      // FCM token
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+
+      await FirebaseFirestore.instance.collection('shops').doc(shopId).set({
+        ...model.toMap(),
+        'shopId': shopId,
+        'fcmTokens': [fcmToken],
+      });
+
+      uId = shopId;
+      await CacheHelper.saveData(key: 'uId', value: uId);
       emit(SignupCreateUserSuccessState());
     } catch (e) {
       emit(SignupCreateUserErrorState(e.toString()));
@@ -155,6 +277,7 @@ class SignupCubit extends Cubit<SignupState> {
             firstName: userCredential.user?.displayName ?? "Guest",
             lastName: userCredential.user?.displayName ?? "Guest",
             email: userCredential.user?.email ?? "",
+            phoneNumber: userCredential.user?.phoneNumber ?? "",
             gender: Gender.male,
           );
         } else {

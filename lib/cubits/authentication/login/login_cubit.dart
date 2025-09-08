@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
@@ -31,32 +33,83 @@ class LoginCubit extends Cubit<LoginState> {
   void userLogin({required String email, required String password}) async {
     try {
       emit(LoginLoadingState());
+
+      // 1️⃣ Sign in with Firebase Auth
       var userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       uId = userCredential.user!.uid;
-      var user = await FirebaseFirestore.instance
+
+      /// 2️⃣ Determine user type by checking collections
+      DocumentSnapshot<Map<String, dynamic>>? userDoc;
+      UserType? type;
+
+      /// Check "admins" collection
+      // final adminDoc = await FirebaseFirestore.instance
+      //     .collection('admins')
+      //     .doc(uId)
+      //     .get();
+      // if (adminDoc.exists) {
+      //   type = UserType.admin;
+      //   userDoc = adminDoc;
+      // }
+
+      /// Check "shops" collection
+      final shopDoc = await FirebaseFirestore.instance
+          .collection('shops')
+          .doc(uId)
+          .get();
+      if (shopDoc.exists) {
+        type = UserType.shop;
+        userDoc = shopDoc;
+      }
+
+      /// Check "users" collection
+      final usersDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(uId)
           .get();
-      if (!user.exists) {
+      if (usersDoc.exists) {
+        type = UserType.values.firstWhere(
+          (e) => e.name == usersDoc.data()!['userType'], // customer / guest
+          orElse: () => UserType.customer,
+        );
+        userDoc = usersDoc;
+      }
+
+      if (userDoc == null) {
         throw 'الحساب غير موجود';
       }
+
+      /// 3️⃣ Save FCM tokens & cache
       await Future.wait([
-        // 👇 Replace all old tokens with the new one
-        FirebaseFirestore.instance.collection('users').doc(uId).update({
-          'fcmTokens': [fcmDeviceToken],
-        }),
+        FirebaseFirestore.instance
+            .collection(userDoc.reference.parent.id)
+            .doc(uId)
+            .update({
+              'fcmTokens': [fcmDeviceToken],
+            }),
         CacheHelper.saveData(key: 'uId', value: uId),
       ]);
+
+      currentUserType = type!;
+      CacheHelper.saveData(key: "currentUserType", value: currentUserType.name);
+
+      /// 4️⃣ Load proper model
+      if (currentUserType == UserType.shop) {
+        await ShopCubit.instance.getCurrentShop();
+      } else {
+        await UserCubit.instance.getCurrentUser();
+      }
+
       emit(LoginSuccessState(uId));
     } catch (error) {
       if (error is FirebaseAuthException) {
         if (error.code == 'user-not-found') {
-          emit(LoginErrorState(error: 'un registered account'));
+          emit(LoginErrorState(error: 'Unregistered account'));
         } else if (error.code == 'wrong-password') {
-          emit(LoginErrorState(error: 'wrong password'));
+          emit(LoginErrorState(error: 'Wrong password'));
         } else {
-          emit(LoginErrorState(error: 'something went wrong'));
+          emit(LoginErrorState(error: 'Something went wrong'));
         }
       } else {
         emit(LoginErrorState(error: 'An error occurred: $error'));
@@ -65,27 +118,69 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   /// ================= Create/Login Guest =================
-  Future<GuestUserModel> loginAsGuest() async {
-    // Generate a unique guest ID
-    final guestId = const Uuid().v4();
+  void guestLogin() async {
+    emit(LoginLoadingState());
 
-    // Get FCM token
-    final fcmToken = await FirebaseMessaging.instance.getToken();
+    try {
+      // ✅ إنشاء مستخدم Anonymous
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
 
-    // Create guest user
-    final guest = GuestUserModel(guestId: guestId, createdAt: DateTime.now());
+      final uid = userCredential.user?.uid;
+      if (uid == null) {
+        emit(LoginErrorState(error: 'Failed to create guest'));
+        return;
+      }
 
-    // Save to Firestore
-    await FirebaseFirestore.instance.collection('users').doc(guestId).set({
-      ...guest.toMap(),
-      'fcmTokens': [fcmToken],
-    });
+      // ✅ استدعاء guestCreate
+      await guestCreate(guestId: uid, firstName: "Guest", lastName: "Account");
 
-    // Cache guest ID locally
-    await CacheHelper.saveData(key: 'uId', value: guestId);
-    await CacheHelper.saveData(key: 'isGuest', value: true);
+      await CacheHelper.saveData(key: 'uId', value: uid);
 
-    return guest;
+      await UserCubit.instance.getCurrentUser();
+
+      emit(LoginSuccessState(uid));
+    } catch (e) {
+      emit(LoginErrorState(error: 'An error occurred: $e'));
+    }
+  }
+
+  Future<void> guestCreate({
+    required String guestId,
+    String firstName = "Guest",
+    String lastName = "Account",
+    String email = "",
+    String phoneNumber = "",
+    Gender gender = Gender.male,
+  }) async {
+    emit(LoginCreateGuestLoadingState());
+
+    final model = GuestUserModel(
+      guestId: guestId,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phoneNumber: phoneNumber,
+      gender: gender,
+      notificationsEnabled: true,
+    );
+
+    try {
+      // ✅ Get FCM token
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+
+      await FirebaseFirestore.instance.collection('users').doc(guestId).set({
+        ...model.toMap(),
+        'fcmTokens': [fcmToken],
+      });
+
+      currentGuestModel = model; // ✨ حفظه في المتغير
+
+      await CacheHelper.saveData(key: 'uId', value: guestId);
+
+      emit(LoginCreateGuestSuccessState());
+    } catch (e) {
+      emit(LoginCreateGuestErrorState(e.toString()));
+    }
   }
 
   /// ================= Delete Guest Account =================

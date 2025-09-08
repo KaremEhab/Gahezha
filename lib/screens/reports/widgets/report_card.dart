@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/report_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/reports/widgets/report_details_sheet.dart';
 import 'package:iconly/iconly.dart';
@@ -38,11 +40,11 @@ class ReportCard extends StatelessWidget {
             builder: (_) => ReportDetailsSheet(
               reportId: "1234",
               title: "Hello Gahezha App I want to report this issue.",
-              type: "Fraudulent Activity",
+              type: S.current.fraudulent_activity,
               description:
                   "User reported suspicious transactions in Gahezha account.",
               date: "02 Sep 2025",
-              status: "Pending",
+              status: ReportType.pending,
               reporter: name,
             ),
           );
@@ -59,7 +61,7 @@ class ReportCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Report #1234",
+                    "${S.current.report} #1234",
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.w700,
                       height: 0.7,
@@ -73,7 +75,9 @@ class ReportCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          userType == UserType.customer ? IconlyBold.profile : Icons.storefront,
+                          userType == UserType.customer
+                              ? IconlyBold.profile
+                              : Icons.storefront,
                           size: 15,
                           color: primaryBlue,
                         ),
@@ -98,7 +102,7 @@ class ReportCard extends StatelessWidget {
                   const Icon(IconlyLight.danger, size: 18, color: Colors.red),
                   const SizedBox(width: 6),
                   Text(
-                    "Fraudulent Activity",
+                    S.current.fraudulent_activity,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeight.w500,
                       color: Colors.red,
@@ -150,7 +154,7 @@ class ReportCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      "Pending",
+                      S.current.pending,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Colors.orange[700],
                         fontWeight: FontWeight.w600,
