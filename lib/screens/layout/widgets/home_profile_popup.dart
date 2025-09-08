@@ -57,7 +57,7 @@ class HomeProfilePopup extends StatelessWidget {
                               CircleAvatar(
                                 radius: 36,
                                 child: CustomCachedImage(
-                                  imageUrl: "https://i.pravatar.cc/300",
+                                  imageUrl: currentUserModel.profileUrl,
                                   height: double.infinity,
                                   borderRadius: BorderRadius.circular(200),
                                 ),
@@ -65,8 +65,8 @@ class HomeProfilePopup extends StatelessWidget {
                               const SizedBox(height: 12),
 
                               // Name
-                              const Text(
-                                "John Doe",
+                              Text(
+                                currentUserModel.fullName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -75,12 +75,9 @@ class HomeProfilePopup extends StatelessWidget {
                               const SizedBox(height: 6),
 
                               // Email
-                              const Text(
-                                "johndoe@email.com",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
+                              Text(
+                                currentUserModel.email,
+                                style: TextStyle(fontSize: 14),
                               ),
 
                               const SizedBox(height: 16),

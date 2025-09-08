@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/profile/customer/pages/change_email.dart';
 import 'package:gahezha/screens/profile/customer/pages/change_password.dart';
 import 'package:gahezha/screens/profile/customer/pages/edit_profile.dart';
@@ -17,7 +19,7 @@ class CustomerProfilePage extends StatefulWidget {
 }
 
 class _CustomerProfilePageState extends State<CustomerProfilePage> {
-  bool notifications = false;
+  bool notifications = currentUserModel.notificationsEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -70,27 +72,24 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
             ),
             child: Column(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(
-                    "https://picsum.photos/200/200?random=12",
+                  child: CustomCachedImage(
+                    imageUrl: currentUserModel.profileUrl,
+                    height: double.infinity,
+                    borderRadius: BorderRadius.circular(200),
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "John Doe",
+                  currentUserModel.fullName,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.blueGrey[900],
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  "johndoe@gmail.com",
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                ),
+                Text(currentUserModel.email, style: theme.textTheme.bodyMedium),
                 const SizedBox(height: 16),
                 GradientBorderButton(),
               ],
@@ -123,7 +122,7 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
           _buildSectionTitle(S.current.app_settings, context),
           SwitchListTile(
             value: notifications,
-            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             title: Text(S.current.notifications),
             secondary: Icon(
               notifications
@@ -131,7 +130,12 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
                   : IconlyLight.notification,
               color: primaryBlue,
             ),
-            onChanged: (val) => setState(() => notifications = val),
+            onChanged: (val) async {
+              setState(() => notifications = val);
+
+              // ✅ استدعاء التحديث
+              await UserCubit.instance.editUserData(notificationsEnabled: val);
+            },
           ),
           _buildListTile(
             icon: IconlyLight.message,

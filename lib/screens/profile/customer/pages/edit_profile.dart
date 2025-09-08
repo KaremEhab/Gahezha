@@ -1,11 +1,16 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/cloudinary/cloudinary_service.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
+import 'package:gahezha/public_widgets/pick_images.dart';
 import 'package:iconly/iconly.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfileSheet extends StatefulWidget {
   const EditProfileSheet({super.key});
@@ -15,8 +20,17 @@ class EditProfileSheet extends StatefulWidget {
 }
 
 class _EditProfileSheetState extends State<EditProfileSheet> {
-  final nameController = TextEditingController(text: "John Doe");
-  final emailController = TextEditingController(text: "johndoe@gmail.com");
+  Gender selectedGender = Gender.male;
+  File? pickedImage; // الصورة اللي اتحددت
+  bool isUploading = false; // علشان نظهر Loader وقت الرفع
+
+  final firstNameController = TextEditingController(
+    text: currentUserModel.firstName,
+  );
+  final lastNameController = TextEditingController(
+    text: currentUserModel.lastName,
+  );
+  final emailController = TextEditingController(text: currentUserModel.email);
 
   // Shop-only controllers
   final categoryController = TextEditingController(text: "Fast Food");
@@ -28,6 +42,19 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
     text: "Opens from 10 AM - 11 PM",
   );
   final phoneController = TextEditingController(text: "+20 111 219 0563");
+
+  // function to pick image
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        pickedImage = File(pickedFile.path);
+      });
+      log("Picked image path: ${pickedFile.path}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +92,103 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                   const SizedBox(height: 20),
 
                   /// Avatar
-                  currentUserType == UserType.customer
-                      ? buildCustomerAvatar()
-                      : buildShopAvatar(),
+                  currentUserType == UserType.shop
+                      ? buildShopAvatar()
+                      : buildCustomerAvatar(),
 
                   const SizedBox(height: 30),
 
                   /// Name
-                  CustomTextField(
-                    controller: nameController,
-                    title: S.current.full_name,
-                    hint: S.current.full_name,
-                    icon: IconlyLight.profile,
-                    keyboardType: TextInputType.text,
+                  Row(
+                    spacing: 5,
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          controller: firstNameController,
+                          title: S.current.full_name,
+                          hint: S.current.full_name,
+                          icon: IconlyLight.profile,
+                          keyboardType: TextInputType.text,
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomTextField(
+                          controller: lastNameController,
+                          title: S.current.full_name,
+                          hint: S.current.full_name,
+                          icon: IconlyLight.profile,
+                          keyboardType: TextInputType.text,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
 
                   /// Email
-                  CustomTextField(
-                    controller: emailController,
-                    title: S.current.email,
-                    hint: S.current.enter_your_email,
-                    icon: IconlyLight.message,
-                    keyboardType: TextInputType.emailAddress,
+                  // CustomTextField(
+                  //   controller: emailController,
+                  //   title: S.current.email,
+                  //   hint: S.current.enter_your_email,
+                  //   icon: IconlyLight.message,
+                  //   keyboardType: TextInputType.emailAddress,
+                  // ),
+
+                  /// Gender
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Gender",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<Gender>(
+                        value: selectedGender,
+                        icon: const Icon(
+                          IconlyBold.arrow_down_2,
+                          size: 20,
+                          color: Colors.black54,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: "",
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: const Icon(Icons.legend_toggle),
+                        ),
+                        dropdownColor: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                        items: Gender.values.map((gender) {
+                          return DropdownMenuItem<Gender>(
+                            value: gender,
+                            child: Text(
+                              gender.name.toUpperCase(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) =>
+                            setState(() => selectedGender = val!),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 24),
@@ -320,9 +421,39 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
             /// Save Button
             bottomNavigationBar: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () async {
+                    String? profileUrl = currentUserModel.profileUrl;
+
+                    if (pickedImage != null) {
+                      setState(() => isUploading = true);
+
+                      final cloudinaryService = CloudinaryService();
+                      final url = await cloudinaryService.uploadImage(
+                        pickedImage!,
+                      );
+
+                      if (url != null) {
+                        profileUrl = url;
+                      }
+
+                      setState(() => isUploading = false);
+                    }
+
+                    // ✨ تحديث بيانات المستخدم
+                    UserCubit.instance.editUserData(
+                      firstName: firstNameController.text.trim(),
+                      lastName: lastNameController.text.trim(),
+                      gender: selectedGender,
+                      profileUrl: profileUrl,
+                    );
+
+                    if (context.mounted) {
+                      Navigator.pop(context, profileUrl);
+                    }
+                  },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryBlue,
                     foregroundColor: Colors.white,
@@ -340,77 +471,74 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
       },
     );
   }
-}
 
-// --- Extracted widgets for clarity ---
-Widget buildCustomerAvatar() {
-  return Center(
-    child: Container(
-      height: 250,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-      child: Stack(
+  // --- Extracted widgets for clarity ---
+  Widget buildShopAvatar() {
+    return Center(
+      child: Container(
+        height: 250,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        children: [
-          InkWell(
-            onTap: () => log("Cover image tapped"),
-            child: Stack(
-              children: [
-                CustomCachedImage(
-                  imageUrl: "https://picsum.photos/600/300",
-                  height: double.infinity,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+        child: Stack(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          children: [
+            InkWell(
+              onTap: () => showModalBottomSheet(
+                showDragHandle: true,
+                context: context,
+                backgroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-                Container(color: Colors.black.withOpacity(0.5)),
-                Positioned(
-                  bottom: 10,
-                  right: 10,
-                  child: Material(
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(200),
-                      onTap: () => log("Cover edit tapped"),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: primaryBlue,
-                            strokeAlign: BorderSide.strokeAlignInside,
-                          ),
-                        ),
-                        child: Icon(IconlyBold.ticket, color: primaryBlue),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 10,
-            left: 0,
-            right: 0,
-            child: Center(
+                builder: (_) {
+                  return PickImageSource(
+                    cameraButton: () async {
+                      Navigator.pop(context);
+                      await pickImage(ImageSource.camera);
+                    },
+                    galleryButton: () async {
+                      Navigator.pop(context);
+                      await pickImage(ImageSource.gallery);
+                    },
+                  );
+                },
+              ),
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 85,
-                    backgroundColor: primaryBlue.withOpacity(0.3),
-                    child: const CircleAvatar(
-                      radius: 80,
-                      backgroundImage: NetworkImage(
-                        "https://picsum.photos/200",
-                      ),
-                    ),
+                  CustomCachedImage(
+                    imageUrl: "https://picsum.photos/600/300",
+                    height: double.infinity,
                   ),
+                  Container(color: Colors.black.withOpacity(0.5)),
                   Positioned(
-                    bottom: 5,
-                    right: 5,
+                    bottom: 10,
+                    right: 10,
                     child: Material(
                       shape: const CircleBorder(),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(200),
-                        onTap: () => log("Avatar edit tapped"),
+                        onTap: () => showModalBottomSheet(
+                          showDragHandle: true,
+                          context: context,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          builder: (_) {
+                            return PickImageSource(
+                              cameraButton: () async {
+                                Navigator.pop(context);
+                                await pickImage(ImageSource.camera);
+                              },
+                              galleryButton: () async {
+                                Navigator.pop(context);
+                                await pickImage(ImageSource.gallery);
+                              },
+                            );
+                          },
+                        ),
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
@@ -420,7 +548,7 @@ Widget buildCustomerAvatar() {
                               strokeAlign: BorderSide.strokeAlignInside,
                             ),
                           ),
-                          child: Icon(IconlyBold.profile, color: primaryBlue),
+                          child: Icon(IconlyBold.ticket, color: primaryBlue),
                         ),
                       ),
                     ),
@@ -428,48 +556,126 @@ Widget buildCustomerAvatar() {
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget buildShopAvatar() {
-  return Center(
-    child: Stack(
-      children: [
-        CircleAvatar(
-          radius: 85,
-          backgroundColor: primaryBlue.withOpacity(0.3),
-          child: const CircleAvatar(
-            radius: 80,
-            backgroundImage: NetworkImage("https://picsum.photos/200"),
-          ),
-        ),
-        Positioned(
-          bottom: 5,
-          right: 5,
-          child: Material(
-            shape: const CircleBorder(),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(200),
-              onTap: () => log("Shop avatar edit tapped"),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: primaryBlue,
-                    strokeAlign: BorderSide.strokeAlignInside,
-                  ),
+            Positioned(
+              bottom: 10,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 85,
+                      backgroundColor: primaryBlue.withOpacity(0.3),
+                      child: const CircleAvatar(
+                        radius: 80,
+                        backgroundImage: NetworkImage(
+                          "https://picsum.photos/200",
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: Material(
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(200),
+                          onTap: () => log("Avatar edit tapped"),
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: primaryBlue,
+                                strokeAlign: BorderSide.strokeAlignInside,
+                              ),
+                            ),
+                            child: Icon(IconlyBold.profile, color: primaryBlue),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Icon(IconlyBold.edit, color: primaryBlue),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCustomerAvatar() {
+    return Center(
+      child: Stack(
+        children: [
+          CircleAvatar(
+            radius: 85,
+            backgroundColor: primaryBlue.withOpacity(0.3),
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 80,
+                  backgroundImage: pickedImage != null
+                      ? FileImage(pickedImage!) as ImageProvider
+                      : NetworkImage(currentUserModel.profileUrl),
+                ),
+                if (isUploading)
+                  CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Colors.black.withOpacity(0.4),
+                    child: const Center(
+                      child: CircularProgressIndicator(color: primaryBlue),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 5,
+            right: 5,
+            child: Material(
+              shape: const CircleBorder(),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(200),
+                onTap: () => showModalBottomSheet(
+                  showDragHandle: true,
+                  context: context,
+                  backgroundColor: Colors.white,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (_) {
+                    return PickImageSource(
+                      cameraButton: () async {
+                        Navigator.pop(context);
+                        await pickImage(ImageSource.camera);
+                      },
+                      galleryButton: () async {
+                        Navigator.pop(context);
+                        await pickImage(ImageSource.gallery);
+                      },
+                    );
+                  },
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: primaryBlue,
+                      strokeAlign: BorderSide.strokeAlignInside,
+                    ),
+                  ),
+                  child: Icon(IconlyBold.edit, color: primaryBlue),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

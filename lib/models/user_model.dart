@@ -66,6 +66,31 @@ class UserModel {
           : DateTime.now(),
     );
   }
+
+  /// ✅ copyWith
+  UserModel copyWith({
+    String? userId,
+    String? profileUrl,
+    String? firstName,
+    String? lastName,
+    Gender? gender,
+    String? email,
+    bool? notificationsEnabled,
+    UserType? userType,
+    DateTime? createdAt,
+  }) {
+    return UserModel(
+      userId: userId ?? this.userId,
+      profileUrl: profileUrl ?? this.profileUrl,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      gender: gender ?? this.gender,
+      email: email ?? this.email,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      userType: userType ?? this.userType,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
 
 class GuestUserModel extends UserModel {
@@ -81,12 +106,11 @@ class GuestUserModel extends UserModel {
     super.email = "",
     super.gender = Gender.male,
     super.notificationsEnabled = true,
-    DateTime? createdAt,
+    super.createdAt,
   }) : super(
          userId: guestId,
          profileUrl: defaultProfileUrl,
          userType: UserType.guest,
-         createdAt: createdAt,
        );
 
   @override
@@ -120,6 +144,27 @@ class GuestUserModel extends UserModel {
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
           : DateTime.now(),
+    );
+  }
+
+  /// ✅ copyWith
+  GuestUserModel copyWithGuest({
+    String? guestId,
+    String? firstName,
+    String? lastName,
+    Gender? gender,
+    String? email,
+    bool? notificationsEnabled,
+    DateTime? createdAt,
+  }) {
+    return GuestUserModel(
+      guestId: guestId ?? this.guestId,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      gender: gender ?? this.gender,
+      email: email ?? this.email,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

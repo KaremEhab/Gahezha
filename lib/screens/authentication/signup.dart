@@ -56,10 +56,7 @@ class _SignupState extends State<Signup> {
             currentUserType = UserType.customer;
           }
           if (context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const Layout()),
-            );
+            navigateAndFinish(context: context, screen: const Layout());
           }
         }
       },
@@ -244,7 +241,7 @@ class _SignupState extends State<Signup> {
                             obscureText: false, // initial obscure state
                           ),
 
-                          /// Email
+                          /// Gender
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

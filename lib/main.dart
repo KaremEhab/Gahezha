@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,10 +7,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gahezha/constants/bloc_observer.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/authentication/login/login_cubit.dart';
 import 'package:gahezha/cubits/authentication/signup/signup_cubit.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/gahezha_splash.dart';
 import 'package:gahezha/generated/l10n.dart';
@@ -29,6 +31,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CacheHelper.init();
+  Bloc.observer = MyBlocObserver();
+  fcmDeviceToken = await FirebaseMessaging.instance.getToken() ?? '';
+  // accessToken = await AccessTokenFirebase().getAccessToken();
+  uId = await CacheHelper.getData(key: 'uId') ?? '';
   lang = await CacheHelper.getData(key: 'lang') ?? 'en';
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -49,6 +55,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider(create: (_) => SignupCubit()),
+        BlocProvider(create: (_) => LoginCubit()),
+        BlocProvider(create: (_) => UserCubit()),
         BlocProvider(create: (_) => ProfileToggleCubit()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(

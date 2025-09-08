@@ -157,5 +157,8 @@
   "regular": "عادي",
   "to_cart": "إلى السلة",
 
-  "new_orders": "الطلبات الجديد"
+  "new_orders": "الطلبات الجديد",
+
+  "take_a_picture": "التقط صورة",
+  "choose_from_gallery": "اختر من المعرض"
 }

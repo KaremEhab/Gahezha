@@ -52,6 +52,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Change Your Password",
     ),
     "checkout": MessageLookupByLibrary.simpleMessage("Checkout"),
+    "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
+      "Choose from gallery",
+    ),
     "choose_size": MessageLookupByLibrary.simpleMessage("Choose Size"),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "closed": MessageLookupByLibrary.simpleMessage("Closed"),
@@ -263,6 +266,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "special_offer": MessageLookupByLibrary.simpleMessage("Special Offer"),
     "spicy": MessageLookupByLibrary.simpleMessage("Spicy"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
+    "take_a_picture": MessageLookupByLibrary.simpleMessage("Take a picture"),
     "tasty_items_for_you": MessageLookupByLibrary.simpleMessage(
       "A tasty and freshly prepared items for you",
     ),

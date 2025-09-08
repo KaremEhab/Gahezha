@@ -28,10 +28,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -1188,6 +1187,26 @@ class S {
   /// `New Orders`
   String get new_orders {
     return Intl.message('New Orders', name: 'new_orders', desc: '', args: []);
+  }
+
+  /// `Take a picture`
+  String get take_a_picture {
+    return Intl.message(
+      'Take a picture',
+      name: 'take_a_picture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose from gallery`
+  String get choose_from_gallery {
+    return Intl.message(
+      'Choose from gallery',
+      name: 'choose_from_gallery',
+      desc: '',
+      args: [],
+    );
   }
 }
 

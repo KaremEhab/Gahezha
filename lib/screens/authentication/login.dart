@@ -21,6 +21,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _obscurePassword = true;
+  TextEditingController _email = TextEditingController();
+  TextEditingController _password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +32,7 @@ class _LoginState extends State<Login> {
       listener: (context, state) {
         if (state is LoginSuccessState) {
           if (context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const Layout()),
-            );
+            navigateAndFinish(context: context, screen: const Layout());
           }
         }
       },
@@ -89,6 +88,7 @@ class _LoginState extends State<Login> {
 
                       /// Email Field
                       TextFormField(
+                        controller: _email,
                         decoration: InputDecoration(
                           labelText: S.current.email,
                           prefixIcon: const Icon(IconlyLight.message),
@@ -103,6 +103,7 @@ class _LoginState extends State<Login> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextFormField(
+                            controller: _password,
                             obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               labelText: S.current.password,
@@ -198,19 +199,14 @@ class _LoginState extends State<Login> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    /// Sign Up Button
+                    /// Login Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          currentUserType = UserType.customer;
-                          CacheHelper.saveData(
-                            key: "currentUserType",
-                            value: currentUserType.name,
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const Layout()),
+                          LoginCubit.instance.userLogin(
+                            email: _email.text.trim(),
+                            password: _password.text.trim(),
                           );
                         },
                         child: Text(

@@ -54,6 +54,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "تغيير كلمة المرور",
     ),
     "checkout": MessageLookupByLibrary.simpleMessage("إتمام الشراء"),
+    "choose_from_gallery": MessageLookupByLibrary.simpleMessage(
+      "اختر من المعرض",
+    ),
     "choose_size": MessageLookupByLibrary.simpleMessage("اختر الحجم"),
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "closed": MessageLookupByLibrary.simpleMessage("مغلق"),
@@ -258,6 +261,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "special_offer": MessageLookupByLibrary.simpleMessage("عرض خاص"),
     "spicy": MessageLookupByLibrary.simpleMessage("حار"),
     "submit": MessageLookupByLibrary.simpleMessage("إرسال"),
+    "take_a_picture": MessageLookupByLibrary.simpleMessage("التقط صورة"),
     "tasty_items_for_you": MessageLookupByLibrary.simpleMessage(
       "أطباق شهية وطازجة مُعدة خصيصاً لك",
     ),

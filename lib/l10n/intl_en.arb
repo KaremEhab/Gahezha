@@ -157,5 +157,8 @@
   "regular": "Regular",
   "to_cart": "to Cart",
 
-  "new_orders": "New Orders"
+  "new_orders": "New Orders",
+
+  "take_a_picture": "Take a picture",
+  "choose_from_gallery": "Choose from gallery"
 }

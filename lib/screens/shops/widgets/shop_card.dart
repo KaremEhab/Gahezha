@@ -33,7 +33,7 @@ class ShopCard extends StatelessWidget {
               children: [
                 // --- Shop Image with gradient & overlay ---
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Stack(
                     children: [
                       // widget.productImages == null || widget.productImages.isEmpty
@@ -103,7 +103,7 @@ class ShopCard extends StatelessWidget {
 
                 // --- Shop Details ---
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,

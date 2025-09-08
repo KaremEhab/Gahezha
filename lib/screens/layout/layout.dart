@@ -1,7 +1,10 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/main.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -27,7 +30,6 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -36,25 +38,13 @@ class _LayoutState extends State<Layout> {
   }
 
   Future<void> _initializeFirebaseStuff() async {
-    await Future.wait([_initFirebase(), _initNotifications(), _initUserData()]);
-
-    if (mounted) {
-      setState(() => _isInitialized = true);
-    }
-  }
-
-  Future<void> _initFirebase() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  }
-
-  Future<void> _initNotifications() async {
     await setupFCM();
-  }
 
-  Future<void> _initUserData() async {
-    // Load current user info or cached data if needed
+    // ✅ بعد ما يخلص Firebase init → هات اليوزر
+    UserCubit.instance.getCurrentUser();
   }
 
   void _onItemTapped(int index) {
@@ -78,19 +68,22 @@ class _LayoutState extends State<Layout> {
             const UsersAndShopsPage(),
             const CustomerProfilePage(),
           ];
-
-    return Scaffold(
-      body: _isInitialized
-          ? PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _pages,
-            )
-          : const Center(child: CircularProgressIndicator()),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _currentIndex,
-        onItemTapped: _onItemTapped,
-      ),
+    return Stack(
+      children: [
+        Scaffold(
+          body: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: _pages,
+          ),
+          bottomNavigationBar: CustomNavBar(
+            currentIndex: _currentIndex,
+            onItemTapped: _onItemTapped,
+          ),
+        ),
+        // ================= Profile Pop-up Container =================
+        Material(color: Colors.transparent, child: HomeProfilePopup()),
+      ],
     );
   }
 }

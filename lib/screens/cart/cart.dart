@@ -202,259 +202,262 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
           : SingleChildScrollView(
               controller: scrollController,
               physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: cartShops.map((shop) {
-                  return Column(
-                    children: [
-                      // Shop Header
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 10, 7, 5),
-                        child: Material(
-                          color: Colors.grey.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(radius),
-                          child: InkWell(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: Column(
+                  children: cartShops.map((shop) {
+                    return Column(
+                      children: [
+                        // Shop Header
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(7, 10, 7, 5),
+                          child: Material(
+                            color: Colors.grey.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(radius),
-                            onTap: () {
-                              setState(() {
-                                shop['expanded'] = !(shop['expanded'] as bool);
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 10,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 20,
-                                        child: CustomCachedImage(
-                                          imageUrl: shop['shopLogo'],
-                                          height: double.infinity,
-                                          borderRadius: BorderRadius.circular(
-                                            200,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(radius),
+                              onTap: () {
+                                setState(() {
+                                  shop['expanded'] = !(shop['expanded'] as bool);
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 10,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 20,
+                                          child: CustomCachedImage(
+                                            imageUrl: shop['shopLogo'],
+                                            height: double.infinity,
+                                            borderRadius: BorderRadius.circular(
+                                              200,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        shop['shopName'],
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          shop['shopName'],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "${(shop['orders'] as List).length} ${S.current.items}",
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "${(shop['orders'] as List).length} ${S.current.items}",
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
-                                      AnimatedRotation(
-                                        turns: (shop['expanded'] as bool)
-                                            ? 0.5
-                                            : 0,
-                                        duration: const Duration(
-                                          milliseconds: 300,
+                                        AnimatedRotation(
+                                          turns: (shop['expanded'] as bool)
+                                              ? 0.5
+                                              : 0,
+                                          duration: const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                          child: const Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                          ),
                                         ),
-                                        child: const Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
 
-                      // Orders List
-                      if (shop['expanded'] as bool)
-                        Column(
-                          children: (shop['orders'] as List)
-                              .map<Widget>(
-                                (order) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  child: Material(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(radius),
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(
-                                        radius,
-                                      ),
-                                      // onTap: () {
-                                      //   showModalBottomSheet(
-                                      //     context: context,
-                                      //     isScrollControlled:
-                                      //         true, // ✅ makes it fullscreen-like
-                                      //     shape: RoundedRectangleBorder(
-                                      //       borderRadius: BorderRadius.vertical(
-                                      //         top: Radius.circular(sheetRadius),
-                                      //       ),
-                                      //     ),
-                                      //     builder: (_) {
-                                      //       return ProductDetailsSheet(
-                                      //         product: fakeProducts[index],
-                                      //       );
-                                      //     },
-                                      //   );
-                                      // },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 10,
+                        // Orders List
+                        if (shop['expanded'] as bool)
+                          Column(
+                            children: (shop['orders'] as List)
+                                .map<Widget>(
+                                  (order) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    child: Material(
+                                      color: Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(radius),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(
+                                          radius,
                                         ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            radius,
+                                        // onTap: () {
+                                        //   showModalBottomSheet(
+                                        //     context: context,
+                                        //     isScrollControlled:
+                                        //         true, // ✅ makes it fullscreen-like
+                                        //     shape: RoundedRectangleBorder(
+                                        //       borderRadius: BorderRadius.vertical(
+                                        //         top: Radius.circular(sheetRadius),
+                                        //       ),
+                                        //     ),
+                                        //     builder: (_) {
+                                        //       return ProductDetailsSheet(
+                                        //         product: fakeProducts[index],
+                                        //       );
+                                        //     },
+                                        //   );
+                                        // },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
                                           ),
-                                          border: Border.all(
-                                            color: Colors.grey.shade300,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              radius,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.grey.shade300,
+                                            ),
                                           ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            CustomCachedImage(
-                                              imageUrl: order['image'],
-                                              width: 60,
-                                              height: 60,
-                                              borderRadius:
-                                                  BorderRadius.circular(radius),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    order['name'],
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    "${S.current.price}: SAR ${order['price']} x ${order['quantity']}",
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            // New Increment/Decrement UI
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade200,
+                                          child: Row(
+                                            children: [
+                                              CustomCachedImage(
+                                                imageUrl: order['image'],
+                                                width: 60,
+                                                height: 60,
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                      radius,
-                                                    ),
+                                                    BorderRadius.circular(radius),
                                               ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  // Decrement Button
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (order['quantity'] >
-                                                            1) {
-                                                          order['quantity']--;
-                                                        }
-                                                      });
-                                                    },
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          radius,
-                                                        ),
-                                                    child: const Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 6,
-                                                          ),
-                                                      child: Icon(
-                                                        Icons.remove,
-                                                        size: 18,
-                                                        color: primaryBlue,
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  // Quantity Display
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 12,
-                                                        ),
-                                                    child: Text(
-                                                      '${order['quantity']}',
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      order['name'],
                                                       style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
                                                         fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
-                                                  ),
-
-                                                  // Increment Button
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        order['quantity']++;
-                                                      });
-                                                    },
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          radius,
-                                                        ),
-                                                    child: const Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 6,
-                                                          ),
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        size: 18,
-                                                        color: primaryBlue,
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      "${S.current.price}: SAR ${order['price']} x ${order['quantity']}",
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey,
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              // New Increment/Decrement UI
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.shade200,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        radius,
+                                                      ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    // Decrement Button
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (order['quantity'] >
+                                                              1) {
+                                                            order['quantity']--;
+                                                          }
+                                                        });
+                                                      },
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            radius,
+                                                          ),
+                                                      child: const Padding(
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 6,
+                                                            ),
+                                                        child: Icon(
+                                                          Icons.remove,
+                                                          size: 18,
+                                                          color: primaryBlue,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    // Quantity Display
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                          ),
+                                                      child: Text(
+                                                        '${order['quantity']}',
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    // Increment Button
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          order['quantity']++;
+                                                        });
+                                                      },
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            radius,
+                                                          ),
+                                                      child: const Padding(
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 6,
+                                                            ),
+                                                        child: Icon(
+                                                          Icons.add,
+                                                          size: 18,
+                                                          color: primaryBlue,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                    ],
-                  );
-                }).toList(),
+                                )
+                                .toList(),
+                          ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             ),
 

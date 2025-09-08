@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/home/customer/widgets/active_orders_sheet.dart';
@@ -61,13 +62,23 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                                     ProfileToggleCubit.instance
                                         .homeProfileButtonToggle();
                                   },
-                                  child: CircleAvatar(
-                                    radius: 22,
-                                    child: CustomCachedImage(
-                                      imageUrl: "https://i.pravatar.cc/300",
-                                      height: double.infinity,
-                                      borderRadius: BorderRadius.circular(200),
-                                    ),
+                                  child: BlocBuilder<UserCubit, UserState>(
+                                    builder: (context, state) {
+                                      if (state is UserLoaded) {
+                                        return CircleAvatar(
+                                          radius: 22,
+                                          child: CustomCachedImage(
+                                            imageUrl:
+                                                currentUserModel.profileUrl,
+                                            height: double.infinity,
+                                            borderRadius: BorderRadius.circular(
+                                              200,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox.shrink();
+                                    },
                                   ),
                                 );
                               },
@@ -282,13 +293,13 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                                       //       )
                                       //     :
                                       CustomCachedImage(
-                                              borderRadius:
-                                                  const BorderRadius.vertical(
-                                                    top: Radius.circular(16),
-                                                  ),
-                                              imageUrl:
-                                                  "https://picsum.photos/200/150?random=$index",
+                                        borderRadius:
+                                            const BorderRadius.vertical(
+                                              top: Radius.circular(16),
                                             ),
+                                        imageUrl:
+                                            "https://picsum.photos/200/150?random=$index",
+                                      ),
                                       Padding(
                                         padding: const EdgeInsets.all(10),
                                         child: Column(
