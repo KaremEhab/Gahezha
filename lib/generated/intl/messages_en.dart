@@ -75,6 +75,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose from gallery",
     ),
     "choose_size": MessageLookupByLibrary.simpleMessage("Choose Size"),
+    "click_again_to_exit": MessageLookupByLibrary.simpleMessage(
+      "Click back again to exit.",
+    ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "closed": MessageLookupByLibrary.simpleMessage("Closed"),
     "confirm_password": MessageLookupByLibrary.simpleMessage(

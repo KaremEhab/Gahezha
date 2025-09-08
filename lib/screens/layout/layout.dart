@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/main.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/blocked_and_reported/users_and_shops.dart';
@@ -50,8 +51,8 @@ class _LayoutState extends State<Layout> {
         now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
       _lastBackPressTime = now;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Click back again to exit."),
+        SnackBar(
+          content: Text(S.current.click_again_to_exit),
           duration: Duration(seconds: 2),
         ),
       );

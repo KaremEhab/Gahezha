@@ -276,5 +276,6 @@
   "add_add_ons": "Add Add-ons",
 
   "edit_shop": "Edit Shop",
-  "delete_shop": "Delete My Shop"
+  "delete_shop": "Delete My Shop",
+  "click_again_to_exit": "Click back again to exit."
 }

@@ -1998,6 +1998,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Click back again to exit.`
+  String get click_again_to_exit {
+    return Intl.message(
+      'Click back again to exit.',
+      name: 'click_again_to_exit',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

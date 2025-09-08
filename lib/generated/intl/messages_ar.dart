@@ -75,6 +75,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "اختر من المعرض",
     ),
     "choose_size": MessageLookupByLibrary.simpleMessage("اختر الحجم"),
+    "click_again_to_exit": MessageLookupByLibrary.simpleMessage(
+      "اضغط زر العودة مجددًا للخروج من التطبيق.",
+    ),
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "closed": MessageLookupByLibrary.simpleMessage("مغلق"),
     "confirm_password": MessageLookupByLibrary.simpleMessage(
