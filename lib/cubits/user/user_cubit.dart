@@ -4,15 +4,15 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/cupertino.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/user/user_state.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
-
-part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
   UserCubit._privateConstructor() : super(UserInitial());
@@ -170,6 +170,71 @@ class UserCubit extends Cubit<UserState> {
       }
     } catch (e) {
       if (!silentUpdate) emit(UserUpdatingError(e.toString()));
+    }
+  }
+
+  /// ✅ Change Email (supports customer, guest, and admin)
+  /// ✅ Change Email (supports customer, guest, and admin)
+  Future<void> changeEmail({
+    required String oldEmail,
+    required String newEmail,
+    required String password,
+  }) async {
+    try {
+      emit(UserUpdating());
+
+      if (uId == null) {
+        emit(UserUpdatingError("No user logged in"));
+        return;
+      }
+
+      // ✅ Pick the right collection
+      final collectionName = (currentUserType == UserType.admin)
+          ? "admins"
+          : "users";
+
+      // ✅ If not guest, reauthenticate + update Firebase Auth email
+      if (currentUserModel?.userType != UserType.guest) {
+        final fb.User? user = _auth.currentUser;
+        if (user == null) {
+          emit(UserUpdatingError("Firebase user not found"));
+          return;
+        }
+
+        // Reauthenticate first
+        final cred = fb.EmailAuthProvider.credential(
+          email: oldEmail,
+          password: password,
+        );
+        await user.reauthenticateWithCredential(cred);
+
+        // ✅ Send verification before updating email
+        await user.verifyBeforeUpdateEmail(newEmail);
+
+        // Reload to refresh user data
+        await user.reload();
+      }
+
+      // ✅ Update Firestore
+      await _firestore.collection(collectionName).doc(uId).update({
+        "email": newEmail,
+      });
+
+      // ✅ Update local model
+      currentUserModel = currentUserModel?.copyWith(email: newEmail);
+
+      await CacheHelper.saveData(
+        key: "currentUserModel",
+        value: currentUserModel?.toMap(),
+      );
+
+      emit(UserUpdated(currentUserModel!));
+
+      log(
+        "✅ Verification email sent. Email will update once verified: $newEmail",
+      );
+    } catch (e) {
+      emit(UserUpdatingError(e.toString()));
     }
   }
 

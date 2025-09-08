@@ -5,6 +5,7 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
+import 'package:gahezha/cubits/user/user_state.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';

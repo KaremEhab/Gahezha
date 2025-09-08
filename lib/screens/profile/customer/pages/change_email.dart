@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
@@ -115,10 +118,21 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  // Just UI → no logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(S.current.email_change_submitted)),
-                  );
+                  final oldEmail = _oldEmailController.text.trim();
+                  final newEmail = _newEmailController.text.trim();
+                  final password = _passwordController.text.trim();
+
+                  log(oldEmail);
+                  log(newEmail);
+                  log(password);
+
+                  // UserCubit.instance.changeEmail(
+                  //   oldEmail: oldEmail,
+                  //   newEmail: newEmail,
+                  //   password: password,
+                  // );
+
+                  log("Success");
                 }
               },
               style: ElevatedButton.styleFrom(

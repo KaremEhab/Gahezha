@@ -1,4 +1,4 @@
-part of 'user_cubit.dart';
+import 'package:gahezha/models/user_model.dart';
 
 abstract class UserState {}
 
