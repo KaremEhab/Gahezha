@@ -10,7 +10,9 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/authentication/login/login_cubit.dart';
 import 'package:gahezha/cubits/authentication/signup/signup_cubit.dart';
 import 'package:gahezha/cubits/locale/locale_cubit.dart';
+import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/gahezha_splash.dart';
@@ -58,6 +60,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SignupCubit()),
         BlocProvider(create: (_) => LoginCubit()),
         BlocProvider(create: (_) => UserCubit()),
+        BlocProvider(create: (_) => ShopCubit()),
+        BlocProvider(create: (_) => ProductCubit()),
         BlocProvider(create: (_) => ProfileToggleCubit()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(

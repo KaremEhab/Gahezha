@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +12,12 @@ import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/main.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/login.dart';
 import 'package:gahezha/screens/layout/layout.dart';
 import 'package:gahezha/screens/onboarding/onboarding_screen.dart';
+import 'package:gahezha/waiting_for_approval.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GahezhaSplash extends StatefulWidget {
@@ -100,7 +104,22 @@ class _GahezhaSplashState extends State<GahezhaSplash> {
       navigateAndFinish(context: context, screen: const Login());
       await GoogleSignIn().signOut();
     } else {
-      navigateAndFinish(context: context, screen: const Layout());
+      if (currentUserType == UserType.shop) {
+        if (currentShopModel!.shopAcceptanceStatus ==
+            ShopAcceptanceStatus.accepted) {
+          log('user id: $uId');
+          navigateAndFinish(context: context, screen: const Layout());
+        } else {
+          if (!mounted) return;
+          navigateAndFinish(
+            context: context,
+            screen: const WaitingForApprovalPage(),
+          );
+        }
+      } else {
+        log('user id: $uId');
+        navigateAndFinish(context: context, screen: const Layout());
+      }
     }
   }
 

@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
+    "accepted_shops": MessageLookupByLibrary.simpleMessage("Accepted Shops"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "account_settings": MessageLookupByLibrary.simpleMessage(
       "Account Settings",
@@ -367,6 +368,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "regular": MessageLookupByLibrary.simpleMessage("Regular"),
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),
+    "rejected_shops": MessageLookupByLibrary.simpleMessage("Rejected Shops"),
     "report": MessageLookupByLibrary.simpleMessage("Report"),
     "report_status": MessageLookupByLibrary.simpleMessage("Report Status"),
     "reported": MessageLookupByLibrary.simpleMessage("Reported"),
@@ -436,6 +438,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "unblock": MessageLookupByLibrary.simpleMessage("Unblock"),
     "viewing_details_of_order": MessageLookupByLibrary.simpleMessage(
       "Viewing details of order",
+    ),
+    "waiting_for_approval": MessageLookupByLibrary.simpleMessage(
+      "Waiting for approval...",
     ),
     "we_are_preparing_your_order": MessageLookupByLibrary.simpleMessage(
       "We are preparing your order",

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/products/customer/widgets/images_carousel.dart';
+import 'package:gahezha/screens/products/shop/edit_products.dart';
 import 'package:iconly/iconly.dart';
 
 class ProductDetailsSheet extends StatefulWidget {
-  final ProductModel product;
+  final ProductModel productModel;
 
-  const ProductDetailsSheet({super.key, required this.product});
+  const ProductDetailsSheet({super.key, required this.productModel});
 
   @override
   State<ProductDetailsSheet> createState() => _ProductDetailsSheetState();
@@ -31,11 +33,11 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
     super.initState();
 
     extrasAreEmpty =
-        widget.product.specifications.isEmpty &&
-        widget.product.selectedAddOns.isEmpty;
+        widget.productModel.specifications.isEmpty &&
+        widget.productModel.selectedAddOns.isEmpty;
 
     // Initialize specifications (default to first option)
-    for (var spec in widget.product.specifications) {
+    for (var spec in widget.productModel.specifications) {
       final key = spec.keys.first;
       final values = spec[key] ?? [];
       if (values.isNotEmpty) {
@@ -44,7 +46,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
     }
 
     // Initialize add-ons
-    for (var addon in widget.product.selectedAddOns) {
+    for (var addon in widget.productModel.selectedAddOns) {
       final addonName = addon["name"] ?? "";
       addOns[addonName] = false;
     }
@@ -57,7 +59,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final totalPrice = widget.product.calculateTotalPrice(
+    final totalPrice = widget.productModel.calculateTotalPrice(
       selectedSpecs: selectedSpecs,
       addOns: addOns,
       quantity: quantity,
@@ -76,7 +78,9 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
               // ---------- IMAGE ----------
               Stack(
                 children: [
-                  ProductImagesCarousel(productImages: widget.product.images),
+                  ProductImagesCarousel(
+                    productImages: widget.productModel.images,
+                  ),
                   Positioned(
                     top: 8,
                     right: 0,
@@ -102,7 +106,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.product.name,
+                      widget.productModel.name,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -110,7 +114,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.product.description,
+                      widget.productModel.description,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -119,7 +123,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "${S.current.sar} ${widget.product.price.toStringAsFixed(2)}",
+                      "${S.current.sar} ${widget.productModel.price.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -128,8 +132,8 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                     const SizedBox(height: 20),
 
                     // ---------- DYNAMIC SPECIFICATIONS ----------
-                    if (widget.product.specifications.isNotEmpty) ...[
-                      ...widget.product.specifications.map((spec) {
+                    if (widget.productModel.specifications.isNotEmpty) ...[
+                      ...widget.productModel.specifications.map((spec) {
                         final key = spec.keys.first;
                         final values = spec[key] ?? [];
 
@@ -188,7 +192,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                     ],
 
                     // ---------- DYNAMIC ADD-ONS ----------
-                    if (widget.product.selectedAddOns.isNotEmpty) ...[
+                    if (widget.productModel.selectedAddOns.isNotEmpty) ...[
                       Text(
                         S.current.add_extras,
                         style: const TextStyle(
@@ -196,7 +200,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                           fontSize: 16,
                         ),
                       ),
-                      ...widget.product.selectedAddOns.map((addon) {
+                      ...widget.productModel.selectedAddOns.map((addon) {
                         final addonName = addon["name"] ?? "";
                         final addonPrice = (addon["price"] ?? 0.0) as double;
 
@@ -247,25 +251,47 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
               children: [
                 // Counter
                 Material(
-                  color: currentUserType == UserType.shop
+                  color:
+                      currentUserType == UserType.shop ||
+                          currentUserType == UserType.admin
                       ? Colors.red.withOpacity(0.1)
                       : null,
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
-                    onTap: currentUserType == UserType.customer ? null : () {},
+                    onTap: currentUserType == UserType.customer
+                        ? null
+                        : () {
+                            Navigator.pop(context);
+                            ProductCubit.instance.deleteProductById(
+                              widget.productModel.id,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "${widget.productModel.name} ${S.current.deleted}",
+                                ),
+                              ),
+                            );
+                          },
                     child: Container(
-                      padding: currentUserType == UserType.shop
+                      padding:
+                          currentUserType == UserType.shop ||
+                              currentUserType == UserType.admin
                           ? EdgeInsets.symmetric(horizontal: 25, vertical: 15)
                           : null,
 
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        border: currentUserType == UserType.shop
+                        border:
+                            currentUserType == UserType.shop ||
+                                currentUserType == UserType.admin
                             ? null
                             : Border.all(color: Colors.grey.shade300),
                       ),
-                      child: currentUserType == UserType.shop
+                      child:
+                          currentUserType == UserType.shop ||
+                              currentUserType == UserType.admin
                           ? Row(
                               spacing: 5,
                               children: [
@@ -312,22 +338,33 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       if (currentUserType == UserType.guest) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text("Create an account first"),
-                            action: SnackBarAction(
-                              label: "Sign Up",
-                              textColor: primaryBlue,
-                              onPressed: () {
-                                navigateTo(
-                                  context: context,
-                                  screen: Signup(isGuestMode: true),
-                                );
-                              },
+                        Navigator.pop(
+                          context,
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text("Create an account first"),
+                              action: SnackBarAction(
+                                label: "Sign Up",
+                                textColor: primaryBlue,
+                                onPressed: () {
+                                  navigateTo(
+                                    context: context,
+                                    screen: Signup(isGuestMode: true),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         );
+                      } else if (currentUserType == UserType.shop ||
+                          currentUserType == UserType.admin) {
+                        Navigator.pop(context);
+                        navigateTo(
+                          context: context,
+                          screen: EditProductPage(product: widget.productModel),
+                        );
                       } else {
+                        Navigator.pop(context);
                         final selectedAddOnList = addOns.entries
                             .where((e) => e.value)
                             .map((e) => e.key)
@@ -338,8 +375,6 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                         debugPrint("Specifications: $selectedSpecs");
                         debugPrint("Add-ons: $selectedAddOnList");
                       }
-
-                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -352,14 +387,16 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                       ),
                     ),
                     icon: Icon(
-                      currentUserType == UserType.shop
+                      currentUserType == UserType.shop ||
+                              currentUserType == UserType.admin
                           ? IconlyLight.edit
                           : Icons.add_shopping_cart,
                       color: Colors.white,
                     ),
                     label: Text(
-                      currentUserType == UserType.shop
-                          ? "Edit ${widget.product.name}"
+                      currentUserType == UserType.shop ||
+                              currentUserType == UserType.admin
+                          ? "Edit ${widget.productModel.name}"
                           : "Add to cart $totalPrice",
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 16, color: Colors.white),

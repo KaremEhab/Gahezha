@@ -19,19 +19,42 @@ import 'package:gahezha/screens/layout/widgets/home_profile_popup.dart';
 import 'package:gahezha/screens/menu/shop_menu.dart';
 import 'package:gahezha/screens/orders/orders.dart';
 import 'package:gahezha/screens/profile/customer/customer_profile.dart';
+import 'package:gahezha/screens/profile/customer/pages/edit_profile.dart';
 import 'package:gahezha/screens/profile/shop/shop_profile.dart';
 
 class Layout extends StatefulWidget {
   const Layout({super.key});
 
   @override
-  State<Layout> createState() => _LayoutState();
+  State<Layout> createState() => LayoutState();
 }
 
-class _LayoutState extends State<Layout> {
+class LayoutState extends State<Layout> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+  List<Widget> _pages = [];
   DateTime? _lastBackPressTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages =
+        currentUserType == UserType.customer ||
+            currentUserType == UserType.guest
+        ? [
+            const CustomerHomePage(),
+            const CartPage(),
+            const OrdersPage(),
+            const CustomerProfilePage(),
+          ]
+        : currentUserType == UserType.shop
+        ? [const ShopHomePage(), const ShopMenuPage(), const ShopProfilePage()]
+        : [
+            const AdminHomePage(),
+            const UsersAndShopsPage(),
+            const CustomerProfilePage(),
+          ];
+  }
 
   void _onItemTapped(int index) {
     setState(() => _currentIndex = index);
@@ -62,25 +85,27 @@ class _LayoutState extends State<Layout> {
     return true; // يسمح بالخروج إذا ضغط مرتين خلال ثانيتين
   }
 
+  void openEditProfile(BuildContext context) {
+    _onItemTapped(_pages.length - 1); // jump to last tab
+    Future.delayed(const Duration(milliseconds: 200), () {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        backgroundColor: Colors.white,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(sheetRadius),
+          ),
+        ),
+        builder: (context) => const EditProfileSheet(),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages =
-        currentUserType == UserType.customer ||
-            currentUserType == UserType.guest
-        ? [
-            const CustomerHomePage(),
-            const CartPage(),
-            const OrdersPage(),
-            const CustomerProfilePage(),
-          ]
-        : currentUserType == UserType.shop
-        ? [const ShopHomePage(), const ShopMenuPage(), const ShopProfilePage()]
-        : [
-            const AdminHomePage(),
-            const UsersAndShopsPage(),
-            const CustomerProfilePage(),
-          ];
-
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Stack(

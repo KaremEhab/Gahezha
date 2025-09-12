@@ -4,14 +4,15 @@ import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/blocked_and_reported/widgets/account_settings_sheet.dart';
 import 'package:iconly/iconly.dart';
 
-class AcoountSettingsCard extends StatelessWidget {
-  const AcoountSettingsCard({
+class AccountSettingsCard extends StatelessWidget {
+  const AccountSettingsCard({
     super.key,
     required this.userType,
     this.userName = "John Doe",
     this.userEmail = "john.doe@example.com",
     this.userPhone = "+20 111 222 3333",
     this.avatarUrl = "https://picsum.photos/200/200?random=1",
+    this.bannerUrl = "https://picsum.photos/200/200?random=1",
     this.isBlocked = false,
     this.isReported = false,
     this.isDisabled = false, // NEW
@@ -23,6 +24,7 @@ class AcoountSettingsCard extends StatelessWidget {
   final String userEmail;
   final String userPhone;
   final String avatarUrl;
+  final String bannerUrl;
   final bool isBlocked;
   final bool isReported;
   final bool isDisabled; // NEW
@@ -76,6 +78,7 @@ class AcoountSettingsCard extends StatelessWidget {
               email: userEmail,
               phone: userPhone,
               avatarUrl: avatarUrl,
+              bannerUrl: bannerUrl,
               isBlocked: isBlocked,
               isReported: isReported,
               reportedCount: reportedCount,

@@ -20,79 +20,82 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
 
   // Fake products for UI demo
-  List<ProductModel> fakeProducts = [
-    ProductModel(
-      id: "141514",
-      name: "Cheeseburger",
-      description: "Cheeseburger description",
-      quantity: 23,
-      price: 8.99,
-      specifications: [
-        {
-          "Select Size": [
-            {"name": "Small", "price": 0.0},
-            {"name": "Medium", "price": 2.5},
-            {"name": "Large", "price": 4.0},
-          ],
-        },
-      ],
-      selectedAddOns: [
-        {"name": "Extra Pickles", "price": 0.5},
-        {"name": "No Vegetables", "price": 0.0},
-        {"name": "Extra Mushrooms", "price": 1.0},
-      ],
-      images: [
-        "https://www.sargento.com/assets/Uploads/Recipe/Image/cheddarbaconcheeseburger__FocusFillWyIwLjAwIiwiMC4wMCIsODAwLDQ3OF0_CompressedW10.jpg",
-      ],
-    ),
-    ProductModel(
-      id: "231412",
-      name: "Pepperoni Pizza",
-      description: "Pepperoni Pizza description",
-      quantity: 4,
-      price: 12.50,
-      specifications: [
-        {
-          "Select Size": [
-            {"name": "Small", "price": 0.0},
-            {"name": "Medium", "price": 2.5},
-            {"name": "Large", "price": 4.0},
-          ],
-        },
-      ],
-      selectedAddOns: [
-        {"name": "Extra Cheese", "price": 2.0},
-        {"name": "Extra Pepperoni", "price": 3.0},
-      ],
-      images: [
-        "https://www.moulinex.com.eg/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbXxhRFl5TDJneE9TOHhNekV4TVRjM01UVXlPVEkwTmk1aWFXNHw3NTkwMmNjYmFhZTUwZjYwNzk0ZmQyNjVmMjEzYjZiNGI3YzU1NGI3ZGNjYjM3YjYxZGY5Y2Y0ZTdjZmZkZmNj",
-        "https://www.tablefortwoblog.com/wp-content/uploads/2025/06/pepperoni-pizza-recipe-photos-tablefortwoblog-7.jpg",
-      ],
-    ),
-    ProductModel(
-      id: "139401",
-      name: "American Coffee",
-      description: "American Coffee description",
-      quantity: 20,
-      price: 3.25,
-      specifications: [
-        {
-          "How to Serve": [
-            {"name": "Hot", "price": 0.0},
-            {"name": "Iced", "price": 2.5},
-            {"name": "Decaf", "price": 4.0},
-          ],
-        },
-      ],
-      selectedAddOns: [
-        {"name": "Extra Milk", "price": 0.5},
-        {"name": "Whipped Cream", "price": 1.0},
-      ],
-      images: [
-        "https://pontevecchiosrl.it/wp-content/uploads/2021/03/caffe-americano-in-casa.jpg",
-      ],
-    ),
-  ];
+  // List<ProductModel> fakeProducts = [
+  //   ProductModel(
+  //     id: "141514",
+  //     shopId: "141514",
+  //     name: "Cheeseburger",
+  //     description: "Cheeseburger description",
+  //     quantity: 23,
+  //     price: 8.99,
+  //     specifications: [
+  //       {
+  //         "Select Size": [
+  //           {"name": "Small", "price": 0.0},
+  //           {"name": "Medium", "price": 2.5},
+  //           {"name": "Large", "price": 4.0},
+  //         ],
+  //       },
+  //     ],
+  //     selectedAddOns: [
+  //       {"name": "Extra Pickles", "price": 0.5},
+  //       {"name": "No Vegetables", "price": 0.0},
+  //       {"name": "Extra Mushrooms", "price": 1.0},
+  //     ],
+  //     images: [
+  //       "https://www.sargento.com/assets/Uploads/Recipe/Image/cheddarbaconcheeseburger__FocusFillWyIwLjAwIiwiMC4wMCIsODAwLDQ3OF0_CompressedW10.jpg",
+  //     ],
+  //   ),
+  //   ProductModel(
+  //     id: "141514",
+  //     shopId: "141514",
+  //     name: "Pepperoni Pizza",
+  //     description: "Pepperoni Pizza description",
+  //     quantity: 4,
+  //     price: 12.50,
+  //     specifications: [
+  //       {
+  //         "Select Size": [
+  //           {"name": "Small", "price": 0.0},
+  //           {"name": "Medium", "price": 2.5},
+  //           {"name": "Large", "price": 4.0},
+  //         ],
+  //       },
+  //     ],
+  //     selectedAddOns: [
+  //       {"name": "Extra Cheese", "price": 2.0},
+  //       {"name": "Extra Pepperoni", "price": 3.0},
+  //     ],
+  //     images: [
+  //       "https://www.moulinex.com.eg/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbXxhRFl5TDJneE9TOHhNekV4TVRjM01UVXlPVEkwTmk1aWFXNHw3NTkwMmNjYmFhZTUwZjYwNzk0ZmQyNjVmMjEzYjZiNGI3YzU1NGI3ZGNjYjM3YjYxZGY5Y2Y0ZTdjZmZkZmNj",
+  //       "https://www.tablefortwoblog.com/wp-content/uploads/2025/06/pepperoni-pizza-recipe-photos-tablefortwoblog-7.jpg",
+  //     ],
+  //   ),
+  //   ProductModel(
+  //     id: "141514",
+  //     shopId: "141514",
+  //     name: "American Coffee",
+  //     description: "American Coffee description",
+  //     quantity: 20,
+  //     price: 3.25,
+  //     specifications: [
+  //       {
+  //         "How to Serve": [
+  //           {"name": "Hot", "price": 0.0},
+  //           {"name": "Iced", "price": 2.5},
+  //           {"name": "Decaf", "price": 4.0},
+  //         ],
+  //       },
+  //     ],
+  //     selectedAddOns: [
+  //       {"name": "Extra Milk", "price": 0.5},
+  //       {"name": "Whipped Cream", "price": 1.0},
+  //     ],
+  //     images: [
+  //       "https://pontevecchiosrl.it/wp-content/uploads/2021/03/caffe-americano-in-casa.jpg",
+  //     ],
+  //   ),
+  // ];
 
   // Dummy multi-shop cart data
   List<Map<String, dynamic>> cartShops = [

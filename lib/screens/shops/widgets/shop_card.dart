@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/shops/shop_details.dart';
 import 'package:iconly/iconly.dart';
 
 class ShopCard extends StatelessWidget {
-  const ShopCard({super.key});
+  const ShopCard({super.key, this.shopModel});
+
+  final ShopModel? shopModel;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class ShopCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ShopDetailsPage(shopName: S.current.shop),
+                builder: (context) => ShopDetailsPage(shopModel: shopModel!),
               ),
             );
           },
@@ -36,30 +39,27 @@ class ShopCard extends StatelessWidget {
                   flex: 4,
                   child: Stack(
                     children: [
-                      // widget.productImages == null || widget.productImages.isEmpty
-                      //     ? Container(
-                      //   height: 160,
-                      //   decoration: BoxDecoration(
-                      //     color: Colors.grey.shade200,
-                      //     borderRadius: const BorderRadius.vertical(
-                      //       top: Radius.circular(18),
-                      //     ),
-                      //   ),
-                      //   child: Center(
-                      //     child: Icon(
-                      //       IconlyBroken.image,
-                      //       size: 50,
-                      //     ),
-                      //   ),
-                      // )
-                      //     :
-                      CustomCachedImage(
-                        imageUrl: "https://picsum.photos/500/250?random=1",
-                        height: double.infinity,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(18),
-                        ),
-                      ),
+                      shopModel!.shopBanner == null ||
+                              shopModel!.shopBanner.isEmpty
+                          ? Container(
+                              height: 160,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(18),
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(IconlyBroken.image, size: 50),
+                              ),
+                            )
+                          : CustomCachedImage(
+                              imageUrl: shopModel!.shopBanner,
+                              height: double.infinity,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(18),
+                              ),
+                            ),
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
@@ -77,26 +77,26 @@ class ShopCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: Material(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            onTap: () {},
-                            child: const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
-                                IconlyBold.delete,
-                                color: Colors.redAccent,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Positioned(
+                      //   top: 10,
+                      //   right: 10,
+                      //   child: Material(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(50),
+                      //     child: InkWell(
+                      //       borderRadius: BorderRadius.circular(50),
+                      //       onTap: () {},
+                      //       child: const Padding(
+                      //         padding: EdgeInsets.all(8),
+                      //         child: Icon(
+                      //           IconlyBold.delete,
+                      //           color: Colors.redAccent,
+                      //           size: 20,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -123,7 +123,7 @@ class ShopCard extends StatelessWidget {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                S.current.shop,
+                                shopModel!.shopName,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -136,13 +136,19 @@ class ShopCard extends StatelessWidget {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
+                                color: shopModel!.shopStatus
+                                    ? Colors.green.withOpacity(0.1)
+                                    : Colors.red.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                S.current.open,
+                                shopModel!.shopStatus
+                                    ? S.current.open
+                                    : S.current.closed,
                                 style: TextStyle(
-                                  color: Colors.green,
+                                  color: shopModel!.shopStatus
+                                      ? Colors.green
+                                      : Colors.red,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 11,
                                 ),
@@ -153,7 +159,7 @@ class ShopCard extends StatelessWidget {
 
                         const SizedBox(height: 6),
                         Text(
-                          S.current.fresh_items_quick_delivery,
+                          "${shopModel!.shopCategory} · ${S.current.opening_hours}: ${shopModel!.openingHoursFrom} ${S.current.am} - ${shopModel!.openingHoursTo} ${S.current.pm}",
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 13,
@@ -171,8 +177,8 @@ class ShopCard extends StatelessWidget {
                               size: 18,
                             ),
                             const SizedBox(width: 4),
-                            const Text(
-                              "4.8",
+                            Text(
+                              shopModel!.shopRate.toString(),
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
@@ -180,12 +186,14 @@ class ShopCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 14),
                             const Icon(
-                              IconlyBold.time_circle,
+                              IconlyLight.time_circle,
                               size: 16,
                               color: Colors.grey,
                             ),
                             const SizedBox(width: 4),
-                            Text("25-30 ${S.current.min}"),
+                            Text(
+                              "${shopModel!.preparingTimeFrom}-${shopModel!.preparingTimeTo} ${S.current.min}",
+                            ),
                             const Spacer(),
 
                             // Gradient CTA

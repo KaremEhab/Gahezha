@@ -1,160 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:gahezha/public_widgets/shimmer_box.dart';
 import 'package:gahezha/screens/products/customer/widgets/product_details_sheet.dart';
 import 'package:gahezha/screens/products/shop/add_products.dart';
 import 'package:gahezha/screens/products/shop/edit_products.dart';
 import 'package:iconly/iconly.dart';
 
-class ShopMenuPage extends StatelessWidget {
+class ShopMenuPage extends StatefulWidget {
   const ShopMenuPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Fake products for UI demo
-    List<ProductModel> fakeProducts = [
-      ProductModel(
-        id: "141514",
-        name: "Cheeseburger",
-        description: "Cheeseburger description",
-        quantity: 23,
-        price: 8.99,
-        specifications: [
-          {
-            "Select Size": [
-              {"name": "Small", "price": 0.0},
-              {"name": "Medium", "price": 2.5},
-              {"name": "Large", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Pickles", "price": 0.5},
-          {"name": "No Vegetables", "price": 0.0},
-          {"name": "Extra Mushrooms", "price": 1.0},
-        ],
-        images: [
-          "https://www.sargento.com/assets/Uploads/Recipe/Image/cheddarbaconcheeseburger__FocusFillWyIwLjAwIiwiMC4wMCIsODAwLDQ3OF0_CompressedW10.jpg",
-        ],
-      ),
-      ProductModel(
-        id: "231412",
-        name: "Pepperoni Pizza",
-        description: "Pepperoni Pizza description",
-        quantity: 4,
-        price: 12.50,
-        specifications: [
-          {
-            "Select Size": [
-              {"name": "Small", "price": 0.0},
-              {"name": "Medium", "price": 2.5},
-              {"name": "Large", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Cheese", "price": 2.0},
-          {"name": "Extra Pepperoni", "price": 3.0},
-        ],
-        images: [
-          "https://www.moulinex.com.eg/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbXxhRFl5TDJneE9TOHhNekV4TVRjM01UVXlPVEkwTmk1aWFXNHw3NTkwMmNjYmFhZTUwZjYwNzk0ZmQyNjVmMjEzYjZiNGI3YzU1NGI3ZGNjYjM3YjYxZGY5Y2Y0ZTdjZmZkZmNj",
-          "https://www.tablefortwoblog.com/wp-content/uploads/2025/06/pepperoni-pizza-recipe-photos-tablefortwoblog-7.jpg",
-        ],
-      ),
-      ProductModel(
-        id: "139401",
-        name: "American Coffee",
-        description: "American Coffee description",
-        quantity: 20,
-        price: 3.25,
-        specifications: [
-          {
-            "How to Serve": [
-              {"name": "Hot", "price": 0.0},
-              {"name": "Iced", "price": 2.5},
-              {"name": "Decaf", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Milk", "price": 0.5},
-          {"name": "Whipped Cream", "price": 1.0},
-        ],
-        images: [
-          "https://pontevecchiosrl.it/wp-content/uploads/2021/03/caffe-americano-in-casa.jpg",
-        ],
-      ),
-      ProductModel(
-        id: "139401",
-        name: "American Coffee",
-        description: "American Coffee description",
-        quantity: 20,
-        price: 3.25,
-        specifications: [],
-        selectedAddOns: [],
-        images: [
-          // "https://pontevecchiosrl.it/wp-content/uploads/2021/03/caffe-americano-in-casa.jpg",
-        ],
-      ),
-    ];
+  State<ShopMenuPage> createState() => _ShopMenuPageState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.current.shop_menu),
-        backgroundColor: Colors.white,
-        forceMaterialTransparency: true,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: fakeProducts.isEmpty
-          ? Center(child: Text(S.current.no_products_yet))
-          : ListView.builder(
-              padding: const EdgeInsets.only(top: 10, bottom: 80),
-              itemCount: fakeProducts.length,
-              itemBuilder: (context, index) {
-                final product = fakeProducts[index];
-                return _ProductCard(product: product);
-              },
-            ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryBlue,
-        shape: CircleBorder(),
-        elevation: 0,
-        child: const Icon(Icons.add, color: Colors.white),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddProductPage()),
-          );
-        },
-      ),
+class _ShopMenuPageState extends State<ShopMenuPage> {
+  bool display = false;
+  @override
+  void initState() {
+    super.initState();
+    ProductCubit.instance.getAllProductsByShopId(uId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<ProductCubit, ProductState>(
+      listener: (context, state) {
+        if (state is ProductSuccess) {
+          display = true;
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(S.current.shop_menu),
+            backgroundColor: Colors.white,
+            forceMaterialTransparency: true,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            centerTitle: true,
+          ),
+          body: ProductCubit.instance.allProducts.isEmpty
+              ? Center(child: Text(S.current.no_products_yet))
+              : ListView.builder(
+                  padding: const EdgeInsets.only(top: 10, bottom: 80),
+                  itemCount: display
+                      ? 5
+                      : ProductCubit.instance.allProducts.length,
+                  itemBuilder: (context, index) {
+                    final product = ProductCubit.instance.allProducts[index];
+                    return ProductCard(
+                      product: display ? null : product,
+                      isLoading: display,
+                    );
+                  },
+                ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: primaryBlue,
+            shape: CircleBorder(),
+            elevation: 0,
+            child: const Icon(Icons.add, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddProductPage()),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
 
-class _ProductCard extends StatelessWidget {
-  final ProductModel product;
-  const _ProductCard({required this.product});
+class ProductCard extends StatelessWidget {
+  final ProductModel? product; // nullable for loading
+  final bool isLoading;
+
+  const ProductCard({super.key, this.product, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
-      key: ValueKey(product.id),
+    if (isLoading || product == null) {
+      // Shimmer placeholder
+      return ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        leading: const ShimmerBox(width: 56, height: 56, borderRadius: 8),
+        title: const ShimmerBox(width: double.infinity, height: 16),
+        subtitle: const ShimmerBox(width: double.infinity, height: 12),
+        trailing: const ShimmerBox(width: 50, height: 16),
+      );
+    }
 
-      // LEFT → Delete
+    // Actual ProductCard
+    return Slidable(
+      key: ValueKey(product!.id),
       startActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: (c) async {
-              // TODO: implement delete product
+            onPressed: (c) {
+              ProductCubit.instance.deleteProductById(product!.id);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("${product.name} ${S.current.deleted}")),
+                SnackBar(
+                  content: Text("${product!.name} ${S.current.deleted}"),
+                ),
               );
             },
             backgroundColor: Colors.red,
@@ -164,17 +120,15 @@ class _ProductCard extends StatelessWidget {
           ),
         ],
       ),
-
-      // RIGHT → Edit
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: (c) async {
+            onPressed: (c) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => EditProductPage(product: product),
+                  builder: (_) => EditProductPage(product: product!),
                 ),
               );
             },
@@ -185,7 +139,6 @@ class _ProductCard extends StatelessWidget {
           ),
         ],
       ),
-
       child: ListTile(
         onTap: () {
           showModalBottomSheet(
@@ -196,11 +149,11 @@ class _ProductCard extends StatelessWidget {
                 top: Radius.circular(sheetRadius),
               ),
             ),
-            builder: (_) => ProductDetailsSheet(product: product),
+            builder: (_) => ProductDetailsSheet(productModel: product!),
           );
         },
-        contentPadding: EdgeInsets.symmetric(horizontal: 10),
-        leading: product.images == null || product.images.isEmpty
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        leading: product!.images.isEmpty
             ? Container(
                 width: 56,
                 height: 56,
@@ -208,26 +161,26 @@ class _ProductCard extends StatelessWidget {
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(radius),
                 ),
-                child: Center(child: Icon(IconlyBroken.image, size: 30)),
+                child: const Center(child: Icon(IconlyBroken.image, size: 30)),
               )
             : CustomCachedImage(
-                imageUrl: product.images.first ?? "",
+                imageUrl: product!.images.first,
                 borderRadius: BorderRadius.circular(radius),
                 width: 56,
                 height: 56,
               ),
         title: Text(
-          product.name,
-          style: TextStyle(fontWeight: FontWeight.w700),
+          product!.name,
+          style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         subtitle: Text(
-          product.description,
+          product!.description,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         trailing: Text(
-          "${S.current.sar} ${product.price.toStringAsFixed(2)}",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          "${S.current.sar} ${product!.price.toStringAsFixed(2)}",
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),
     );

@@ -62,6 +62,54 @@ class CloudinaryService {
     }
   }
 
+  Future<String?> uploadProductImage(
+    File file, {
+    String folder = "products", // default folder
+  }) async {
+    try {
+      // Use the file name + timestamp to make it unique
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = file.path.split('/').last;
+      final safeName = fileName
+          .replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_')
+          .toLowerCase();
+      final publicId = "${safeName}_$timestamp";
+
+      final response = await _cloudinary.uploader().upload(
+        file,
+        params: UploadParams(
+          resourceType: 'image',
+          folder: folder,
+          publicId: publicId,
+          uniqueFilename: true,
+          overwrite: false,
+        ),
+      );
+
+      return response?.data?.secureUrl;
+    } catch (e) {
+      print("Upload error: $e");
+      return null;
+    }
+  }
+
+  Future<List<String>> addMultipleImages(
+    List<File> files, {
+    String folder = "products",
+  }) async {
+    List<String> urls = [];
+
+    for (int i = 0; i < files.length; i++) {
+      final file = files[i];
+
+      final url = await uploadProductImage(file, folder: folder);
+
+      if (url != null) urls.add(url);
+    }
+
+    return urls;
+  }
+
   /// رفع صورة من URL
   Future<String?> uploadImageFromUrl(
     String imageUrl, {
@@ -81,6 +129,40 @@ class CloudinaryService {
     } catch (e) {
       print("Upload error: $e");
       return null;
+    }
+  }
+
+  Future<void> deleteImageByUrl(String url) async {
+    try {
+      // Example URL:
+      // https://res.cloudinary.com/dl0wayiab/image/upload/v1757701904/products/image_cropper_1757701830290_jpg_1757701901584.png
+
+      final uri = Uri.parse(url);
+      final path = uri.path;
+      // path = "/image/upload/v1757701904/products/image_cropper_1757701830290_jpg_1757701901584.png"
+
+      // Remove leading '/image/upload/' and optional version 'v1234567890/'
+      final regex = RegExp(r'^/image/upload/(v\d+/)?');
+      String publicId = path.replaceFirst(regex, '');
+
+      // Remove file extension
+      publicId = publicId.replaceAll(RegExp(r'\.[^/.]+$'), '');
+
+      print("Deleting Cloudinary publicId: $publicId");
+      // ✅ Should now print: products/image_cropper_1757701830290_jpg_1757701901584
+
+      // Delete the image
+      final response = await _cloudinary.uploader().destroy(
+        DestroyParams(publicId: publicId, resourceType: 'image'),
+      );
+
+      if (response.responseCode == 200) {
+        print("Deleted image successfully: $publicId");
+      } else {
+        print("Failed to delete image: $publicId, ${response.error}");
+      }
+    } catch (e) {
+      print("Cloudinary delete error: $e");
     }
   }
 }

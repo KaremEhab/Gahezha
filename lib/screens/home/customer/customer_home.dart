@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/cubits/user/user_state.dart';
 import 'package:gahezha/generated/l10n.dart';
@@ -29,358 +30,307 @@ class _CustomerHomePageState extends State<CustomerHomePage>
   @override
   bool get wantKeepAlive => true;
 
+  ValueNotifier<bool> allShopsDisplayNotifier = ValueNotifier(false);
+  ValueNotifier<bool> dealerShopsDisplayNotifier = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    // ShopCubit.instance.getHotDealerShops();
+    ShopCubit.instance.customerGetAllShops();
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              // ---------------- SliverAppBar ----------------
-              SliverAppBar(
-                pinned: true,
-                floating: true,
-                backgroundColor: Colors.white,
-                forceMaterialTransparency: true,
-                automaticallyImplyLeading: false,
-                elevation: 0,
-                titleSpacing: 0,
-                flexibleSpace: Material(
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      const SafeArea(child: SizedBox()),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            BlocBuilder<ProfileToggleCubit, HomeToggleState>(
-                              builder: (context, state) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    ProfileToggleCubit.instance
-                                        .homeProfileButtonToggle();
+    return BlocConsumer<ShopCubit, ShopState>(
+      listener: (context, state) {
+        if (state is AllShopsLoaded) {
+          allShopsDisplayNotifier.value = true;
+          dealerShopsDisplayNotifier.value = true;
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  // ---------------- SliverAppBar ----------------
+                  SliverAppBar(
+                    pinned: true,
+                    floating: true,
+                    backgroundColor: Colors.white,
+                    forceMaterialTransparency: true,
+                    automaticallyImplyLeading: false,
+                    elevation: 0,
+                    titleSpacing: 0,
+                    flexibleSpace: Material(
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          const SafeArea(child: SizedBox()),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                BlocBuilder<
+                                  ProfileToggleCubit,
+                                  HomeToggleState
+                                >(
+                                  builder: (context, state) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        ProfileToggleCubit.instance
+                                            .homeProfileButtonToggle();
+                                      },
+                                      child: BlocBuilder<UserCubit, UserState>(
+                                        builder: (context, state) {
+                                          if (state is UserLoaded) {
+                                            return CircleAvatar(
+                                              radius: 22,
+                                              backgroundColor:
+                                                  Colors.grey.shade300,
+                                              child: CircleAvatar(
+                                                radius: 20,
+                                                child: CustomCachedImage(
+                                                  imageUrl: currentUserModel!
+                                                      .profileUrl,
+                                                  height: double.infinity,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        200,
+                                                      ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          return SizedBox.shrink();
+                                        },
+                                      ),
+                                    );
                                   },
-                                  child: BlocBuilder<UserCubit, UserState>(
-                                    builder: (context, state) {
-                                      if (state is UserLoaded) {
-                                        return CircleAvatar(
-                                          radius: 22,
-                                          child: CustomCachedImage(
-                                            imageUrl:
-                                                currentUserModel!.profileUrl,
-                                            height: double.infinity,
-                                            borderRadius: BorderRadius.circular(
-                                              200,
+                                ),
+                                SvgPicture.asset(
+                                  'assets/images/logo.svg',
+                                  height: 28,
+                                ),
+                                Stack(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const NotificationsPage(),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        IconlyLight.notification,
+                                        size: 28,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 10,
+                                      top: 10,
+                                      child: Container(
+                                        height: 10,
+                                        width: 10,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // ---------------- Body ----------------
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Catchy Text
+                          FadeInDown(
+                            duration: const Duration(milliseconds: 600),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: Text(
+                                S.current.home_catchy_text,
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Active Orders Card
+                          FadeInUp(
+                            duration: const Duration(milliseconds: 600),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      primaryBlue.withOpacity(0.8),
+                                      primaryBlue.withOpacity(0.5),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(18),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: primaryBlue.withOpacity(0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(18),
+                                    onTap: () {
+                                      if (currentUserType == UserType.guest) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: const Text(
+                                              "Create an account first",
+                                            ),
+                                            action: SnackBarAction(
+                                              label: "Sign Up",
+                                              textColor: primaryBlue,
+                                              onPressed: () {
+                                                navigateTo(
+                                                  context: context,
+                                                  screen: Signup(
+                                                    isGuestMode: true,
+                                                  ),
+                                                );
+                                              },
                                             ),
                                           ),
                                         );
+                                      } else {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          backgroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(sheetRadius),
+                                            ),
+                                          ),
+                                          builder: (context) =>
+                                              const ActiveOrdersBottomSheet(),
+                                        );
                                       }
-                                      return SizedBox.shrink();
                                     },
-                                  ),
-                                );
-                              },
-                            ),
-                            SvgPicture.asset(
-                              'assets/images/logo.svg',
-                              height: 28,
-                            ),
-                            Stack(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NotificationsPage(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(18),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            IconlyBold.bag,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Expanded(
+                                            child: Text(
+                                              currentUserType == UserType.guest
+                                                  ? "See your active orders"
+                                                  : S
+                                                        .current
+                                                        .home_active_orders, // replaced text
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          const Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    IconlyLight.notification,
-                                    size: 28,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 10,
-                                  top: 10,
-                                  child: Container(
-                                    height: 10,
-                                    width: 10,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ---------------- Body ----------------
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Catchy Text
-                      FadeInDown(
-                        duration: const Duration(milliseconds: 600),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            S.current.home_catchy_text,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Active Orders Card
-                      FadeInUp(
-                        duration: const Duration(milliseconds: 600),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  primaryBlue.withOpacity(0.8),
-                                  primaryBlue.withOpacity(0.5),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: primaryBlue.withOpacity(0.2),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(18),
-                                onTap: () {
-                                  if (currentUserType == UserType.guest) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text(
-                                          "Create an account first",
-                                        ),
-                                        action: SnackBarAction(
-                                          label: "Sign Up",
-                                          textColor: primaryBlue,
-                                          onPressed: () {
-                                            navigateTo(
-                                              context: context,
-                                              screen: Signup(isGuestMode: true),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(sheetRadius),
-                                        ),
-                                      ),
-                                      builder: (context) =>
-                                          const ActiveOrdersBottomSheet(),
-                                    );
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(18),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        IconlyBold.bag,
-                                        color: Colors.white,
-                                        size: 30,
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Expanded(
-                                        child: Text(
-                                          currentUserType == UserType.guest
-                                              ? "See your active orders"
-                                              : S
-                                                    .current
-                                                    .home_active_orders, // replaced text
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      const Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 18,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ),
                             ),
                           ),
-                        ),
+
+                          const SizedBox(height: 30),
+                          // Hot Dealers Section
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              "🔥 ${S.current.hot_dealers}",
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          AnimatedDealerList(
+                            dealerShopsDisplayNotifier:
+                                dealerShopsDisplayNotifier,
+                            dealerShops: ShopCubit.instance.hotDealerShops,
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Recommended Section
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              "⭐ ${S.current.recommended}",
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          AnimatedShopsList(
+                            allShopsDisplayNotifier: allShopsDisplayNotifier,
+                            allShops: ShopCubit.instance.allShops,
+                          ),
+                        ],
                       ),
-
-                      const SizedBox(height: 30),
-                      // Hot Dealers Section
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "🔥 ${S.current.hot_dealers}",
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      SizedBox(
-                        height: 220,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 6,
-                          itemBuilder: (context, index) {
-                            return FadeInUp(
-                              duration: Duration(
-                                milliseconds: 400 + index * 100,
-                              ),
-                              child: Container(
-                                width: 160,
-                                margin: EdgeInsets.only(
-                                  right: 10,
-                                  left: index == 0 ? 10 : 0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.05),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(16),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ShopDetailsPage(
-                                          shopName:
-                                              "${S.current.shop} ${index + 1}",
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // widget.productImages == null || widget.productImages.isEmpty
-                                      //     ? Container(
-                                      //         width: double.infinity,
-                                      //         height: double.infinity,
-                                      //         decoration: BoxDecoration(
-                                      //           color: Colors.grey.shade200,
-                                      //           borderRadius:
-                                      //               const BorderRadius.vertical(
-                                      //                 top: Radius.circular(16),
-                                      //               ),
-                                      //         ),
-                                      //         child: Center(
-                                      //           child: Icon(
-                                      //             IconlyBroken.image,
-                                      //             size: 50,
-                                      //           ),
-                                      //         ),
-                                      //       )
-                                      //     :
-                                      CustomCachedImage(
-                                        borderRadius:
-                                            const BorderRadius.vertical(
-                                              top: Radius.circular(16),
-                                            ),
-                                        imageUrl:
-                                            "https://picsum.photos/200/150?random=$index",
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${S.current.dealer} ${index + 1}",
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              "${S.current.special_offer} · ${S.current.limited_time}",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Recommended Section
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "⭐ ${S.current.recommended}",
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      AnimatedShopsList(),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

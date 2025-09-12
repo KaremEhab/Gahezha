@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,9 +7,11 @@ import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/authentication/login/login_cubit.dart';
 import 'package:gahezha/cubits/authentication/signup/signup_cubit.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
+import 'package:gahezha/waiting_for_approval.dart';
 import 'package:iconly/iconly.dart';
 
 import '../../generated/l10n.dart';
@@ -34,7 +37,22 @@ class _LoginState extends State<Login> {
       listener: (context, state) {
         if (state is LoginSuccessState) {
           if (context.mounted) {
-            navigateAndFinish(context: context, screen: const Layout());
+            if (currentUserType == UserType.shop) {
+              if (currentShopModel!.shopAcceptanceStatus ==
+                  ShopAcceptanceStatus.accepted) {
+                log('user id: $uId');
+                navigateAndFinish(context: context, screen: const Layout());
+              } else {
+                if (!mounted) return;
+                navigateAndFinish(
+                  context: context,
+                  screen: const WaitingForApprovalPage(),
+                );
+              }
+            } else {
+              log('user id: $uId');
+              navigateAndFinish(context: context, screen: const Layout());
+            }
           }
         }
       },

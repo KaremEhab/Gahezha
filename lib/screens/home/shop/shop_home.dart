@@ -179,10 +179,10 @@ class ShopHomePage extends StatelessWidget {
                                   },
                                   child: // Profile picture
                                   CircleAvatar(
-                                    radius: 24,
+                                    radius: 22,
                                     backgroundColor: Colors.grey.shade300,
                                     child: CircleAvatar(
-                                      radius: 22,
+                                      radius: 20,
                                       child: CustomCachedImage(
                                         imageUrl: currentShopModel!.shopLogo,
                                         height: double.infinity,

@@ -673,16 +673,31 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
           children: [
             Stack(
               children: [
-                SizedBox(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: bannerPickedImage != null
-                      ? Image.file(bannerPickedImage!, fit: BoxFit.cover)
-                      : Image.network(
-                          currentShopModel!.shopBanner,
-                          fit: BoxFit.cover,
+                currentShopModel!.shopBanner == null ||
+                        currentShopModel!.shopBanner.isEmpty
+                    ? Container(
+                        height: double.infinity,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
                         ),
-                ),
+                        child: Center(
+                          child: Icon(IconlyBroken.image, size: 50),
+                        ),
+                      )
+                    : SizedBox(
+                        height: double.infinity,
+                        width: double.infinity,
+                        child: bannerPickedImage != null
+                            ? Image.file(bannerPickedImage!, fit: BoxFit.cover)
+                            : Image.network(
+                                currentShopModel!.shopBanner,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                 Container(color: Colors.black.withOpacity(0.5)),
                 if (logoPickedImage == null)
                   Positioned(
@@ -748,12 +763,23 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                       backgroundColor: primaryBlue.withOpacity(0.3),
                       child: Stack(
                         children: [
-                          CircleAvatar(
-                            radius: 80,
-                            backgroundImage: logoPickedImage != null
-                                ? FileImage(logoPickedImage!) as ImageProvider
-                                : NetworkImage(currentShopModel!.shopLogo),
-                          ),
+                          currentShopModel!.shopLogo == null ||
+                                  currentShopModel!.shopLogo.isEmpty
+                              ? CircleAvatar(
+                                  radius: 80,
+                                  child: Center(
+                                    child: Icon(IconlyBroken.image, size: 50),
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  radius: 80,
+                                  backgroundImage: logoPickedImage != null
+                                      ? FileImage(logoPickedImage!)
+                                            as ImageProvider
+                                      : NetworkImage(
+                                          currentShopModel!.shopLogo,
+                                        ),
+                                ),
                           if (isUploading)
                             CircleAvatar(
                               radius: 80,
@@ -839,12 +865,20 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
             backgroundColor: primaryBlue.withOpacity(0.3),
             child: Stack(
               children: [
-                CircleAvatar(
-                  radius: 80,
-                  backgroundImage: pickedImage != null
-                      ? FileImage(pickedImage!) as ImageProvider
-                      : NetworkImage(currentUserModel!.profileUrl),
-                ),
+                currentUserModel!.profileUrl == null ||
+                        currentUserModel!.profileUrl.isEmpty
+                    ? CircleAvatar(
+                        radius: 80,
+                        child: Center(
+                          child: Icon(IconlyBroken.image, size: 50),
+                        ),
+                      )
+                    : CircleAvatar(
+                        radius: 80,
+                        backgroundImage: pickedImage != null
+                            ? FileImage(pickedImage!) as ImageProvider
+                            : NetworkImage(currentUserModel!.profileUrl),
+                      ),
                 if (isUploading)
                   CircleAvatar(
                     radius: 80,

@@ -174,7 +174,6 @@ class UserCubit extends Cubit<UserState> {
   }
 
   /// ✅ Change Email (supports customer, guest, and admin)
-  /// ✅ Change Email (supports customer, guest, and admin)
   Future<void> changeEmail({
     required String oldEmail,
     required String newEmail,
@@ -276,6 +275,8 @@ class UserCubit extends Cubit<UserState> {
 
   Future<void> logout(BuildContext context) async {
     final savedUid = uId;
+
+    showProfileDetails = false;
 
     currentShopModel = null;
     currentUserModel = null;

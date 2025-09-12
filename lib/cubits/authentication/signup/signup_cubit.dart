@@ -20,6 +20,7 @@ import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:uuid/uuid.dart';
 part 'signup_state.dart';
 
 class SignupCubit extends Cubit<SignupState> {
@@ -202,6 +203,7 @@ class SignupCubit extends Cubit<SignupState> {
         "https://res.cloudinary.com/dl0wayiab/image/upload/v1757279016/cld-sample-4.jpg";
 
     final model = ShopModel(
+      id: Uuid().v4(),
       shopName: shopName,
       shopLogo: shopLogo,
       shopBanner: shopBanner,
@@ -211,9 +213,13 @@ class SignupCubit extends Cubit<SignupState> {
       preparingTimeTo: preparingTimeTo,
       openingHoursFrom: openingHoursFrom,
       openingHoursTo: openingHoursTo,
+      shopRate: 0.0,
       shopPhoneNumber: shopPhoneNumber,
       shopEmail: shopEmail,
+      shopAcceptanceStatus: ShopAcceptanceStatus.pending,
       shopStatus: false, // يبدأ مغلق مثلاً
+      blocked: false, // يبدأ مغلق مثلاً
+      disabled: false, // يبدأ مغلق مثلاً
       notificationsEnabled: true,
       createdAt: DateTime.now(),
     );
@@ -226,6 +232,7 @@ class SignupCubit extends Cubit<SignupState> {
         ...model.toMap(),
         'shopId': shopId,
         'fcmTokens': [fcmToken],
+        'createdAt': FieldValue.serverTimestamp(),
       });
 
       uId = shopId;

@@ -15,6 +15,7 @@ class AccountDetailsSheet extends StatelessWidget {
   final String email;
   final String phone;
   final String avatarUrl;
+  final String bannerUrl;
   final bool isBlocked;
   final bool isReported;
   final bool isDisabled; // NEW
@@ -28,6 +29,7 @@ class AccountDetailsSheet extends StatelessWidget {
     required this.email,
     required this.phone,
     required this.avatarUrl,
+    required this.bannerUrl,
     this.isBlocked = false,
     this.isReported = false,
     this.isDisabled = false, // NEW
@@ -129,7 +131,7 @@ class AccountDetailsSheet extends StatelessWidget {
                               child: Stack(
                                 children: [
                                   CustomCachedImage(
-                                    imageUrl: "https://picsum.photos/600/300",
+                                    imageUrl: bannerUrl,
                                     height: double.infinity,
                                   ),
                                   Container(

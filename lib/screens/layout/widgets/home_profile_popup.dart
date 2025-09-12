@@ -8,6 +8,7 @@ import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
+import 'package:gahezha/screens/layout/layout.dart';
 import 'package:iconly/iconly.dart';
 
 class HomeProfilePopup extends StatelessWidget {
@@ -145,7 +146,20 @@ class HomeProfilePopup extends StatelessWidget {
                                         context,
                                         Icons.edit,
                                         S.current.edit_profile,
-                                        () {},
+                                        () {
+                                          ProfileToggleCubit.instance
+                                              .homeProfileButtonToggle(); // close popup
+                                          Future.delayed(
+                                            const Duration(milliseconds: 200),
+                                            () {
+                                              context
+                                                  .findAncestorStateOfType<
+                                                    LayoutState
+                                                  >()
+                                                  ?.openEditProfile(context);
+                                            },
+                                          );
+                                        },
                                       ),
                                       _buildActionButton(
                                         context,

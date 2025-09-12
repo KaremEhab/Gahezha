@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/shops/widgets/shop_card.dart';
@@ -106,8 +107,19 @@ class _UsersTab extends StatelessWidget {
 }
 
 /// ---------- SHOPS TAB (Pinned inner tabs) ----------
-class _ShopsTab extends StatelessWidget {
+class _ShopsTab extends StatefulWidget {
   const _ShopsTab();
+
+  @override
+  State<_ShopsTab> createState() => _ShopsTabState();
+}
+
+class _ShopsTabState extends State<_ShopsTab> {
+  @override
+  void initState() {
+    super.initState();
+    ShopCubit.instance.adminGetAllShops();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +196,7 @@ class _UsersList extends StatelessWidget {
 
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
-          child: AcoountSettingsCard(
+          child: AccountSettingsCard(
             userType: UserType.customer,
             isBlocked: isBlocked,
             isDisabled: isDisabled,
@@ -204,40 +216,24 @@ class _ShopsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Example fake data
-    final List<int> shops = List.generate(10, (i) => i);
-
     return ListView.builder(
       shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      itemCount: shops.length,
+      itemCount: ShopCubit.instance.allShops.length,
       itemBuilder: (context, index) {
-        final Random random = Random();
-
-        // Disabled is exclusive
-        final bool isDisabled = random.nextBool(); // 50% chance
-
-        bool isBlocked = false;
-        bool isReported = false;
-        int reportedCount = 0;
-
-        if (!isDisabled) {
-          // Only if not disabled, decide blocked/reported independently
-          isBlocked = random.nextBool(); // 50% chance
-          isReported = random.nextBool(); // 50% chance
-          reportedCount = isReported ? random.nextInt(13) : 0;
-        }
-
+        final shop = ShopCubit.instance.allShops[index];
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
-          child: AcoountSettingsCard(
+          child: AccountSettingsCard(
             userType: UserType.shop,
-            userName: "Shop ${index + 1}",
-            userEmail: "Shop${index + 1}XFSE@example.com",
-            isBlocked: isBlocked,
-            isDisabled: isDisabled,
-            isReported: isReported,
-            reportedCount: reportedCount,
+            avatarUrl: shop.shopLogo,
+            bannerUrl: shop.shopBanner,
+            userName: shop.shopName,
+            userEmail: shop.shopEmail,
+            isBlocked: shop.blocked,
+            isDisabled: shop.disabled,
+            isReported: false,
+            reportedCount: 0,
           ),
         );
       },

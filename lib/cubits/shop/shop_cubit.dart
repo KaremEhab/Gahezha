@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/models/shop_model.dart';
+import 'package:uuid/uuid.dart';
 
 part 'shop_state.dart';
 
@@ -19,6 +20,17 @@ class ShopCubit extends Cubit<ShopState> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  /// ✅ Shop Lists
+  List<ShopModel> allShops = [];
+
+  List<ShopModel> hotDealerShops = [];
+
+  List<ShopModel> pendingShops = [];
+
+  List<ShopModel> rejectedShops = [];
+
+  List<ShopModel> acceptedShops = [];
 
   /// ✅ Get current logged-in shop
   Future<void> getCurrentShop() async {
@@ -47,19 +59,202 @@ class ShopCubit extends Cubit<ShopState> {
     }
   }
 
-  /// ✅ Get all shops
-  Future<void> getAllShops() async {
+  /// ✅ Get all shops and separate hot dealers
+  Future<void> customerGetAllShops() async {
     try {
       emit(ShopLoading());
 
-      final querySnapshot = await _firestore.collection("shops").get();
+      // Fetch all shops sorted by createdAt descending
+      final querySnapshot = await _firestore
+          .collection("shops")
+          .orderBy("createdAt", descending: true)
+          .get();
 
-      final shops = querySnapshot.docs
-          .map((doc) => ShopModel.fromMap(doc.data()))
+      if (querySnapshot.docs.isEmpty) {
+        allShops = [];
+        hotDealerShops = [];
+        emit(AllShopsLoaded(allShops));
+        return;
+      }
+
+      // Take up to 4 shops as hot dealers
+      final hotDealerDocs = querySnapshot.docs.take(4).toList();
+      hotDealerShops = hotDealerDocs
+          .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
           .toList();
 
-      emit(ShopsLoaded(shops));
+      // Remaining shops
+      final remainingDocs = querySnapshot.docs.skip(4).toList();
+      allShops = remainingDocs
+          .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
+          .toList();
+
+      emit(AllShopsLoaded(allShops));
+    } catch (e, stackTrace) {
+      print("Error in getAllShops: $e");
+      print(stackTrace);
+      allShops = [];
+      hotDealerShops = [];
+      emit(ShopError(e.toString()));
+    }
+  }
+
+  /// ✅ Get all shops
+  Future<void> adminGetAllShops() async {
+    try {
+      emit(ShopLoading());
+
+      // Fetch all shops sorted by createdAt descending
+      final querySnapshot = await _firestore
+          .collection("shops")
+          .orderBy("createdAt", descending: true)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        allShops = [];
+        emit(AllShopsLoaded(allShops));
+        return;
+      }
+
+      allShops = querySnapshot.docs
+          .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
+          .toList();
+
+      emit(AllShopsLoaded(allShops));
+    } catch (e, stackTrace) {
+      print("Error in getAllShops: $e");
+      print(stackTrace);
+      allShops = [];
+      emit(ShopError(e.toString()));
+    }
+  }
+
+  /// ✅ Get shops by status directly from Firestore
+  Future<List<ShopModel>> getShopsByStatus(ShopAcceptanceStatus status) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection("shops")
+          .where(
+            'shopAcceptanceStatus',
+            isEqualTo: status.index,
+          ) // store index in Firestore
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) return [];
+
+      return querySnapshot.docs
+          .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
+          .toList();
+    } catch (e, stackTrace) {
+      print("Error fetching shops by status [$status]: $e");
+      print(stackTrace);
+      return [];
+    }
+  }
+
+  /// ✅ Fetch top 4 pending shops for home display
+  Future<void> getHomePendingShops() async {
+    emit(ShopLoading()); // optional: emit loading state
+
+    try {
+      final shops = await getShopsByStatus(ShopAcceptanceStatus.pending);
+
+      // Limit to 4 if more than 4 shops exist
+      final displayedShops = shops.length > 4 ? shops.take(4).toList() : shops;
+
+      pendingShops = displayedShops; // assign the limited list
+      emit(PendingShopsLoaded(pendingShops)); // emit state for UI
     } catch (e) {
+      print("Error fetching home pending shops: $e");
+      emit(ShopError(e.toString()));
+    }
+  }
+
+  /// ✅ Fetch pending shops and store in pendingShops list
+  Future<void> getPendingShops() async {
+    emit(ShopLoading()); // optional: emit loading state
+
+    try {
+      final shops = await getShopsByStatus(ShopAcceptanceStatus.pending);
+      pendingShops = shops; // assign fetched shops directly
+      emit(PendingShopsLoaded(pendingShops)); // emit state for UI
+    } catch (e) {
+      print("Error fetching pending shops: $e");
+      emit(ShopError(e.toString()));
+    }
+  }
+
+  /// ✅ Similarly for accepted shops
+  Future<void> getAcceptedShops() async {
+    emit(ShopLoading());
+    try {
+      final shops = await getShopsByStatus(ShopAcceptanceStatus.accepted);
+      acceptedShops = shops;
+      emit(AcceptedShopsLoaded(acceptedShops));
+    } catch (e) {
+      print("Error fetching accepted shops: $e");
+      emit(ShopError(e.toString()));
+    }
+  }
+
+  /// ✅ Similarly for rejected shops
+  Future<void> getRejectedShops() async {
+    emit(ShopLoading());
+    try {
+      final shops = await getShopsByStatus(ShopAcceptanceStatus.rejected);
+      rejectedShops = shops;
+      emit(RejectedShopsLoaded(rejectedShops));
+    } catch (e) {
+      print("Error fetching rejected shops: $e");
+      emit(ShopError(e.toString()));
+    }
+  }
+
+  /// Change the acceptance status of a shop
+  Future<void> changeShopAcceptanceStatus({
+    required ShopModel shop,
+    required ShopAcceptanceStatus newStatus,
+  }) async {
+    if (shop.id.isEmpty) {
+      print('Error: shopId is empty');
+      return;
+    }
+
+    try {
+      // 1️⃣ Update Firestore
+      await _firestore.collection('shops').doc(shop.id).update({
+        'shopAcceptanceStatus': newStatus.index,
+      });
+
+      print('Shop ${shop.id} status updated to $newStatus');
+
+      // 2️⃣ Remove the shop from any existing lists
+      allShops.removeWhere((s) => s.id == shop.id);
+      pendingShops.removeWhere((s) => s.id == shop.id);
+      acceptedShops.removeWhere((s) => s.id == shop.id);
+      rejectedShops.removeWhere((s) => s.id == shop.id);
+
+      // 3️⃣ Add the shop to the new status list
+      final updatedShop = shop.copyWith(shopAcceptanceStatus: newStatus);
+
+      switch (newStatus) {
+        case ShopAcceptanceStatus.accepted:
+          acceptedShops.insert(0, updatedShop);
+          emit(AcceptedShopsLoaded(acceptedShops));
+          break;
+        case ShopAcceptanceStatus.rejected:
+          rejectedShops.insert(0, updatedShop);
+          emit(RejectedShopsLoaded(rejectedShops));
+          break;
+        case ShopAcceptanceStatus.pending:
+          pendingShops.insert(0, updatedShop);
+          emit(PendingShopsLoaded(pendingShops));
+          break;
+      }
+    } catch (e, stackTrace) {
+      print('Error updating shop acceptance status: $e');
+      print(stackTrace);
       emit(ShopError(e.toString()));
     }
   }
@@ -75,6 +270,7 @@ class ShopCubit extends Cubit<ShopState> {
     int? preparingTimeTo,
     int? openingHoursFrom,
     int? openingHoursTo,
+    num? shopRate,
     String? shopPhoneNumber,
     String? shopEmail,
     bool? shopStatus,
@@ -107,6 +303,9 @@ class ShopCubit extends Cubit<ShopState> {
       if (openingHoursTo != null) {
         updatedData['openingHoursTo'] = openingHoursTo;
       }
+      if (shopRate != null) {
+        updatedData['shopRate'] = shopRate;
+      }
       if (shopPhoneNumber != null) {
         updatedData['shopPhoneNumber'] = shopPhoneNumber;
       }
@@ -126,6 +325,7 @@ class ShopCubit extends Cubit<ShopState> {
 
       // ✅ Update local model
       currentShopModel = ShopModel(
+        id: Uuid().v4(),
         shopName: shopName ?? currentShopModel!.shopName,
         shopLogo: shopLogo ?? currentShopModel!.shopLogo,
         shopBanner: shopBanner ?? currentShopModel!.shopBanner,
@@ -137,9 +337,15 @@ class ShopCubit extends Cubit<ShopState> {
         openingHoursFrom:
             openingHoursFrom ?? currentShopModel!.openingHoursFrom,
         openingHoursTo: openingHoursTo ?? currentShopModel!.openingHoursTo,
+        shopRate: shopRate ?? currentShopModel!.shopRate,
         shopPhoneNumber: shopPhoneNumber ?? currentShopModel!.shopPhoneNumber,
         shopEmail: shopEmail ?? currentShopModel!.shopEmail,
         shopStatus: shopStatus ?? currentShopModel!.shopStatus,
+        blocked: currentShopModel!.blocked ?? false,
+        disabled: currentShopModel!.disabled ?? false,
+        shopAcceptanceStatus:
+            currentShopModel!.shopAcceptanceStatus ??
+            ShopAcceptanceStatus.pending,
         notificationsEnabled:
             notificationsEnabled ?? currentShopModel!.notificationsEnabled,
         createdAt: currentShopModel!.createdAt,

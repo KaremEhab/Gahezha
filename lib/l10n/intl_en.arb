@@ -200,6 +200,8 @@
   "shops": "Shops",
   "all_shops": "All Shops",
   "pending_shops": "Pending Shops",
+  "accepted_shops": "Accepted Shops",
+  "rejected_shops": "Rejected Shops",
   "recent_orders": "Recent Orders",
   "recent_reports": "Recent Reports",
   "see_all": "See all",
@@ -277,5 +279,7 @@
 
   "edit_shop": "Edit Shop",
   "delete_shop": "Delete My Shop",
-  "click_again_to_exit": "Click back again to exit."
+  "click_again_to_exit": "Click back again to exit.",
+
+  "waiting_for_approval": "Waiting for approval..."
 }

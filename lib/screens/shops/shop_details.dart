@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
@@ -10,9 +13,9 @@ import 'package:gahezha/screens/cart/widgets/cart_popup.dart';
 import 'package:iconly/iconly.dart';
 
 class ShopDetailsPage extends StatefulWidget {
-  final String shopName;
+  const ShopDetailsPage({super.key, required this.shopModel});
 
-  const ShopDetailsPage({super.key, required this.shopName});
+  final ShopModel shopModel;
 
   @override
   State<ShopDetailsPage> createState() => _ShopDetailsPageState();
@@ -22,9 +25,12 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  bool displayProducts = false;
+
   @override
   void initState() {
     super.initState();
+    ProductCubit.instance.getAllProductsByShopId(widget.shopModel.id);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -46,105 +52,6 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    // Fake products for UI demo
-    List<ProductModel> fakeProducts = [
-      ProductModel(
-        id: "141514",
-        name: "Cheeseburger",
-        description: "Cheeseburger description",
-        quantity: 23,
-        price: 8.99,
-        specifications: [
-          {
-            "Select Size": [
-              {"name": "Small", "price": 0.0},
-              {"name": "Medium", "price": 2.5},
-              {"name": "Large", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Pickles", "price": 0.5},
-          {"name": "No Vegetables", "price": 0.0},
-          {"name": "Extra Mushrooms", "price": 1.0},
-        ],
-        images: [
-          "https://www.sargento.com/assets/Uploads/Recipe/Image/cheddarbaconcheeseburger__FocusFillWyIwLjAwIiwiMC4wMCIsODAwLDQ3OF0_CompressedW10.jpg",
-        ],
-      ),
-      ProductModel(
-        id: "141514",
-        name: "Cheeseburger",
-        description: "Cheeseburger description",
-        quantity: 23,
-        price: 8.99,
-        specifications: [
-          {
-            "Select Size": [
-              {"name": "Small", "price": 0.0},
-              {"name": "Medium", "price": 2.5},
-              {"name": "Large", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Pickles", "price": 0.5},
-          {"name": "No Vegetables", "price": 0.0},
-          {"name": "Extra Mushrooms", "price": 1.0},
-        ],
-        images: [
-          // "https://www.sargento.com/assets/Uploads/Recipe/Image/cheddarbaconcheeseburger__FocusFillWyIwLjAwIiwiMC4wMCIsODAwLDQ3OF0_CompressedW10.jpg",
-        ],
-      ),
-      ProductModel(
-        id: "231412",
-        name: "Pepperoni Pizza",
-        description: "Pepperoni Pizza description",
-        quantity: 4,
-        price: 12.50,
-        specifications: [
-          {
-            "Select Size": [
-              {"name": "Small", "price": 0.0},
-              {"name": "Medium", "price": 2.5},
-              {"name": "Large", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Cheese", "price": 2.0},
-          {"name": "Extra Pepperoni", "price": 3.0},
-        ],
-        images: [
-          "https://www.moulinex.com.eg/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbXxhRFl5TDJneE9TOHhNekV4TVRjM01UVXlPVEkwTmk1aWFXNHw3NTkwMmNjYmFhZTUwZjYwNzk0ZmQyNjVmMjEzYjZiNGI3YzU1NGI3ZGNjYjM3YjYxZGY5Y2Y0ZTdjZmZkZmNj",
-          "https://www.tablefortwoblog.com/wp-content/uploads/2025/06/pepperoni-pizza-recipe-photos-tablefortwoblog-7.jpg",
-        ],
-      ),
-      ProductModel(
-        id: "139401",
-        name: "American Coffee",
-        description: "American Coffee description",
-        quantity: 20,
-        price: 3.25,
-        specifications: [
-          {
-            "How to Serve": [
-              {"name": "Hot", "price": 0.0},
-              {"name": "Iced", "price": 2.5},
-              {"name": "Decaf", "price": 4.0},
-            ],
-          },
-        ],
-        selectedAddOns: [
-          {"name": "Extra Milk", "price": 0.5},
-          {"name": "Whipped Cream", "price": 1.0},
-        ],
-        images: [
-          "https://pontevecchiosrl.it/wp-content/uploads/2021/03/caffe-americano-in-casa.jpg",
-        ],
-      ),
-    ];
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -172,7 +79,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
               pinned: true,
               expandedHeight: 300,
               elevation: 0,
-              title: innerBoxIsScrolled ? Text(widget.shopName) : null,
+              title: innerBoxIsScrolled
+                  ? Text(widget.shopModel.shopName)
+                  : null,
               leading: IconButton(
                 onPressed: () => Navigator.pop(context),
                 style: IconButton.styleFrom(
@@ -207,11 +116,15 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                             : Colors.white,
                         child: CircleAvatar(
                           radius: 4,
-                          backgroundColor: Colors.green,
+                          backgroundColor: widget.shopModel.shopStatus
+                              ? Colors.green
+                              : Colors.red,
                         ),
                       ),
                       Text(
-                        S.current.open,
+                        widget.shopModel.shopStatus
+                            ? S.current.open
+                            : S.current.closed,
                         style: TextStyle(
                           color: innerBoxIsScrolled
                               ? Colors.black
@@ -228,24 +141,21 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // widget.productImages == null || widget.productImages.isEmpty
-                    //     ? Container(
-                    //   height: double.infinity,
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.grey.shade200,
-                    //   ),
-                    //   child: Center(
-                    //     child: Icon(
-                    //       IconlyBroken.image,
-                    //       size: 50,
-                    //     ),
-                    //   ),
-                    // )
-                    //     :
-                    CustomCachedImage(
-                      imageUrl: "https://picsum.photos/600/300",
-                      height: double.infinity,
-                    ),
+                    widget.shopModel.shopBanner == null ||
+                            widget.shopModel.shopBanner.isEmpty
+                        ? Container(
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                            ),
+                            child: Center(
+                              child: Icon(IconlyBroken.image, size: 50),
+                            ),
+                          )
+                        : CustomCachedImage(
+                            imageUrl: widget.shopModel.shopBanner,
+                            height: double.infinity,
+                          ),
                     Container(color: Colors.black.withOpacity(0.4)),
                     Positioned(
                       bottom: 65,
@@ -254,28 +164,36 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          // widget.productImages == null || widget.productImages.isEmpty
-                          //     ? Container(
-                          //   height: 70,
-                          //   width: 70,
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.grey.shade200,
-                          //     borderRadius: BorderRadius.circular(radius),
-                          //   ),
-                          //   child: Center(
-                          //     child: Icon(
-                          //       IconlyBroken.image,
-                          //       size: 50,
-                          //     ),
-                          //   ),
-                          // )
-                          //     :
-                          CustomCachedImage(
-                            imageUrl: "https://picsum.photos/80",
-                            height: 70,
-                            width: 70,
-                            borderRadius: BorderRadius.circular(radius),
-                          ),
+                          widget.shopModel.shopLogo == null ||
+                                  widget.shopModel.shopLogo.isEmpty
+                              ? Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(radius),
+                                  ),
+                                  child: Center(
+                                    child: Icon(IconlyBroken.image, size: 30),
+                                  ),
+                                )
+                              : Material(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(
+                                    radius + 2,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: CustomCachedImage(
+                                      imageUrl: widget.shopModel.shopLogo,
+                                      height: 70,
+                                      width: 70,
+                                      borderRadius: BorderRadius.circular(
+                                        radius,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
@@ -283,7 +201,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  widget.shopName,
+                                  widget.shopModel.shopName,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
@@ -299,14 +217,20 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                       size: 18,
                                     ),
                                     const SizedBox(width: 4),
-                                    const Text(
-                                      "4.7",
-                                      style: TextStyle(color: Colors.white),
+                                    Text(
+                                      widget.shopModel.shopRate.toString(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      "• ${S.current.flowers_gifts}",
-                                      style: TextStyle(color: Colors.white),
+                                      "• ${widget.shopModel.shopCategory}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -347,160 +271,212 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
             controller: _tabController,
             children: [
               // -------------------- MENU --------------------
-              ListView.builder(
-                padding: const EdgeInsets.only(
-                  top: 15,
-                  right: 10,
-                  left: 10,
-                  bottom: 120,
-                ),
-                itemCount: fakeProducts.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(14),
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled:
-                              true, // ✅ makes it fullscreen-like
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(sheetRadius),
-                            ),
+              BlocConsumer<ProductCubit, ProductState>(
+                listener: (context, state) {
+                  // You can remove displayProducts boolean if using state directly
+                },
+                builder: (context, state) {
+                  if (state is ProductLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is AllProductsLoaded) {
+                    final products = ProductCubit.instance.allProducts;
+                    if (products.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "Empty Products",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
-                          builder: (_) {
-                            return ProductDetailsSheet(
-                              product: fakeProducts[index],
-                            );
-                          },
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ---------- Product Image ----------
-                            fakeProducts[index].images == null ||
-                                    fakeProducts[index].images.isEmpty
-                                ? Container(
-                                    height: 120,
-                                    width: 110,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(
-                                        radius,
-                                      ),
+                        ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        padding: EdgeInsets.only(
+                          top: 15,
+                          right: 10,
+                          left: 10,
+                          bottom: MediaQuery.of(context).size.height * 0.4,
+                        ),
+                        itemCount: ProductCubit.instance.allProducts.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final product =
+                              ProductCubit.instance.allProducts[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(14),
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled:
+                                      true, // ✅ makes it fullscreen-like
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(sheetRadius),
                                     ),
-                                    child: Center(
-                                      child: Icon(IconlyBroken.image, size: 50),
-                                    ),
-                                  )
-                                : CustomCachedImage(
-                                    imageUrl: fakeProducts[index].images.first,
-                                    height: 120,
-                                    width: 110,
-                                    borderRadius: BorderRadius.circular(radius),
                                   ),
-
-                            // ---------- Product Info ----------
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                child: Column(
+                                  builder: (_) {
+                                    return ProductDetailsSheet(
+                                      productModel: product,
+                                    );
+                                  },
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      fakeProducts[index].name,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      fakeProducts[index].description,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey,
-                                        height: 1.4,
-                                      ),
-                                    ),
-
-                                    // ---------- Price & Button ----------
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "${S.current.sar} ${fakeProducts[index].price}",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        TextButton(
-                                          style: TextButton.styleFrom(
-                                            minimumSize: const Size(60, 34),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                            ),
-                                            shape: RoundedRectangleBorder(
+                                    // ---------- Product Image ----------
+                                    product.images == null ||
+                                            product.images.isEmpty
+                                        ? Container(
+                                            height: 120,
+                                            width: 110,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade200,
                                               borderRadius:
-                                                  BorderRadius.circular(10),
-                                              side: BorderSide(
-                                                color: Colors.blue.shade400,
+                                                  BorderRadius.circular(radius),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                IconlyBroken.image,
+                                                size: 50,
                                               ),
                                             ),
+                                          )
+                                        : CustomCachedImage(
+                                            imageUrl: product.images.first,
+                                            height: 120,
+                                            width: 110,
+                                            borderRadius: BorderRadius.circular(
+                                              radius,
+                                            ),
                                           ),
-                                          onPressed: () {
-                                            if (currentUserType ==
-                                                UserType.guest) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: const Text(
-                                                    "Create an account first",
-                                                  ),
-                                                  action: SnackBarAction(
-                                                    label: "Sign Up",
-                                                    textColor: primaryBlue,
-                                                    onPressed: () {
-                                                      navigateTo(
-                                                        context: context,
-                                                        screen: Signup(
-                                                          isGuestMode: true,
-                                                        ),
-                                                      );
-                                                    },
+
+                                    // ---------- Product Info ----------
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              product.name,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              product.description,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.grey,
+                                                height: 1.4,
+                                              ),
+                                            ),
+
+                                            // ---------- Price & Button ----------
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "${S.current.sar} ${product.price}",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                    color: Colors.black87,
                                                   ),
                                                 ),
-                                              );
-                                            }
-                                          },
-                                          child: Text(S.current.add),
+                                                const Spacer(),
+                                                TextButton(
+                                                  style: TextButton.styleFrom(
+                                                    minimumSize: const Size(
+                                                      60,
+                                                      34,
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 14,
+                                                        ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                      side: BorderSide(
+                                                        color: Colors
+                                                            .blue
+                                                            .shade400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    if (currentUserType ==
+                                                        UserType.guest) {
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: const Text(
+                                                            "Create an account first",
+                                                          ),
+                                                          action: SnackBarAction(
+                                                            label: "Sign Up",
+                                                            textColor:
+                                                                primaryBlue,
+                                                            onPressed: () {
+                                                              navigateTo(
+                                                                context:
+                                                                    context,
+                                                                screen: Signup(
+                                                                  isGuestMode:
+                                                                      true,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Text(S.current.add),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
+                      );
+                    }
+                  } else if (state is ProductFailure) {
+                    return Center(
+                      child: Text(
+                        "Error: ${state.error}",
+                        style: const TextStyle(color: Colors.red),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    // Fallback for initial or unknown states
+                    return const SizedBox.shrink();
+                  }
                 },
               ),
 
@@ -522,9 +498,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                       children: [
                         Icon(IconlyLight.location, color: primaryBlue),
                         const SizedBox(width: 8),
-                        const Expanded(
-                          child: Text("123 Main Street, Cairo, Egypt"),
-                        ),
+                        Expanded(child: Text(widget.shopModel.shopLocation)),
                       ],
                     ),
                     const SizedBox(height: 15),
@@ -532,7 +506,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                       children: [
                         Icon(IconlyLight.bag, color: primaryBlue),
                         const SizedBox(width: 8),
-                        Text("~ 24 - 38 ${S.current.minuets}"),
+                        Text(
+                          "~ ${widget.shopModel.preparingTimeFrom} - ${widget.shopModel.preparingTimeTo} ${S.current.minuets}",
+                        ),
                       ],
                     ),
                     const SizedBox(height: 15),
@@ -541,7 +517,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                         Icon(IconlyLight.time_circle, color: primaryBlue),
                         const SizedBox(width: 8),
                         Text(
-                          "${S.current.open}: 10 ${S.current.am} - 11 ${S.current.pm}",
+                          "${widget.shopModel.shopStatus ? S.current.open : S.current.closed}: ${widget.shopModel.openingHoursFrom} ${S.current.am} - ${widget.shopModel.openingHoursTo} ${S.current.pm}",
                         ),
                       ],
                     ),
@@ -550,7 +526,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                       children: [
                         Icon(IconlyLight.call, color: primaryBlue),
                         const SizedBox(width: 8),
-                        const Text("+20 123 456 789"),
+                        Text(widget.shopModel.shopPhoneNumber),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -566,6 +542,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                       S.current.pickup_instructions_subtitle,
                       style: TextStyle(color: Colors.grey),
                     ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.65),
                   ],
                 ),
               ),

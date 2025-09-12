@@ -80,13 +80,17 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  child: currentUserModel == null
-                      ? Icon(IconlyBold.profile, size: 40)
-                      : CustomCachedImage(
-                          imageUrl: currentUserModel!.profileUrl ?? '',
-                          height: double.infinity,
-                          borderRadius: BorderRadius.circular(200),
-                        ),
+                  backgroundColor: Colors.black45,
+                  child: CircleAvatar(
+                    radius: 48,
+                    child: currentUserModel == null
+                        ? Icon(IconlyBold.profile, size: 40)
+                        : CustomCachedImage(
+                            imageUrl: currentUserModel!.profileUrl ?? '',
+                            height: double.infinity,
+                            borderRadius: BorderRadius.circular(200),
+                          ),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -213,24 +217,25 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
           const SizedBox(height: 20),
 
           // Delete Account Button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(IconlyBold.delete),
-              label: Text(S.current.delete_account),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                textStyle: TextStyle(fontWeight: FontWeight.w900),
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          if (currentUserType != UserType.guest)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: Icon(IconlyBold.delete),
+                label: Text(S.current.delete_account),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  textStyle: TextStyle(fontWeight: FontWeight.w900),
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
               ),
             ),
-          ),
         ],
       ),
     );

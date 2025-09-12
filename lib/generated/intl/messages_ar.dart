@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accepted": MessageLookupByLibrary.simpleMessage("مقبول"),
+    "accepted_shops": MessageLookupByLibrary.simpleMessage("المتاجر المقبولة"),
     "account": MessageLookupByLibrary.simpleMessage("الحساب"),
     "account_settings": MessageLookupByLibrary.simpleMessage("إعدادات الحساب"),
     "active_orders": MessageLookupByLibrary.simpleMessage("الطلبات النشطة"),
@@ -352,6 +353,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "regular": MessageLookupByLibrary.simpleMessage("عادي"),
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "rejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
+    "rejected_shops": MessageLookupByLibrary.simpleMessage("المتاجر المرفوضة"),
     "report": MessageLookupByLibrary.simpleMessage("تقرير"),
     "report_status": MessageLookupByLibrary.simpleMessage("حالة التقرير"),
     "reported": MessageLookupByLibrary.simpleMessage("تم التبليغ"),
@@ -419,6 +421,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "unblock": MessageLookupByLibrary.simpleMessage("رفع الحظر"),
     "viewing_details_of_order": MessageLookupByLibrary.simpleMessage(
       "عرض تفاصيل الطلب",
+    ),
+    "waiting_for_approval": MessageLookupByLibrary.simpleMessage(
+      "في انتظار الموافقة...",
     ),
     "we_are_preparing_your_order": MessageLookupByLibrary.simpleMessage(
       "نقوم الآن بتجهيز طلبك",

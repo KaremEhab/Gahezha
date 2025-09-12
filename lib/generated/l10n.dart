@@ -1470,6 +1470,26 @@ class S {
     );
   }
 
+  /// `Accepted Shops`
+  String get accepted_shops {
+    return Intl.message(
+      'Accepted Shops',
+      name: 'accepted_shops',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected Shops`
+  String get rejected_shops {
+    return Intl.message(
+      'Rejected Shops',
+      name: 'rejected_shops',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Recent Orders`
   String get recent_orders {
     return Intl.message(
@@ -2005,6 +2025,16 @@ class S {
     return Intl.message(
       'Click back again to exit.',
       name: 'click_again_to_exit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for approval...`
+  String get waiting_for_approval {
+    return Intl.message(
+      'Waiting for approval...',
+      name: 'waiting_for_approval',
       desc: '',
       args: [],
     );

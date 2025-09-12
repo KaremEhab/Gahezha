@@ -1,10 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/cloudinary/cloudinary_service.dart';
+import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
+import 'package:gahezha/public_widgets/pick_images.dart';
 import 'package:iconly/iconly.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProductPage extends StatefulWidget {
   final ProductModel product;
@@ -23,6 +30,7 @@ class _EditProductPageState extends State<EditProductPage> {
   late TextEditingController _quantityController;
 
   late List<String> _images;
+  List<File> pickedImages = [];
   late List<Map<String, List<Map<String, dynamic>>>> _specifications;
   late List<Map<String, dynamic>> _addOns;
 
@@ -45,12 +53,67 @@ class _EditProductPageState extends State<EditProductPage> {
     _addOns = List.from(widget.product.selectedAddOns);
   }
 
-  void _addImage() {
-    setState(() {
-      _images.add(
-        "https://via.placeholder.com/200",
-      ); // Mock placeholder (replace with picker later)
-    });
+  // ---------------- Images ----------------
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+
+    if (source == ImageSource.gallery) {
+      final selectedImages = await picker.pickMultiImage(imageQuality: 90);
+      if (selectedImages.isNotEmpty) {
+        for (final img in selectedImages) {
+          final croppedFile = await ImageCropper().cropImage(
+            sourcePath: img.path,
+            compressFormat: ImageCompressFormat.jpg,
+            compressQuality: 90,
+            uiSettings: [
+              AndroidUiSettings(
+                toolbarTitle: S.current.edit_profile,
+                toolbarColor: Colors.white,
+                toolbarWidgetColor: primaryBlue,
+                initAspectRatio: CropAspectRatioPreset.square,
+                lockAspectRatio: true,
+              ),
+              IOSUiSettings(
+                title: S.current.edit_profile,
+                aspectRatioLockEnabled: true,
+              ),
+            ],
+          );
+          if (croppedFile != null) {
+            setState(() {
+              pickedImages.add(File(croppedFile.path)); // ✅ File
+            });
+          }
+        }
+      }
+    } else {
+      final picked = await picker.pickImage(source: ImageSource.camera);
+      if (picked != null) {
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: picked.path,
+          compressFormat: ImageCompressFormat.jpg,
+          compressQuality: 90,
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: S.current.edit_profile,
+              toolbarColor: Colors.white,
+              toolbarWidgetColor: primaryBlue,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: true,
+            ),
+            IOSUiSettings(
+              title: S.current.edit_profile,
+              aspectRatioLockEnabled: true,
+            ),
+          ],
+        );
+        if (croppedFile != null) {
+          setState(() {
+            pickedImages.add(File(croppedFile.path)); // ✅ File
+          });
+        }
+      }
+    }
   }
 
   void _removeImage(int index) {
@@ -112,70 +175,125 @@ class _EditProductPageState extends State<EditProductPage> {
                       children: [
                         Text(
                           S.current.images,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (_images.isNotEmpty)
-                          GestureDetector(
-                            onTap: _addImage,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                size: 18,
-                                color: primaryBlue,
+                        GestureDetector(
+                          onTap: () => showModalBottomSheet(
+                            showDragHandle: true,
+                            context: context,
+                            backgroundColor: Colors.white,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
                               ),
                             ),
+                            builder: (_) {
+                              return PickImageSource(
+                                cameraButton: () async {
+                                  Navigator.pop(context);
+                                  await pickImage(ImageSource.camera);
+                                },
+                                galleryButton: () async {
+                                  Navigator.pop(context);
+                                  await pickImage(ImageSource.gallery);
+                                },
+                              );
+                            },
                           ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              size: 18,
+                              color: primaryBlue,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 8),
-                  if (_images.isNotEmpty)
+                  if (_images.isNotEmpty || pickedImages.isNotEmpty)
                     SizedBox(
                       height: 180,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        itemCount: _images.length,
+                        itemCount: _images.length + pickedImages.length,
                         itemBuilder: (context, index) {
+                          final isNetworkImage = index < _images.length;
+                          final imageUrlOrFile = isNetworkImage
+                              ? _images[index]
+                              : pickedImages[index - _images.length];
+
                           return Padding(
-                            padding: EdgeInsetsGeometry.directional(
-                              end: _images.length == 1 ? 0 : 5,
-                            ),
+                            padding: EdgeInsets.only(right: 5),
                             child: Stack(
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: CachedNetworkImage(
-                                    imageUrl: _images[index],
-                                    width: _images.length == 1
-                                        ? MediaQuery.sizeOf(context).width *
-                                              0.95
-                                        : 250,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: isNetworkImage
+                                      ? CachedNetworkImage(
+                                          imageUrl: imageUrlOrFile as String,
+                                          width:
+                                              _images.length +
+                                                      pickedImages.length ==
+                                                  1
+                                              ? MediaQuery.sizeOf(
+                                                      context,
+                                                    ).width *
+                                                    0.95
+                                              : 250,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.file(
+                                          imageUrlOrFile as File,
+                                          width:
+                                              _images.length +
+                                                      pickedImages.length ==
+                                                  1
+                                              ? MediaQuery.sizeOf(
+                                                      context,
+                                                    ).width *
+                                                    0.95
+                                              : 250,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
                                 ),
                                 Positioned(
                                   top: 4,
                                   right: 4,
                                   child: GestureDetector(
-                                    onTap: () => _removeImage(index),
-                                    child: const CircleAvatar(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isNetworkImage) {
+                                          _images.removeAt(index);
+                                        } else {
+                                          pickedImages.removeAt(
+                                            index - _images.length,
+                                          );
+                                        }
+                                      });
+                                    },
+                                    child: CircleAvatar(
                                       radius: 12,
                                       backgroundColor: Colors.red,
                                       child: Icon(
-                                        Icons.close,
+                                        isNetworkImage
+                                            ? IconlyBold.delete
+                                            : Icons.close,
                                         size: 16,
                                         color: Colors.white,
                                       ),
@@ -190,11 +308,32 @@ class _EditProductPageState extends State<EditProductPage> {
                     )
                   else
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
                       width: double.infinity,
                       height: 180,
                       child: ElevatedButton(
-                        onPressed: () => _addImage(),
+                        onPressed: () => showModalBottomSheet(
+                          showDragHandle: true,
+                          context: context,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          builder: (_) {
+                            return PickImageSource(
+                              cameraButton: () async {
+                                Navigator.pop(context);
+                                await pickImage(ImageSource.camera);
+                              },
+                              galleryButton: () async {
+                                Navigator.pop(context);
+                                await pickImage(ImageSource.gallery);
+                              },
+                            );
+                          },
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey.shade100,
                           foregroundColor: Colors.black87,
@@ -206,7 +345,6 @@ class _EditProductPageState extends State<EditProductPage> {
                           ),
                         ),
                         child: Column(
-                          spacing: 10,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
@@ -214,14 +352,15 @@ class _EditProductPageState extends State<EditProductPage> {
                               size: 60,
                               color: primaryBlue,
                             ),
+                            const SizedBox(height: 10),
                             Row(
-                              spacing: 5,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(Icons.add, color: primaryBlue),
+                                const SizedBox(width: 5),
                                 Text(
                                   S.current.add_your_product_images,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                     color: primaryBlue,
@@ -791,19 +930,92 @@ class _EditProductPageState extends State<EditProductPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  final updatedProduct = ProductModel(
-                    id: widget.product.id,
-                    name: _nameController.text,
-                    description: _descriptionController.text,
-                    price: double.tryParse(_priceController.text) ?? 0.0,
-                    quantity: int.tryParse(_quantityController.text) ?? 0,
-                    specifications: _specifications,
-                    selectedAddOns: _addOns,
-                    images: _images,
+              onPressed: () async {
+                if (!_formKey.currentState!.validate()) return;
+
+                final cloudinaryService = CloudinaryService();
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                // Start with existing network images
+                List<String> uploadedImageUrls = [..._images];
+
+                // Upload new picked images
+                if (pickedImages.isNotEmpty) {
+                  double progress = 0.0;
+
+                  // Show SnackBar
+                  final snackBar = SnackBar(
+                    duration: const Duration(hours: 1),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${_nameController.text} - Uploading image 1 of ${pickedImages.length}...",
+                        ),
+                        const SizedBox(height: 6),
+                        LinearProgressIndicator(value: progress),
+                      ],
+                    ),
                   );
+                  scaffoldMessenger.showSnackBar(snackBar);
+
+                  final newUrls = await cloudinaryService.addMultipleImages(
+                    pickedImages,
+                    folder: "products",
+                  );
+
+                  uploadedImageUrls.addAll(newUrls);
+
+                  scaffoldMessenger.hideCurrentSnackBar();
+                }
+
+                // Delete removed network images from Cloudinary
+                final removedImages = _images.where(
+                  (url) => !uploadedImageUrls.contains(url),
+                );
+                for (var url in removedImages) {
+                  try {
+                    await cloudinaryService.deleteImageByUrl(url);
+                  } catch (e) {
+                    print("Failed to delete image $url: $e");
+                  }
+                }
+
+                // Prepare updated product
+                final updatedProduct = ProductModel(
+                  id: widget.product.id,
+                  shopId: widget.product.shopId,
+                  name: _nameController.text,
+                  description: _descriptionController.text,
+                  price: double.tryParse(_priceController.text) ?? 0.0,
+                  quantity: int.tryParse(_quantityController.text) ?? 0,
+                  specifications: _specifications,
+                  selectedAddOns: _addOns,
+                  images: uploadedImageUrls,
+                  createdAt: widget.product.createdAt,
+                );
+
+                // Update Firestore
+                await ProductCubit.instance.editProduct(updatedProduct);
+
+                // Handle result
+                final state = ProductCubit.instance.state;
+                if (state is ProductEditedSuccessfully) {
                   Navigator.pop(context, updatedProduct);
+                  scaffoldMessenger.showSnackBar(
+                    const SnackBar(
+                      content: Text("✅ Product updated successfully!"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else if (state is ProductEditedFailure) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(
+                      content: Text(state.error),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
               },
               child: Text(

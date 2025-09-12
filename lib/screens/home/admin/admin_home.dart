@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/notifications/notifications.dart';
@@ -15,8 +16,19 @@ import 'package:iconly/iconly.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/screens/orders/widgets/order_card.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
+
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    ShopCubit.instance.getHomePendingShops();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +63,14 @@ class AdminHomePage extends StatelessWidget {
                               },
                               child: CircleAvatar(
                                 radius: 22,
-                                child: CustomCachedImage(
-                                  imageUrl: currentUserModel!.profileUrl,
-                                  height: double.infinity,
-                                  borderRadius: BorderRadius.circular(200),
+                                backgroundColor: Colors.grey.shade300,
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  child: CustomCachedImage(
+                                    imageUrl: currentUserModel!.profileUrl,
+                                    height: double.infinity,
+                                    borderRadius: BorderRadius.circular(200),
+                                  ),
                                 ),
                               ),
                             );
@@ -120,18 +136,38 @@ class AdminHomePage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 290,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    shrinkWrap: true,
-                    separatorBuilder: (_, __) => const SizedBox(width: 5),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    itemBuilder: (context, index) {
-                      return SizedBox(width: 330, child: ShopCard());
-                    },
-                  ),
+                BlocConsumer<ShopCubit, ShopState>(
+                  listener: (context, state) {
+                    // if (state is PendingShopsLoaded) {
+                    //   display = true;
+                    // }
+                  },
+                  builder: (context, state) {
+                    return state is ShopLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ShopCubit.instance.pendingShops.isEmpty
+                        ? const Center(child: Text("No pending shops"))
+                        : SizedBox(
+                            height: 290,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: ShopCubit.instance.pendingShops.length,
+                              shrinkWrap: true,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 5),
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              itemBuilder: (context, index) {
+                                return SizedBox(
+                                  width: 330,
+                                  child: ShopCard(
+                                    shopModel:
+                                        ShopCubit.instance.pendingShops[index],
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                  },
                 ),
 
                 // Section: Reports
