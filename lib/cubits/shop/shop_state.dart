@@ -45,3 +45,18 @@ class ShopError extends ShopState {
   final String message;
   ShopError(this.message);
 }
+
+class ShopDisabled extends ShopState {
+  final String shopId;
+  ShopDisabled(this.shopId);
+}
+
+class ShopBlocked extends ShopState {
+  final String shopId;
+  ShopBlocked(this.shopId);
+}
+
+class ShopDeleted extends ShopState {
+  final String shopId;
+  ShopDeleted(this.shopId);
+}

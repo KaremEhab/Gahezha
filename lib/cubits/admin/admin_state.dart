@@ -20,3 +20,20 @@ class AdminError extends AdminState {
   final String message;
   AdminError(this.message);
 }
+
+class AdminShopDisabled extends AdminState {
+  final String shopId;
+  final bool isDisabled;
+  AdminShopDisabled(this.shopId, this.isDisabled);
+}
+
+class AdminShopBlocked extends AdminState {
+  final String shopId;
+  final bool isBlocked;
+  AdminShopBlocked(this.shopId, this.isBlocked);
+}
+
+class AdminShopDeleted extends AdminState {
+  final String shopId;
+  AdminShopDeleted(this.shopId);
+}

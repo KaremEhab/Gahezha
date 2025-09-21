@@ -12,6 +12,9 @@ class UserModel {
   final String phoneNumber; // ✨ جديد
   final bool notificationsEnabled;
   final UserType userType;
+  final bool blocked;
+  final bool disabled;
+  final bool reported;
   final DateTime createdAt;
 
   UserModel({
@@ -23,6 +26,9 @@ class UserModel {
     required this.phoneNumber, // ✨ مطلوب
     this.gender = Gender.male,
     this.notificationsEnabled = true,
+    this.blocked = true,
+    this.disabled = true,
+    this.reported = true,
     this.userType = UserType.customer,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
@@ -39,12 +45,15 @@ class UserModel {
       'email': email,
       'phoneNumber': phoneNumber, // ✨
       'notificationsEnabled': notificationsEnabled,
+      'blocked': blocked,
+      'disabled': disabled,
+      'reported': reported,
       'userType': userType.name,
       'createdAt': createdAt.toIso8601String(),
     };
   }
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map, {String? userId}) {
     return UserModel(
       userId: map['userId'] ?? '',
       profileUrl: map['profileUrl'] ?? '',
@@ -59,6 +68,9 @@ class UserModel {
       email: map['email'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
       notificationsEnabled: map['notificationsEnabled'] ?? true,
+      blocked: map['blocked'] ?? true,
+      disabled: map['disabled'] ?? true,
+      reported: map['reported'] ?? true,
       userType: map['userType'] != null
           ? UserType.values.firstWhere(
               (e) => e.name == map['userType'],
@@ -81,6 +93,9 @@ class UserModel {
     String? email,
     String? phoneNumber, // ✨
     bool? notificationsEnabled,
+    bool? blocked,
+    bool? disabled,
+    bool? reported,
     UserType? userType,
     DateTime? createdAt,
   }) {
@@ -93,6 +108,9 @@ class UserModel {
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber, // ✨
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      blocked: blocked ?? this.blocked,
+      disabled: disabled ?? this.disabled,
+      reported: reported ?? this.reported,
       userType: userType ?? this.userType,
       createdAt: createdAt ?? this.createdAt,
     );

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:iconly/iconly.dart';
 
@@ -48,12 +51,8 @@ class CustomNavBar extends StatelessWidget {
               ),
             if (currentUserType == UserType.shop)
               BottomNavigationBarItem(
-                icon: const Icon(Icons.restaurant_menu_outlined, size: 22),
-                activeIcon: Icon(
-                  Icons.restaurant_menu_rounded,
-                  size: 25,
-                  color: primaryBlue,
-                ),
+                icon: Icon(IconlyLight.buy, size: 22),
+                activeIcon: Icon(IconlyBold.buy, size: 25, color: primaryBlue),
                 label: '',
               ),
             if (currentUserType == UserType.customer ||
@@ -61,10 +60,23 @@ class CustomNavBar extends StatelessWidget {
                 currentUserType == UserType.admin)
               BottomNavigationBarItem(
                 icon: const Icon(IconlyLight.home, size: 24),
-                activeIcon: Icon(
-                  IconlyBold.home,
-                  size: 25, // bigger size when selected
-                  color: primaryBlue,
+                activeIcon: BlocConsumer<ShopCubit, ShopState>(
+                  listener: (context, state) {
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    return state is ShopLoading
+                        ? SizedBox(
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(strokeWidth: 3.5),
+                          )
+                        : Icon(
+                            IconlyBold.home,
+                            size: 25, // bigger size when selected
+                            color: primaryBlue,
+                          );
+                  },
                 ),
                 label: '',
               ),

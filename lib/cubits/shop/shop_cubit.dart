@@ -32,6 +32,12 @@ class ShopCubit extends Cubit<ShopState> {
 
   List<ShopModel> acceptedShops = [];
 
+  List<ShopModel> blockedShops = [];
+
+  List<ShopModel> reportedShops = [];
+
+  List<ShopModel> disabledShops = [];
+
   /// ✅ Get current logged-in shop
   Future<void> getCurrentShop() async {
     try {
@@ -64,30 +70,43 @@ class ShopCubit extends Cubit<ShopState> {
     try {
       emit(ShopLoading());
 
-      // Fetch all shops sorted by createdAt descending
+      // Fetch shops with ShopAcceptanceStatus.accepted only
       final querySnapshot = await _firestore
           .collection("shops")
+          .where(
+            "shopAcceptanceStatus",
+            isEqualTo: ShopAcceptanceStatus.accepted.index,
+          )
           .orderBy("createdAt", descending: true)
           .get();
 
-      if (querySnapshot.docs.isEmpty) {
+      final docs = querySnapshot.docs;
+
+      if (docs.isEmpty) {
         allShops = [];
         hotDealerShops = [];
         emit(AllShopsLoaded(allShops));
         return;
       }
 
-      // Take up to 4 shops as hot dealers
-      final hotDealerDocs = querySnapshot.docs.take(4).toList();
-      hotDealerShops = hotDealerDocs
-          .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
-          .toList();
+      // ✅ Only set hot dealers if total shops > 4
+      if (docs.length > 4) {
+        final hotDealerDocs = docs.take(4).toList();
+        hotDealerShops = hotDealerDocs
+            .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
+            .toList();
 
-      // Remaining shops
-      final remainingDocs = querySnapshot.docs.skip(4).toList();
-      allShops = remainingDocs
-          .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
-          .toList();
+        final remainingDocs = docs.skip(4).toList();
+        allShops = remainingDocs
+            .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
+            .toList();
+      } else {
+        // If 4 or fewer, no hot dealers
+        hotDealerShops = [];
+        allShops = docs
+            .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
+            .toList();
+      }
 
       emit(AllShopsLoaded(allShops));
     } catch (e, stackTrace) {
@@ -99,7 +118,7 @@ class ShopCubit extends Cubit<ShopState> {
     }
   }
 
-  /// ✅ Get all shops
+  /// ✅ Get all shops and separate blocked/disabled
   Future<void> adminGetAllShops() async {
     try {
       emit(ShopLoading());
@@ -112,24 +131,37 @@ class ShopCubit extends Cubit<ShopState> {
 
       if (querySnapshot.docs.isEmpty) {
         allShops = [];
+        blockedShops = [];
+        disabledShops = [];
+        reportedShops = []; // keep fixed for now
         emit(AllShopsLoaded(allShops));
         return;
       }
 
-      allShops = querySnapshot.docs
+      // Convert to models
+      final shops = querySnapshot.docs
           .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
           .toList();
 
+      // Separate into lists
+      allShops = shops;
+      blockedShops = shops.where((shop) => shop.blocked).toList();
+      disabledShops = shops.where((shop) => shop.disabled).toList();
+      reportedShops = []; // Placeholder until reporting logic ready
+
       emit(AllShopsLoaded(allShops));
     } catch (e, stackTrace) {
-      print("Error in getAllShops: $e");
+      print("Error in adminGetAllShops: $e");
       print(stackTrace);
       allShops = [];
+      blockedShops = [];
+      disabledShops = [];
+      reportedShops = [];
       emit(ShopError(e.toString()));
     }
   }
 
-  /// ✅ Get shops by status directly from Firestore
+  /// ✅ Get shops by status
   Future<List<ShopModel>> getShopsByStatus(ShopAcceptanceStatus status) async {
     try {
       final querySnapshot = await _firestore

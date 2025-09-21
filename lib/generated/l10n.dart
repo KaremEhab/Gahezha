@@ -875,19 +875,24 @@ class S {
     return Intl.message('Your order', name: 'your_order', desc: '', args: []);
   }
 
-  /// `Pending`
+  /// `PENDING`
   String get pending {
-    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+    return Intl.message('PENDING', name: 'pending', desc: '', args: []);
   }
 
-  /// `Accepted`
+  /// `Pending`
+  String get pending_lower {
+    return Intl.message('Pending', name: 'pending_lower', desc: '', args: []);
+  }
+
+  /// `ACCEPTED`
   String get accepted {
-    return Intl.message('Accepted', name: 'accepted', desc: '', args: []);
+    return Intl.message('ACCEPTED', name: 'accepted', desc: '', args: []);
   }
 
-  /// `Rejected`
+  /// `REJECTED`
   String get rejected {
-    return Intl.message('Rejected', name: 'rejected', desc: '', args: []);
+    return Intl.message('REJECTED', name: 'rejected', desc: '', args: []);
   }
 
   /// `Accept`
@@ -905,14 +910,14 @@ class S {
     return Intl.message('PREPARING', name: 'preparing', desc: '', args: []);
   }
 
-  /// `Pickup`
+  /// `PICKUP`
   String get pickup {
-    return Intl.message('Pickup', name: 'pickup', desc: '', args: []);
+    return Intl.message('PICKUP', name: 'pickup', desc: '', args: []);
   }
 
-  /// `Delivered`
+  /// `DELIVERED`
   String get delivered {
-    return Intl.message('Delivered', name: 'delivered', desc: '', args: []);
+    return Intl.message('DELIVERED', name: 'delivered', desc: '', args: []);
   }
 
   /// `Placed on`
@@ -1615,6 +1620,11 @@ class S {
     return Intl.message('Disable', name: 'disable', desc: '', args: []);
   }
 
+  /// `Enable`
+  String get enable {
+    return Intl.message('Enable', name: 'enable', desc: '', args: []);
+  }
+
   /// `Gahezha`
   String get gahezha {
     return Intl.message('Gahezha', name: 'gahezha', desc: '', args: []);
@@ -1653,6 +1663,11 @@ class S {
   /// `Disabled`
   String get disabled {
     return Intl.message('Disabled', name: 'disabled', desc: '', args: []);
+  }
+
+  /// `Enabled`
+  String get enabled {
+    return Intl.message('Enabled', name: 'enabled', desc: '', args: []);
   }
 
   /// `This account has been blocked and reported`
@@ -2035,6 +2050,696 @@ class S {
     return Intl.message(
       'Waiting for approval...',
       name: 'waiting_for_approval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have`
+  String get you_have {
+    return Intl.message('You have', name: 'you_have', desc: '', args: []);
+  }
+
+  /// `orders to pickup`
+  String get orders_to_pickup {
+    return Intl.message(
+      'orders to pickup',
+      name: 'orders_to_pickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready to Pickup`
+  String get ready_to_pickup {
+    return Intl.message(
+      'Ready to Pickup',
+      name: 'ready_to_pickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fast Food`
+  String get fast_food {
+    return Intl.message('Fast Food', name: 'fast_food', desc: '', args: []);
+  }
+
+  /// `Bakery`
+  String get bakery {
+    return Intl.message('Bakery', name: 'bakery', desc: '', args: []);
+  }
+
+  /// `Cafe`
+  String get cafe {
+    return Intl.message('Cafe', name: 'cafe', desc: '', args: []);
+  }
+
+  /// `Supermarket`
+  String get supermarket {
+    return Intl.message('Supermarket', name: 'supermarket', desc: '', args: []);
+  }
+
+  /// `Grocery`
+  String get grocery {
+    return Intl.message('Grocery', name: 'grocery', desc: '', args: []);
+  }
+
+  /// `Dessert`
+  String get dessert {
+    return Intl.message('Dessert', name: 'dessert', desc: '', args: []);
+  }
+
+  /// `Juice Bar`
+  String get juice_bar {
+    return Intl.message('Juice Bar', name: 'juice_bar', desc: '', args: []);
+  }
+
+  /// `Pizza`
+  String get pizza {
+    return Intl.message('Pizza', name: 'pizza', desc: '', args: []);
+  }
+
+  /// `Sushi`
+  String get sushi {
+    return Intl.message('Sushi', name: 'sushi', desc: '', args: []);
+  }
+
+  /// `Seafood`
+  String get seafood {
+    return Intl.message('Seafood', name: 'seafood', desc: '', args: []);
+  }
+
+  /// `Clothing`
+  String get clothing {
+    return Intl.message('Clothing', name: 'clothing', desc: '', args: []);
+  }
+
+  /// `Electronics`
+  String get electronics {
+    return Intl.message('Electronics', name: 'electronics', desc: '', args: []);
+  }
+
+  /// `Mobile Phones`
+  String get mobile_phones {
+    return Intl.message(
+      'Mobile Phones',
+      name: 'mobile_phones',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home Appliances`
+  String get home_appliances {
+    return Intl.message(
+      'Home Appliances',
+      name: 'home_appliances',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Books`
+  String get books {
+    return Intl.message('Books', name: 'books', desc: '', args: []);
+  }
+
+  /// `Stationery`
+  String get stationery {
+    return Intl.message('Stationery', name: 'stationery', desc: '', args: []);
+  }
+
+  /// `Toys`
+  String get toys {
+    return Intl.message('Toys', name: 'toys', desc: '', args: []);
+  }
+
+  /// `Beauty & Cosmetics`
+  String get beauty_cosmetics {
+    return Intl.message(
+      'Beauty & Cosmetics',
+      name: 'beauty_cosmetics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Jewelry`
+  String get jewelry {
+    return Intl.message('Jewelry', name: 'jewelry', desc: '', args: []);
+  }
+
+  /// `Sports`
+  String get sports {
+    return Intl.message('Sports', name: 'sports', desc: '', args: []);
+  }
+
+  /// `Fitness`
+  String get fitness {
+    return Intl.message('Fitness', name: 'fitness', desc: '', args: []);
+  }
+
+  /// `Pharmacy`
+  String get pharmacy {
+    return Intl.message('Pharmacy', name: 'pharmacy', desc: '', args: []);
+  }
+
+  /// `Flowers`
+  String get flowers {
+    return Intl.message('Flowers', name: 'flowers', desc: '', args: []);
+  }
+
+  /// `Gifts`
+  String get gifts {
+    return Intl.message('Gifts', name: 'gifts', desc: '', args: []);
+  }
+
+  /// `Furniture`
+  String get furniture {
+    return Intl.message('Furniture', name: 'furniture', desc: '', args: []);
+  }
+
+  /// `Pet Shop`
+  String get pet_shop {
+    return Intl.message('Pet Shop', name: 'pet_shop', desc: '', args: []);
+  }
+
+  /// `Music & Instruments`
+  String get music_instruments {
+    return Intl.message(
+      'Music & Instruments',
+      name: 'music_instruments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car Accessories`
+  String get car_accessories {
+    return Intl.message(
+      'Car Accessories',
+      name: 'car_accessories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shoes`
+  String get shoes {
+    return Intl.message('Shoes', name: 'shoes', desc: '', args: []);
+  }
+
+  /// `Handmade Crafts`
+  String get handmade_crafts {
+    return Intl.message(
+      'Handmade Crafts',
+      name: 'handmade_crafts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ice Cream`
+  String get ice_cream {
+    return Intl.message('Ice Cream', name: 'ice_cream', desc: '', args: []);
+  }
+
+  /// `Fast Casual`
+  String get fast_casual {
+    return Intl.message('Fast Casual', name: 'fast_casual', desc: '', args: []);
+  }
+
+  /// `Organic Food`
+  String get organic_food {
+    return Intl.message(
+      'Organic Food',
+      name: 'organic_food',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vegan`
+  String get vegan {
+    return Intl.message('Vegan', name: 'vegan', desc: '', args: []);
+  }
+
+  /// `Tea House`
+  String get tea_house {
+    return Intl.message('Tea House', name: 'tea_house', desc: '', args: []);
+  }
+
+  /// `Dessert Cafe`
+  String get dessert_cafe {
+    return Intl.message(
+      'Dessert Cafe',
+      name: 'dessert_cafe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bakery & Coffee`
+  String get bakery_coffee {
+    return Intl.message(
+      'Bakery & Coffee',
+      name: 'bakery_coffee',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Street Food`
+  String get street_food {
+    return Intl.message('Street Food', name: 'street_food', desc: '', args: []);
+  }
+
+  /// `Bar`
+  String get bar {
+    return Intl.message('Bar', name: 'bar', desc: '', args: []);
+  }
+
+  /// `Night Club`
+  String get night_club {
+    return Intl.message('Night Club', name: 'night_club', desc: '', args: []);
+  }
+
+  /// `Internet Cafe`
+  String get internet_cafe {
+    return Intl.message(
+      'Internet Cafe',
+      name: 'internet_cafe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Photography Studio`
+  String get photography_studio {
+    return Intl.message(
+      'Photography Studio',
+      name: 'photography_studio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bookstore & Cafe`
+  String get bookstore_cafe {
+    return Intl.message(
+      'Bookstore & Cafe',
+      name: 'bookstore_cafe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copied to clipboard`
+  String get copied_to_clipboard {
+    return Intl.message(
+      'Copied to clipboard',
+      name: 'copied_to_clipboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shop not fulfilling orders`
+  String get admin_shop_not_fulfilling_orders {
+    return Intl.message(
+      'Shop not fulfilling orders',
+      name: 'admin_shop_not_fulfilling_orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shop rejecting/cancelling orders too often`
+  String get admin_shop_rejecting_orders_too_often {
+    return Intl.message(
+      'Shop rejecting/cancelling orders too often',
+      name: 'admin_shop_rejecting_orders_too_often',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong items sent / missing items`
+  String get admin_wrong_items_sent {
+    return Intl.message(
+      'Wrong items sent / missing items',
+      name: 'admin_wrong_items_sent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shop not responsive to customers`
+  String get admin_shop_not_responsive {
+    return Intl.message(
+      'Shop not responsive to customers',
+      name: 'admin_shop_not_responsive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customers reporting bad behavior`
+  String get admin_customers_reporting_bad_behavior {
+    return Intl.message(
+      'Customers reporting bad behavior',
+      name: 'admin_customers_reporting_bad_behavior',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fake or invalid orders`
+  String get admin_fake_or_invalid_orders {
+    return Intl.message(
+      'Fake or invalid orders',
+      name: 'admin_fake_or_invalid_orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer disputes on items or pickup`
+  String get admin_customer_disputes {
+    return Intl.message(
+      'Customer disputes on items or pickup',
+      name: 'admin_customer_disputes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order not picked up`
+  String get admin_order_not_picked_up {
+    return Intl.message(
+      'Order not picked up',
+      name: 'admin_order_not_picked_up',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order missing items`
+  String get admin_order_missing_items {
+    return Intl.message(
+      'Order missing items',
+      name: 'admin_order_missing_items',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Miscommunication between shop and customer`
+  String get admin_miscommunication {
+    return Intl.message(
+      'Miscommunication between shop and customer',
+      name: 'admin_miscommunication',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order delayed beyond expected prep time`
+  String get admin_order_delayed {
+    return Intl.message(
+      'Order delayed beyond expected prep time',
+      name: 'admin_order_delayed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Technical issues (app crashes, wrong data)`
+  String get admin_technical_issues {
+    return Intl.message(
+      'Technical issues (app crashes, wrong data)',
+      name: 'admin_technical_issues',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer didn’t pick up order`
+  String get shop_customer_not_picked_up {
+    return Intl.message(
+      'Customer didn’t pick up order',
+      name: 'shop_customer_not_picked_up',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer provided wrong info (phone number, name)`
+  String get shop_customer_wrong_info {
+    return Intl.message(
+      'Customer provided wrong info (phone number, name)',
+      name: 'shop_customer_wrong_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer complained about items unnecessarily`
+  String get shop_customer_complained_unnecessarily {
+    return Intl.message(
+      'Customer complained about items unnecessarily',
+      name: 'shop_customer_complained_unnecessarily',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order contains unclear instructions`
+  String get shop_order_unclear_instructions {
+    return Intl.message(
+      'Order contains unclear instructions',
+      name: 'shop_order_unclear_instructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unable to prepare order on time`
+  String get shop_unable_to_prepare_order {
+    return Intl.message(
+      'Unable to prepare order on time',
+      name: 'shop_unable_to_prepare_order',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extra items or missing items reported`
+  String get shop_extra_or_missing_items {
+    return Intl.message(
+      'Extra items or missing items reported',
+      name: 'shop_extra_or_missing_items',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order notifications not received`
+  String get shop_order_notifications_not_received {
+    return Intl.message(
+      'Order notifications not received',
+      name: 'shop_order_notifications_not_received',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App crashes during order handling`
+  String get shop_app_crashes {
+    return Intl.message(
+      'App crashes during order handling',
+      name: 'shop_app_crashes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong items received`
+  String get customer_wrong_items_received {
+    return Intl.message(
+      'Wrong items received',
+      name: 'customer_wrong_items_received',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Items missing`
+  String get customer_items_missing {
+    return Intl.message(
+      'Items missing',
+      name: 'customer_items_missing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order prepared late / not ready on time`
+  String get customer_order_late {
+    return Intl.message(
+      'Order prepared late / not ready on time',
+      name: 'customer_order_late',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Poor quality of items`
+  String get customer_poor_quality {
+    return Intl.message(
+      'Poor quality of items',
+      name: 'customer_poor_quality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rude shop staff`
+  String get customer_rude_staff {
+    return Intl.message(
+      'Rude shop staff',
+      name: 'customer_rude_staff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong shop information`
+  String get customer_wrong_shop_info {
+    return Intl.message(
+      'Wrong shop information',
+      name: 'customer_wrong_shop_info',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unresponsive shop`
+  String get customer_shop_unresponsive {
+    return Intl.message(
+      'Unresponsive shop',
+      name: 'customer_shop_unresponsive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App crashes`
+  String get customer_app_crashes {
+    return Intl.message(
+      'App crashes',
+      name: 'customer_app_crashes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications not working`
+  String get customer_notifications_not_working {
+    return Intl.message(
+      'Notifications not working',
+      name: 'customer_notifications_not_working',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order tracking issues`
+  String get customer_order_tracking_issues {
+    return Intl.message(
+      'Order tracking issues',
+      name: 'customer_order_tracking_issues',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Report`
+  String get create_report {
+    return Intl.message(
+      'Create Report',
+      name: 'create_report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Report`
+  String get edit_report {
+    return Intl.message('Edit Report', name: 'edit_report', desc: '', args: []);
+  }
+
+  /// `Delete Report`
+  String get delete_report {
+    return Intl.message(
+      'Delete Report',
+      name: 'delete_report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report Type`
+  String get report_type {
+    return Intl.message('Report Type', name: 'report_type', desc: '', args: []);
+  }
+
+  /// `Assign to`
+  String get assign_to {
+    return Intl.message('Assign to', name: 'assign_to', desc: '', args: []);
+  }
+
+  /// `Report description`
+  String get report_description {
+    return Intl.message(
+      'Report description',
+      name: 'report_description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report Customer`
+  String get report_customer {
+    return Intl.message(
+      'Report Customer',
+      name: 'report_customer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report Shop`
+  String get report_shop {
+    return Intl.message('Report Shop', name: 'report_shop', desc: '', args: []);
+  }
+
+  /// `Report Gahezha`
+  String get report_app {
+    return Intl.message(
+      'Report Gahezha',
+      name: 'report_app',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No reports found`
+  String get no_reports_found {
+    return Intl.message(
+      'No reports found',
+      name: 'no_reports_found',
       desc: '',
       args: [],
     );

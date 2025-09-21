@@ -6,24 +6,9 @@ import 'package:iconly/iconly.dart';
 import 'package:gahezha/constants/vars.dart';
 
 class ReportDetailsSheet extends StatefulWidget {
-  final String reportId;
-  final String title;
-  final String type;
-  final String description;
-  final String date;
-  final ReportType status;
-  final String reporter;
+  final ReportModel report;
 
-  const ReportDetailsSheet({
-    super.key,
-    required this.reportId,
-    required this.title,
-    required this.type,
-    required this.description,
-    required this.date,
-    required this.status,
-    required this.reporter,
-  });
+  const ReportDetailsSheet({super.key, required this.report});
 
   @override
   State<ReportDetailsSheet> createState() => _ReportDetailsSheetState();
@@ -31,7 +16,7 @@ class ReportDetailsSheet extends StatefulWidget {
 
 class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
   final TextEditingController responseCtrl = TextEditingController();
-  late ReportType selectedStatus = widget.status;
+  late ReportStatusType selectedStatus = widget.report.status;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +39,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      "${S.current.report} #${widget.reportId} • ${widget.type}",
+                      "${S.current.report} #${widget.report.id} • ${widget.report.reportType}",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -67,7 +52,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
 
               // --- Description ---
               Text(
-                widget.description,
+                widget.report.reportDescription,
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black87,
@@ -82,7 +67,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                   const Icon(IconlyBold.profile, size: 18),
                   const SizedBox(width: 6),
                   Text(
-                    widget.reporter,
+                    widget.report.reporter.name,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
@@ -92,7 +77,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                     color: Colors.grey,
                   ),
                   const SizedBox(width: 6),
-                  Text(widget.date),
+                  Text(widget.report.createdAt.toIso8601String()),
                 ],
               ),
               const SizedBox(height: 24),
@@ -105,7 +90,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                 ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              DropdownButtonFormField<ReportType>(
+              DropdownButtonFormField<ReportStatusType>(
                 value: selectedStatus,
                 icon: const Icon(
                   IconlyBold.arrow_down_2,
@@ -130,15 +115,15 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
-                items: ReportType.values.map((status) {
+                items: ReportStatusType.values.map((status) {
                   Color textColor;
                   IconData iconData;
                   switch (status) {
-                    case ReportType.resolved:
+                    case ReportStatusType.resolved:
                       textColor = Colors.green.shade700;
                       iconData = IconlyLight.tick_square;
                       break;
-                    case ReportType.dismissed:
+                    case ReportStatusType.dismissed:
                       textColor = Colors.grey.shade700;
                       iconData = IconlyLight.close_square;
                       break;
@@ -164,8 +149,9 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
                     ),
                   );
                 }).toList(),
-                onChanged: (val) =>
-                    setState(() => selectedStatus = val ?? ReportType.pending),
+                onChanged: (val) => setState(
+                  () => selectedStatus = val ?? ReportStatusType.pending,
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -193,7 +179,7 @@ class _ReportDetailsSheetState extends State<ReportDetailsSheet> {
             padding: const EdgeInsets.all(16),
             child: ElevatedButton.icon(
               onPressed: () {
-                debugPrint("Report ID: ${widget.reportId}");
+                debugPrint("Report ID: ${widget.report.id}");
                 debugPrint("Status: $selectedStatus");
                 debugPrint("Response: ${responseCtrl.text}");
                 Navigator.pop(context);

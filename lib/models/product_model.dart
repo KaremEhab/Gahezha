@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductModel {
   final String id;
-  final String shopId; // 👈 Added shopId
+  final String shopId;
   final String name;
   final String description;
   final int quantity;
@@ -25,6 +25,33 @@ class ProductModel {
     required this.createdAt,
   });
 
+  /// ✅ copyWith
+  ProductModel copyWith({
+    String? id,
+    String? shopId,
+    String? name,
+    String? description,
+    int? quantity,
+    double? price,
+    List<Map<String, List<Map<String, dynamic>>>>? specifications,
+    List<Map<String, dynamic>>? selectedAddOns,
+    List<String>? images,
+    DateTime? createdAt,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      shopId: shopId ?? this.shopId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      quantity: quantity ?? this.quantity,
+      price: price ?? this.price,
+      specifications: specifications ?? this.specifications,
+      selectedAddOns: selectedAddOns ?? this.selectedAddOns,
+      images: images ?? this.images,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
       id: map['id'] ?? '',
@@ -46,7 +73,6 @@ class ProductModel {
             );
           }).toList() ??
           [],
-
       selectedAddOns: List<Map<String, dynamic>>.from(
         map['selectedAddOns'] ?? [],
       ),
@@ -67,7 +93,7 @@ class ProductModel {
       'specifications': specifications,
       'selectedAddOns': selectedAddOns,
       'images': images,
-      'createdAt': createdAt, // ✅ include timestamp
+      'createdAt': createdAt,
     };
   }
 
@@ -87,7 +113,7 @@ class ProductModel {
 
       final selectedValue = values.firstWhere(
         (v) => v["name"] == selectedName,
-        orElse: () => {}, // 👈 prevent crash if not found
+        orElse: () => {},
       );
 
       if (selectedValue.isNotEmpty) {

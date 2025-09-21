@@ -66,7 +66,7 @@ class _ShopListPageState extends State<ShopListPage>
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 10,
-                        vertical: 10,
+                        vertical: 12,
                       ),
                       child: Center(
                         child: Text(
@@ -74,7 +74,6 @@ class _ShopListPageState extends State<ShopListPage>
                               ? S.current.accepted
                               : S.current.rejected,
                           style: TextStyle(
-                            fontSize: 16,
                             color: shop.shopAcceptanceStatus.index == 1
                                 ? Colors.green
                                 : Colors.red,
@@ -102,8 +101,8 @@ class _ShopListPageState extends State<ShopListPage>
                             newStatus: ShopAcceptanceStatus.rejected,
                           );
                         },
-                        child: const Text(
-                          "REJECT",
+                        child: Text(
+                          S.current.reject.toUpperCase(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -122,8 +121,8 @@ class _ShopListPageState extends State<ShopListPage>
                             newStatus: ShopAcceptanceStatus.accepted,
                           );
                         },
-                        child: const Text(
-                          "ACCEPT",
+                        child: Text(
+                          S.current.accept.toUpperCase(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -169,8 +168,9 @@ class _ShopListPageState extends State<ShopListPage>
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: primaryBlue,
                     labelColor: Colors.black,
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 10),
                     tabs: [
-                      Tab(text: S.current.all_shops),
+                      Tab(text: S.current.all),
                       Tab(text: S.current.pending),
                       Tab(text: S.current.accepted),
                       Tab(text: S.current.rejected),

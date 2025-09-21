@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gahezha/generated/l10n.dart';
 
@@ -5,95 +6,146 @@ enum OrderStatus { pending, accepted, rejected, preparing, pickup, delivered }
 
 class OrderModel {
   final String id;
-  final OrderStatus status;
-  final DateTime date;
-  final List<OrderItem> items; // ✅ multiple items instead of single label
-  final String totalPrice; // ✅ final total
+  final DateTime startDate;
+  final List<String> shopIds;
+  final List<OrderShop> shops;
+  final String totalPrice;
+  final String customerId;
+  final String customerFullName;
+  final String customerProfileUrl;
+  final String customerPhone;
 
   OrderModel({
     required this.id,
-    required this.status,
-    required this.date,
-    required this.items,
+    required this.startDate,
+    required this.shopIds,
+    required this.shops,
     required this.totalPrice,
+    required this.customerId,
+    required this.customerFullName,
+    required this.customerProfileUrl,
+    required this.customerPhone,
   });
 
-  // Convert Firestore/JSON → OrderModel
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       id: map['id'] ?? '',
-      status: statusFromString(map['status'] ?? 'pending'),
-      date: map['date'] is DateTime
-          ? map['date']
-          : DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
-      items: (map['items'] as List<dynamic>? ?? [])
-          .map((item) => OrderItem.fromMap(item))
+      startDate: (map['startDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      shopIds: List<String>.from(map['shopIds'] ?? []),
+      shops: (map['shops'] as List<dynamic>? ?? [])
+          .map((shop) => OrderShop.fromMap(shop))
           .toList(),
-      totalPrice: map['totalPrice'] ?? '',
+      totalPrice: map['totalPrice'] ?? '0.0',
+      customerId: map['customerId'] ?? '',
+      customerFullName: map['customerFullName'] ?? '',
+      customerProfileUrl: map['customerProfileUrl'] ?? '',
+      customerPhone: map['customerPhone'] ?? '',
     );
   }
 
-  // Convert OrderModel → JSON/Map
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'status': status.name,
-      'date': date.toIso8601String(),
-      'items': items.map((i) => i.toMap()).toList(),
-      'totalPrice': totalPrice,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'startDate': Timestamp.fromDate(startDate),
+    'shopIds': shopIds,
+    'shops': shops.map((s) => s.toMap()).toList(),
+    'totalPrice': totalPrice,
+    'customerId': customerId,
+    'customerFullName': customerFullName,
+    'customerProfileUrl': customerProfileUrl,
+    'customerPhone': customerPhone,
+  };
 
-  // --- Helpers ---
-  static OrderStatus statusFromString(String value) {
-    switch (value.toLowerCase()) {
-      case 'accepted':
-        return OrderStatus.accepted;
-      case 'rejected':
-        return OrderStatus.rejected;
-      case 'ready':
-      case 'pickup':
-        return OrderStatus.pickup;
-      case 'delivered':
-        return OrderStatus.delivered;
-      default:
-        return OrderStatus.pending;
-    }
-  }
-
+  /// Localized status for UI
   static String getLocalizedStatus(BuildContext context, OrderStatus status) {
-    final locale = Localizations.localeOf(context).languageCode;
-    String value;
-
     switch (status) {
       case OrderStatus.accepted:
-        value = S.of(context).accepted;
-        break;
+        return S.of(context).accepted;
       case OrderStatus.rejected:
-        value = S.of(context).rejected;
-        break;
+        return S.of(context).rejected;
       case OrderStatus.preparing:
-        value = S.of(context).preparing;
-        break;
-        case OrderStatus.pickup:
-        value = S.of(context).pickup;
-        break;
+        return S.of(context).preparing;
+      case OrderStatus.pickup:
+        return S.of(context).pickup;
       case OrderStatus.delivered:
-        value = S.of(context).delivered;
-        break;
+        return S.of(context).delivered;
       default:
-        value = S.of(context).pending;
+        return S.of(context).pending;
     }
+  }
 
-    // Uppercase only for English
-    return locale == 'en' ? value.toUpperCase() : value;
+  /// Helper: remaining time
+  Duration get remainingTime {
+    late Duration timeLeft;
+    for (int i = 0; i < shops.length; i++) {
+      timeLeft = shops[i].endDate.difference(DateTime.now());
+    }
+    return timeLeft;
   }
 }
 
+class OrderShop {
+  final String shopId;
+  final OrderStatus status;
+  final String shopName;
+  final String shopLogo;
+  final String shopPhone;
+  final DateTime endDate;
+  final int preparingTimeFrom;
+  final int preparingTimeTo;
+  final List<OrderItem> items;
+  final String shopTotalPrice;
+
+  OrderShop({
+    required this.shopId,
+    required this.status,
+    required this.shopName,
+    required this.shopLogo,
+    required this.shopPhone,
+    required this.endDate,
+    required this.preparingTimeFrom,
+    required this.preparingTimeTo,
+    required this.items,
+    required this.shopTotalPrice,
+  });
+
+  factory OrderShop.fromMap(Map<String, dynamic> map) {
+    int statusIndex = map['statusIndex'] ?? 0;
+    return OrderShop(
+      shopId: map['shopId'] ?? '',
+      status: OrderStatus.values[statusIndex],
+      shopName: map['shopName'] ?? '',
+      shopLogo: map['shopLogo'] ?? '',
+      shopPhone: map['shopPhone'] ?? '',
+      endDate:
+          (map['endDate'] as Timestamp?)?.toDate() ??
+          DateTime.now().add(const Duration(minutes: 30)),
+      preparingTimeFrom: map['preparingTimeFrom'] ?? 0,
+      preparingTimeTo: map['preparingTimeTo'] ?? 0,
+      items: (map['items'] as List<dynamic>? ?? [])
+          .map((item) => OrderItem.fromMap(item))
+          .toList(),
+      shopTotalPrice: map['shopTotalPrice'] ?? '0.0',
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'shopId': shopId,
+    'statusIndex': status.index,
+    'shopName': shopName,
+    'shopLogo': shopLogo,
+    'shopPhone': shopPhone,
+    'endDate': Timestamp.fromDate(endDate),
+    'preparingTimeFrom': preparingTimeFrom,
+    'preparingTimeTo': preparingTimeTo,
+    'items': items.map((i) => i.toMap()).toList(),
+    'shopTotalPrice': shopTotalPrice,
+  };
+}
+
 class OrderItem {
-  final String name; // e.g. "Pizza Chicken Ranch"
-  final String price; // e.g. "$49.95"
-  final List<String> extras; // e.g. ["Large", "Sprite", "Cheesy Fries"]
+  final String name;
+  final String price;
+  final List<String> extras;
 
   OrderItem({required this.name, required this.price, this.extras = const []});
 

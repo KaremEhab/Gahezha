@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/order/order_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/order_model.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -7,8 +11,33 @@ import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/orders/widgets/order_card.dart';
 import 'package:iconly/iconly.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
+
+  @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
+  StreamSubscription? _ordersSub;
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger fetching orders depending on user type
+    if (currentUserType == UserType.admin) {
+      _ordersSub = OrderCubit.instance.getOrdersStream();
+    } else if (currentUserType != UserType.guest) {
+      _ordersSub = OrderCubit.instance.getOrdersByCustomerStream();
+    }
+  }
+
+  @override
+  void dispose() {
+    // Cancel Firestore subscriptions
+    _ordersSub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,102 +118,104 @@ class OrdersPage extends StatelessWidget {
             ),
         ],
       ),
-      body: Builder(
-        builder: (context) {
+      body: BlocBuilder<OrderCubit, OrderState>(
+        bloc: OrderCubit.instance,
+        builder: (context, state) {
           if (currentUserType == UserType.guest) {
-            // Guest view with signup button
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      IconlyLight.lock,
-                      size: 80,
-                      color: Colors.grey.shade400,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'You need an account to view orders',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigate to signup page
-                        navigateTo(
-                          context: context,
-                          screen: Signup(isGuestMode: true),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(S.current.create_account),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          } else if (orders.isEmpty) {
-            // Logged-in user but no orders yet
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      IconlyLight.bag,
-                      size: 80,
-                      color: Colors.grey.shade400,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'No orders yet',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Once you place an order, it will appear here.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          } else {
-            // Show orders list
-            return ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                OrderModel order = orders[index];
-                return OrderCard(order: order);
-              },
-            );
+            return _buildGuestView(context);
           }
+
+          if (state is OrderLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is OrderLoaded) {
+            final orders = state.orders;
+            if (orders.isEmpty) return _buildEmptyView();
+
+            return SafeArea(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: orders.length,
+                itemBuilder: (context, index) {
+                  final OrderModel order = orders[index];
+                  return OrderCard(order: order);
+                },
+              ),
+            );
+          } else if (state is OrderError) {
+            return Center(child: Text(state.message));
+          }
+
+          return const SizedBox.shrink();
         },
+      ),
+    );
+  }
+
+  Widget _buildGuestView(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(IconlyLight.lock, size: 80, color: Colors.grey.shade400),
+            const SizedBox(height: 20),
+            Text(
+              'You need an account to view orders',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                navigateTo(context: context, screen: Signup(isGuestMode: true));
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(S.current.create_account),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(IconlyLight.bag, size: 80, color: Colors.grey.shade400),
+            const SizedBox(height: 20),
+            Text(
+              'No orders yet',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Once you place an order, it will appear here.',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

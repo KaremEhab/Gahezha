@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/order/order_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/order_model.dart';
 import 'package:gahezha/screens/orders/widgets/order_card.dart';
@@ -10,37 +12,6 @@ class ActiveOrdersBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orders = [
-      OrderModel(
-        id: "#1023",
-        status: OrderStatus.pickup,
-        date: DateTime.now().copyWith(hour: 10, minute: 30),
-        totalPrice: "${S.current.sar} 24.99",
-        items: [
-          OrderItem(
-            name: "Latte",
-            price: "${S.current.sar} 12.50",
-            extras: ["Medium", "Extra Shot"],
-          ),
-          OrderItem(name: "Croissant", price: "${S.current.sar} 12.49", extras: ["Butter"]),
-        ],
-      ),
-      OrderModel(
-        id: "#1024",
-        status: OrderStatus.pickup,
-        date: DateTime.now().copyWith(hour: 11, minute: 00),
-        totalPrice: "${S.current.sar} 18.50",
-        items: [
-          OrderItem(
-            name: "Cappuccino",
-            price: "${S.current.sar} 9.50",
-            extras: ["Small", "Oat Milk"],
-          ),
-          OrderItem(name: "Muffin", price: "${S.current.sar} 9.00", extras: ["Blueberry"]),
-        ],
-      ),
-    ];
-
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.6,
@@ -80,20 +51,47 @@ class ActiveOrdersBottomSheet extends StatelessWidget {
               ),
             ),
 
-            // Divider(height: 1, color: Colors.grey.withOpacity(0.3)),
-
             // Orders List
             Expanded(
-              child: ListView.builder(
-                controller: scrollController,
-                itemCount: orders.length,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                itemBuilder: (context, index) {
-                  OrderModel order = orders[index];
-                  return OrderCard(order: order);
+              child: BlocBuilder<OrderCubit, OrderState>(
+                bloc: OrderCubit.instance,
+                builder: (context, state) {
+                  if (state is OrderLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is OrderLoaded) {
+                    // ✅ Filter by shop-level statuses
+                    final pickupOrders = state.orders.where((order) {
+                      return order.shops.any(
+                        (shop) => shop.status == OrderStatus.pickup,
+                      );
+                    }).toList();
+
+                    if (pickupOrders.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "No active orders",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      controller: scrollController,
+                      itemCount: pickupOrders.length,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      itemBuilder: (context, index) {
+                        final order = pickupOrders[index];
+                        return OrderCard(order: order);
+                      },
+                    );
+                  } else if (state is OrderError) {
+                    return Center(child: Text(state.message));
+                  } else {
+                    return const SizedBox.shrink();
+                  }
                 },
               ),
             ),

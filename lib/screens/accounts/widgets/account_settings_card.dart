@@ -8,6 +8,7 @@ class AccountSettingsCard extends StatelessWidget {
   const AccountSettingsCard({
     super.key,
     required this.userType,
+    this.id = "mcoeq8yu9cewy8g9f1wc",
     this.userName = "John Doe",
     this.userEmail = "john.doe@example.com",
     this.userPhone = "+20 111 222 3333",
@@ -16,10 +17,12 @@ class AccountSettingsCard extends StatelessWidget {
     this.isBlocked = false,
     this.isReported = false,
     this.isDisabled = false, // NEW
+    this.shopAcceptanceStatus = 0,
     this.reportedCount = 0,
   });
 
   final UserType userType;
+  final String id;
   final String userName;
   final String userEmail;
   final String userPhone;
@@ -28,6 +31,7 @@ class AccountSettingsCard extends StatelessWidget {
   final bool isBlocked;
   final bool isReported;
   final bool isDisabled; // NEW
+  final int shopAcceptanceStatus;
   final int reportedCount;
 
   @override
@@ -74,6 +78,7 @@ class AccountSettingsCard extends StatelessWidget {
             ),
             builder: (_) => AccountDetailsSheet(
               userType: userType,
+              id: id,
               name: userName,
               email: userEmail,
               phone: userPhone,
@@ -82,7 +87,8 @@ class AccountSettingsCard extends StatelessWidget {
               isBlocked: isBlocked,
               isReported: isReported,
               reportedCount: reportedCount,
-              isDisabled: isDisabled, // Pass the new state
+              isDisabled: isDisabled,
+              shopAcceptanceStatus: shopAcceptanceStatus,
             ),
           );
         },
@@ -96,9 +102,12 @@ class AccountSettingsCard extends StatelessWidget {
             children: [
               /// Avatar
               CircleAvatar(
-                radius: 24,
-                backgroundImage: NetworkImage(avatarUrl),
-                backgroundColor: Colors.grey.shade200,
+                radius: 25,
+                backgroundColor: Colors.grey.shade300,
+                child: CircleAvatar(
+                  radius: 24,
+                  backgroundImage: NetworkImage(avatarUrl),
+                ),
               ),
               const SizedBox(width: 12),
 

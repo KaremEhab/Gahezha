@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/generated/l10n.dart';
@@ -32,13 +33,13 @@ class Layout extends StatefulWidget {
 class LayoutState extends State<Layout> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  List<Widget> _pages = [];
+  List<Widget> pages = [];
   DateTime? _lastBackPressTime;
 
   @override
   void initState() {
     super.initState();
-    _pages =
+    pages =
         currentUserType == UserType.customer ||
             currentUserType == UserType.guest
         ? [
@@ -48,7 +49,11 @@ class LayoutState extends State<Layout> {
             const CustomerProfilePage(),
           ]
         : currentUserType == UserType.shop
-        ? [const ShopHomePage(), const ShopMenuPage(), const ShopProfilePage()]
+        ? [
+            ShopHomePage(key: ShopHomePage.globalKey),
+            const ShopMenuPage(),
+            const ShopProfilePage(),
+          ]
         : [
             const AdminHomePage(),
             const UsersAndShopsPage(),
@@ -56,7 +61,15 @@ class LayoutState extends State<Layout> {
           ];
   }
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
+    if (_currentIndex == index && index == 0) {
+      // 🔄 User tapped Home again while already on Home
+      if (pages[0] is CustomerHomePage) {
+        // Force refresh the Home page
+        ShopCubit.instance.customerGetAllShops();
+      }
+    }
+
     setState(() => _currentIndex = index);
     _pageController.jumpToPage(index);
   }
@@ -64,7 +77,7 @@ class LayoutState extends State<Layout> {
   Future<bool> _onWillPop() async {
     // لو المستخدم مش في الصفحة الرئيسية (index 0) نرجعه للصفحة الرئيسية
     if (_currentIndex != 0) {
-      _onItemTapped(0);
+      onItemTapped(0);
       return false; // مانع الخروج من التطبيق
     }
 
@@ -86,7 +99,7 @@ class LayoutState extends State<Layout> {
   }
 
   void openEditProfile(BuildContext context) {
-    _onItemTapped(_pages.length - 1); // jump to last tab
+    onItemTapped(pages.length - 1); // jump to last tab
     Future.delayed(const Duration(milliseconds: 200), () {
       showModalBottomSheet(
         context: context,
@@ -106,6 +119,14 @@ class LayoutState extends State<Layout> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+    );
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Stack(
@@ -114,11 +135,11 @@ class LayoutState extends State<Layout> {
             body: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
-              children: _pages,
+              children: pages,
             ),
             bottomNavigationBar: CustomNavBar(
               currentIndex: _currentIndex,
-              onItemTapped: _onItemTapped,
+              onItemTapped: onItemTapped,
             ),
           ),
           Material(color: Colors.transparent, child: HomeProfilePopup()),

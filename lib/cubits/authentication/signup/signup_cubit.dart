@@ -93,8 +93,8 @@ class SignupCubit extends Cubit<SignupState> {
     emit(SignupCreateUserLoadingState());
 
     final profileUrl = gender == Gender.male
-        ? "https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671122.jpg"
-        : "https://img.freepik.com/free-psd/3d-rendering-hair-style-avatar-design_23-2151869159.jpg";
+        ? "https://res.cloudinary.com/dl0wayiab/image/upload/v1757279014/samples/man-portrait.jpg"
+        : "https://res.cloudinary.com/dl0wayiab/image/upload/v1757279013/samples/outdoor-woman.jpg";
 
     final model = UserModel(
       userId: userId,

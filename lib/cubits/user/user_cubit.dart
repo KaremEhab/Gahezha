@@ -26,6 +26,14 @@ class UserCubit extends Cubit<UserState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  List<UserModel> allCustomers = [];
+
+  List<UserModel> blockedCustomers = [];
+
+  List<UserModel> reportedCustomers = [];
+
+  List<UserModel> disabledCustomers = [];
+
   /// ✅ Get current logged-in user
   Future<void> getCurrentUser() async {
     try {
@@ -75,6 +83,50 @@ class UserCubit extends Cubit<UserState> {
 
       emit(UsersLoaded(users));
     } catch (e) {
+      emit(UserError(e.toString()));
+    }
+  }
+
+  /// ✅ Get all shops and separate blocked/disabled
+  Future<void> adminGetAllCustomers() async {
+    try {
+      emit(UserLoading());
+
+      // Fetch all shops sorted by createdAt descending
+      final querySnapshot = await _firestore
+          .collection("users")
+          .where('userType', isEqualTo: UserType.customer.name)
+          .orderBy("createdAt", descending: true)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        allCustomers = [];
+        blockedCustomers = [];
+        disabledCustomers = [];
+        reportedCustomers = []; // keep fixed for now
+        emit(UsersLoaded(allCustomers));
+        return;
+      }
+
+      // Convert to models
+      final users = querySnapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), userId: doc.id))
+          .toList();
+
+      // Separate into lists
+      allCustomers = users;
+      blockedCustomers = users.where((user) => user.blocked).toList();
+      disabledCustomers = users.where((user) => user.disabled).toList();
+      reportedCustomers = []; // Placeholder until reporting logic ready
+
+      emit(UsersLoaded(allCustomers));
+    } catch (e, stackTrace) {
+      print("Error in adminGetAllCustomers: $e");
+      print(stackTrace);
+      allCustomers = [];
+      blockedCustomers = [];
+      disabledCustomers = [];
+      reportedCustomers = [];
       emit(UserError(e.toString()));
     }
   }

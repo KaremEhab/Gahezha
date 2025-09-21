@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/report_model.dart';
 import 'package:gahezha/screens/reports/widgets/report_card.dart';
 
 class AccountReports extends StatelessWidget {
@@ -87,7 +88,22 @@ class AccountReports extends StatelessWidget {
                   itemBuilder: (context, index) => Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     height: 150,
-                    child: const ReportCard(),
+                    child: ReportCard(
+                      report: ReportModel(
+                        id: "#110029",
+                        reportType: "Order prepared late / not ready on time",
+                        reportDescription: "reportDescription",
+                        reporter: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Alaa El-Sayed",
+                        ),
+                        reporting: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Kareem Ehab",
+                        ),
+                        createdAt: DateTime.now(),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -104,7 +120,22 @@ class AccountReports extends StatelessWidget {
                   itemBuilder: (context, index) => Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     height: 150,
-                    child: const ReportCard(),
+                    child: ReportCard(
+                      report: ReportModel(
+                        id: "#110029",
+                        reportType: "Order prepared late / not ready on time",
+                        reportDescription: "reportDescription",
+                        reporter: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Alaa El-Sayed",
+                        ),
+                        reporting: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Kareem Ehab",
+                        ),
+                        createdAt: DateTime.now(),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -121,7 +152,22 @@ class AccountReports extends StatelessWidget {
                   itemBuilder: (context, index) => Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     height: 150,
-                    child: const ReportCard(),
+                    child: ReportCard(
+                      report: ReportModel(
+                        id: "#110029",
+                        reportType: "Order prepared late / not ready on time",
+                        reportDescription: "reportDescription",
+                        reporter: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Alaa El-Sayed",
+                        ),
+                        reporting: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Kareem Ehab",
+                        ),
+                        createdAt: DateTime.now(),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -138,7 +184,22 @@ class AccountReports extends StatelessWidget {
                   itemBuilder: (context, index) => Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     height: 150,
-                    child: const ReportCard(),
+                    child: ReportCard(
+                      report: ReportModel(
+                        id: "#110029",
+                        reportType: "Order prepared late / not ready on time",
+                        reportDescription: "reportDescription",
+                        reporter: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Alaa El-Sayed",
+                        ),
+                        reporting: ReportUser(
+                          id: "cscwfwdcaer2",
+                          name: "Kareem Ehab",
+                        ),
+                        createdAt: DateTime.now(),
+                      ),
+                    ),
                   ),
                 ),
               ),

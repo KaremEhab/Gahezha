@@ -149,7 +149,14 @@ class ProductCard extends StatelessWidget {
                 top: Radius.circular(sheetRadius),
               ),
             ),
-            builder: (_) => ProductDetailsSheet(productModel: product!),
+            builder: (_) => ProductDetailsSheet(
+              productModel: product!,
+              shopName: currentShopModel!.shopName,
+              shopLogo: currentShopModel!.shopLogo,
+              shopPhone: currentShopModel!.shopPhoneNumber,
+              preparingTimeFrom: currentShopModel!.preparingTimeFrom,
+              preparingTimeTo: currentShopModel!.preparingTimeTo,
+            ),
           );
         },
         contentPadding: const EdgeInsets.symmetric(horizontal: 10),

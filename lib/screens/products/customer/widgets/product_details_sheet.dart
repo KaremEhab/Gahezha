@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/cart/cart_cubit.dart';
 import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/cart_model.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
@@ -11,8 +13,18 @@ import 'package:iconly/iconly.dart';
 
 class ProductDetailsSheet extends StatefulWidget {
   final ProductModel productModel;
+  final String shopName, shopLogo, shopPhone;
+  final int preparingTimeFrom, preparingTimeTo;
 
-  const ProductDetailsSheet({super.key, required this.productModel});
+  const ProductDetailsSheet({
+    super.key,
+    required this.productModel,
+    required this.shopName,
+    required this.shopLogo,
+    required this.shopPhone,
+    required this.preparingTimeFrom,
+    required this.preparingTimeTo,
+  });
 
   @override
   State<ProductDetailsSheet> createState() => _ProductDetailsSheetState();
@@ -336,7 +348,7 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                 // Add to Cart Button
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       if (currentUserType == UserType.guest) {
                         Navigator.pop(
                           context,
@@ -364,16 +376,65 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                           screen: EditProductPage(product: widget.productModel),
                         );
                       } else {
-                        Navigator.pop(context);
-                        final selectedAddOnList = addOns.entries
+                        final selectedSpecsList = selectedSpecs.entries.map((
+                          e,
+                        ) {
+                          return {
+                            e.key: [
+                              {
+                                "name": e.value,
+                                "price":
+                                    widget.productModel.specifications
+                                        .firstWhere(
+                                          (spec) => spec.keys.first == e.key,
+                                        )[e.key]!
+                                        .firstWhere(
+                                          (v) => v["name"] == e.value,
+                                        )["price"] ??
+                                    0.0,
+                              },
+                            ],
+                          };
+                        }).toList();
+
+                        List<Map<String, dynamic>> selectedAddOnList = addOns
+                            .entries
                             .where((e) => e.value)
-                            .map((e) => e.key)
+                            .map((e) {
+                              final addon = widget.productModel.selectedAddOns
+                                  .firstWhere((a) => a["name"] == e.key);
+                              return {
+                                'name': e.key,
+                                'price': (addon["price"] ?? 0.0) as double,
+                              };
+                            })
                             .toList();
 
                         debugPrint("Added to cart:");
                         debugPrint("Quantity: $quantity");
-                        debugPrint("Specifications: $selectedSpecs");
+                        debugPrint("Specifications: $selectedSpecsList");
                         debugPrint("Add-ons: $selectedAddOnList");
+
+                        await CartCubit.instance.addToCart(
+                          widget.productModel.shopId,
+                          widget.shopName,
+                          widget.shopLogo,
+                          widget.shopPhone,
+                          widget.preparingTimeFrom,
+                          widget.preparingTimeTo,
+                          CartItem(
+                            productId: widget.productModel.id,
+                            name: widget.productModel.name,
+                            basePrice: widget.productModel.price,
+                            quantity: quantity,
+                            productUrl: widget.productModel.images.isEmpty
+                                ? ''
+                                : widget.productModel.images.first,
+                            specifications: selectedSpecsList,
+                            selectedAddOns: selectedAddOnList,
+                          ),
+                        );
+                        Navigator.pop(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(

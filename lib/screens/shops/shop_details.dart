@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/cart/cart_cubit.dart';
 import 'package:gahezha/cubits/product/product_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/cart_model.dart';
 import 'package:gahezha/models/product_model.dart';
 import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -24,8 +26,43 @@ class ShopDetailsPage extends StatefulWidget {
 class _ShopDetailsPageState extends State<ShopDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final GlobalKey _fabKey = GlobalKey();
+  final GlobalKey addButtonKey = GlobalKey();
+  final imageKey = GlobalKey();
 
   bool displayProducts = false;
+
+  Future<void> runAddToCartAnimation(
+    BuildContext context,
+    String imageUrl,
+    Offset startOffset, {
+    double startWidth = 50,
+    double startHeight = 50,
+  }) async {
+    final overlay = Overlay.of(context);
+
+    final RenderBox fabBox =
+        _fabKey.currentContext!.findRenderObject() as RenderBox;
+    final fabPosition = fabBox.localToGlobal(Offset.zero);
+
+    final overlayEntry = OverlayEntry(
+      builder: (context) {
+        return AnimatedAddToCart(
+          startOffset: startOffset,
+          endOffset:
+              fabPosition +
+              Offset(fabBox.size.width / 2, fabBox.size.height / 2),
+          imageUrl: imageUrl,
+          startWidth: startWidth,
+          startHeight: startHeight,
+        );
+      },
+    );
+
+    overlay.insert(overlayEntry);
+    await Future.delayed(const Duration(milliseconds: 700));
+    overlayEntry.remove();
+  }
 
   @override
   void initState() {
@@ -60,6 +97,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                 currentUserType == UserType.guest
             ? Hero(
                 tag: "cartHero",
+                key: _fabKey,
                 child: FloatingActionButton.extended(
                   heroTag: null, // ✅ disable default FAB Hero
                   elevation: 0,
@@ -153,6 +191,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                             ),
                           )
                         : CustomCachedImage(
+                            // key: imageKey, // ← Add this
                             imageUrl: widget.shopModel.shopBanner,
                             height: double.infinity,
                           ),
@@ -320,6 +359,14 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                   builder: (_) {
                                     return ProductDetailsSheet(
                                       productModel: product,
+                                      shopName: widget.shopModel.shopName,
+                                      shopLogo: widget.shopModel.shopLogo,
+                                      shopPhone:
+                                          widget.shopModel.shopPhoneNumber,
+                                      preparingTimeFrom:
+                                          widget.shopModel.preparingTimeFrom,
+                                      preparingTimeTo:
+                                          widget.shopModel.preparingTimeTo,
                                     );
                                   },
                                 );
@@ -349,6 +396,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                             ),
                                           )
                                         : CustomCachedImage(
+                                            key: imageKey, // ← Add this
                                             imageUrl: product.images.first,
                                             height: 120,
                                             width: 110,
@@ -400,6 +448,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                                 ),
                                                 const Spacer(),
                                                 TextButton(
+                                                  key: addButtonKey, // add this
                                                   style: TextButton.styleFrom(
                                                     minimumSize: const Size(
                                                       60,
@@ -421,7 +470,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                                       ),
                                                     ),
                                                   ),
-                                                  onPressed: () {
+                                                  onPressed: () async {
                                                     if (currentUserType ==
                                                         UserType.guest) {
                                                       ScaffoldMessenger.of(
@@ -448,6 +497,97 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                                           ),
                                                         ),
                                                       );
+                                                    } else {
+                                                      final selectedSpecs = product
+                                                          .specifications
+                                                          .map((spec) {
+                                                            final key = spec
+                                                                .keys
+                                                                .first; // e.g., "Size"
+                                                            final values =
+                                                                spec[key] ?? [];
+
+                                                            // Pick only the first value in a List
+                                                            final firstValueList =
+                                                                values
+                                                                    .isNotEmpty
+                                                                ? [values.first]
+                                                                : <
+                                                                    Map<
+                                                                      String,
+                                                                      dynamic
+                                                                    >
+                                                                  >[];
+
+                                                            return {
+                                                              key:
+                                                                  firstValueList,
+                                                            };
+                                                          })
+                                                          .toList();
+
+                                                      final RenderBox imageBox =
+                                                          imageKey.currentContext!
+                                                                  .findRenderObject()
+                                                              as RenderBox;
+                                                      final imagePosition =
+                                                          imageBox
+                                                              .localToGlobal(
+                                                                Offset.zero,
+                                                              );
+
+                                                      if (product
+                                                          .images
+                                                          .isNotEmpty) {
+                                                        runAddToCartAnimation(
+                                                          context,
+                                                          product.images.first,
+                                                          imagePosition,
+                                                          startWidth: 110,
+                                                          startHeight: 120,
+                                                        );
+                                                      }
+
+                                                      await CartCubit.instance
+                                                          .addToCart(
+                                                            product.shopId,
+                                                            widget
+                                                                .shopModel
+                                                                .shopName,
+                                                            widget
+                                                                .shopModel
+                                                                .shopLogo,
+                                                            widget
+                                                                .shopModel
+                                                                .shopPhoneNumber,
+                                                            widget
+                                                                .shopModel
+                                                                .preparingTimeFrom,
+                                                            widget
+                                                                .shopModel
+                                                                .preparingTimeTo,
+                                                            CartItem(
+                                                              productId:
+                                                                  product.id,
+                                                              name:
+                                                                  product.name,
+                                                              basePrice:
+                                                                  product.price,
+                                                              quantity: 1,
+                                                              productUrl:
+                                                                  product
+                                                                      .images
+                                                                      .isEmpty
+                                                                  ? ''
+                                                                  : product
+                                                                        .images
+                                                                        .first,
+                                                              specifications:
+                                                                  selectedSpecs,
+                                                              selectedAddOns:
+                                                                  [],
+                                                            ),
+                                                          );
                                                     }
                                                   },
                                                   child: Text(S.current.add),
@@ -551,5 +691,86 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
         ),
       ),
     );
+  }
+}
+
+class AnimatedAddToCart extends StatefulWidget {
+  final Offset startOffset;
+  final Offset endOffset;
+  final String imageUrl;
+  final double startWidth;
+  final double startHeight;
+
+  const AnimatedAddToCart({
+    super.key,
+    required this.startOffset,
+    required this.endOffset,
+    required this.imageUrl,
+    required this.startWidth,
+    required this.startHeight,
+  });
+
+  @override
+  State<AnimatedAddToCart> createState() => _AnimatedAddToCartState();
+}
+
+class _AnimatedAddToCartState extends State<AnimatedAddToCart>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _positionAnimation;
+  late Animation<double> _widthAnimation;
+  late Animation<double> _heightAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
+    _positionAnimation = Tween<Offset>(
+      begin: widget.startOffset,
+      end: widget.endOffset,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _widthAnimation = Tween<double>(
+      begin: widget.startWidth,
+      end: 10,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
+    _heightAnimation = Tween<double>(
+      begin: widget.startHeight,
+      end: 10,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Positioned(
+          left: _positionAnimation.value.dx,
+          top: _positionAnimation.value.dy,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(radius),
+            child: SizedBox(
+              width: _widthAnimation.value,
+              height: _heightAnimation.value,
+              child: Image.network(widget.imageUrl, fit: BoxFit.cover),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

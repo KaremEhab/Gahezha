@@ -1,9 +1,16 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/admin/admin_cubit.dart';
+import 'package:gahezha/cubits/admin/admin_cubit.dart';
+import 'package:gahezha/cubits/admin/admin_state.dart';
 import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
+import 'package:gahezha/cubits/user/user_state.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/shops/widgets/shop_card.dart';
 import 'package:gahezha/screens/accounts/widgets/account_settings_card.dart';
@@ -61,8 +68,19 @@ class UsersAndShopsPage extends StatelessWidget {
   }
 }
 
-class _UsersTab extends StatelessWidget {
+class _UsersTab extends StatefulWidget {
   const _UsersTab();
+
+  @override
+  State<_UsersTab> createState() => _UsersTabState();
+}
+
+class _UsersTabState extends State<_UsersTab> {
+  @override
+  void initState() {
+    super.initState();
+    UserCubit.instance.adminGetAllCustomers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,43 +184,67 @@ class _ShopsTabState extends State<_ShopsTab> {
 /// ---------- USERS LIST ----------
 class _UsersList extends StatelessWidget {
   final String tabType;
+
   const _UsersList({required this.tabType});
 
   @override
   Widget build(BuildContext context) {
-    // Example fake data
-    final List<int> users = List.generate(10, (i) => i);
+    return BlocBuilder<UserCubit, UserState>(
+      builder: (context, state) {
+        final cubit = UserCubit.instance;
 
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        final Random random = Random();
-
-        // Disabled is exclusive
-        final bool isDisabled = random.nextBool(); // 50% chance
-
-        bool isBlocked = false;
-        bool isReported = false;
-        int reportedCount = 0;
-
-        if (!isDisabled) {
-          // Only if not disabled, decide blocked/reported independently
-          isBlocked = random.nextBool(); // 50% chance
-          isReported = random.nextBool(); // 50% chance
-          reportedCount = isReported ? random.nextInt(13) : 0;
+        List<UserModel> usersList;
+        switch (tabType) {
+          case "Blocked":
+            usersList = cubit.blockedCustomers;
+            break;
+          case "Reported":
+            usersList = cubit.reportedCustomers;
+            break;
+          case "Disabled":
+            usersList = cubit.disabledCustomers;
+            break;
+          default:
+            usersList = cubit.allCustomers;
         }
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          child: AccountSettingsCard(
-            userType: UserType.customer,
-            isBlocked: isBlocked,
-            isDisabled: isDisabled,
-            isReported: isReported,
-            reportedCount: reportedCount,
-          ),
+        if (usersList.isEmpty) {
+          return const Center(child: Text("No Customers"));
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          itemCount: usersList.length,
+          itemBuilder: (context, index) {
+            final user = usersList[index];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: BlocConsumer<AdminCubit, AdminState>(
+                listener: (context, state) {
+                  // if (state is AdminCustomerDeleted &&
+                  //     state.userId == user.userId) {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(content: Text("Customer deleted")),
+                  //   );
+                  // }
+                },
+                builder: (context, state) {
+                  return AccountSettingsCard(
+                    userType: UserType.customer,
+                    id: user.userId,
+                    avatarUrl: user.profileUrl,
+                    userName: user.fullName,
+                    userEmail: user.email,
+                    userPhone: user.phoneNumber,
+                    isBlocked: user.blocked,
+                    isDisabled: user.disabled,
+                    isReported: false,
+                    reportedCount: 0,
+                  );
+                },
+              ),
+            );
+          },
         );
       },
     );
@@ -212,30 +254,74 @@ class _UsersList extends StatelessWidget {
 /// ---------- SHOPS LIST ----------
 class _ShopsList extends StatelessWidget {
   final String tabType;
+
   const _ShopsList({required this.tabType});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      itemCount: ShopCubit.instance.allShops.length,
-      itemBuilder: (context, index) {
-        final shop = ShopCubit.instance.allShops[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          child: AccountSettingsCard(
-            userType: UserType.shop,
-            avatarUrl: shop.shopLogo,
-            bannerUrl: shop.shopBanner,
-            userName: shop.shopName,
-            userEmail: shop.shopEmail,
-            isBlocked: shop.blocked,
-            isDisabled: shop.disabled,
-            isReported: false,
-            reportedCount: 0,
-          ),
-        );
+    return BlocBuilder<ShopCubit, ShopState>(
+      builder: (context, state) {
+        if (state is ShopLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is AllShopsLoaded) {
+          // ✅ Use the updated lists from the cubit
+          final cubit = ShopCubit.instance;
+
+          List<ShopModel> shopsList;
+          switch (tabType) {
+            case "Blocked":
+              shopsList = cubit.blockedShops;
+              break;
+            case "Reported":
+              shopsList = cubit.reportedShops;
+              break;
+            case "Disabled":
+              shopsList = cubit.disabledShops;
+              break;
+            default:
+              shopsList = cubit.allShops;
+          }
+
+          if (shopsList.isEmpty) {
+            return const Center(child: Text("No Shops"));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            itemCount: shopsList.length,
+            itemBuilder: (context, index) {
+              final shop = shopsList[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: BlocConsumer<AdminCubit, AdminState>(
+                  listener: (context, state) {
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    return AccountSettingsCard(
+                      userType: UserType.shop,
+                      id: shop.id,
+                      avatarUrl: shop.shopLogo,
+                      bannerUrl: shop.shopBanner,
+                      userName: shop.shopName,
+                      userEmail: shop.shopEmail,
+                      isBlocked: shop.blocked,
+                      isDisabled: shop.disabled,
+                      userPhone: shop.shopPhoneNumber,
+                      isReported: false,
+                      shopAcceptanceStatus: shop.shopAcceptanceStatus.index,
+                      reportedCount: 0,
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        }
+
+        return const SizedBox();
       },
     );
   }

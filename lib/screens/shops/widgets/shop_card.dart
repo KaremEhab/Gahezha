@@ -6,9 +6,17 @@ import 'package:gahezha/screens/shops/shop_details.dart';
 import 'package:iconly/iconly.dart';
 
 class ShopCard extends StatelessWidget {
-  const ShopCard({super.key, this.shopModel});
+  const ShopCard({
+    super.key,
+    this.onRejected,
+    this.onAccepted,
+    this.shopModel,
+    this.isPending = false,
+  });
 
+  final void Function()? onRejected, onAccepted;
   final ShopModel? shopModel;
+  final bool isPending;
 
   @override
   Widget build(BuildContext context) {
@@ -170,66 +178,110 @@ class ShopCard extends StatelessWidget {
 
                         // Info Row
                         Row(
-                          children: [
-                            const Icon(
-                              IconlyBold.star,
-                              color: Colors.amber,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              shopModel!.shopRate.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
-                            const SizedBox(width: 14),
-                            const Icon(
-                              IconlyLight.time_circle,
-                              size: 16,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              "${shopModel!.preparingTimeFrom}-${shopModel!.preparingTimeTo} ${S.current.min}",
-                            ),
-                            const Spacer(),
+                          children: isPending
+                              ? [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        side: const BorderSide(
+                                          color: Colors.red,
+                                        ),
+                                        foregroundColor: Colors.red,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
+                                      ),
+                                      onPressed: onRejected,
+                                      child: Text(
+                                        S.current.reject.toUpperCase(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ), // spacing between buttons
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
+                                      ),
+                                      onPressed: onAccepted,
+                                      child: Text(
+                                        S.current.accept.toUpperCase(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ]
+                              : [
+                                  const Icon(
+                                    IconlyBold.star,
+                                    color: Colors.amber,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    shopModel!.shopRate.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  const Icon(
+                                    IconlyLight.time_circle,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "${shopModel!.preparingTimeFrom}-${shopModel!.preparingTimeTo} ${S.current.min}",
+                                  ),
+                                  const Spacer(),
 
-                            // Gradient CTA
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //     gradient: LinearGradient(
-                            //       colors: [
-                            //         primaryBlue,
-                            //         primaryBlue.withOpacity(0.7),
-                            //       ],
-                            //     ),
-                            //     borderRadius: BorderRadius.circular(10),
-                            //   ),
-                            //   child: Material(
-                            //     color: Colors.transparent,
-                            //     child: InkWell(
-                            //       borderRadius: BorderRadius.circular(10),
-                            //       onTap: () {},
-                            //       child: const Padding(
-                            //         padding: EdgeInsets.symmetric(
-                            //           horizontal: 14,
-                            //           vertical: 8,
-                            //         ),
-                            //         child: Text(
-                            //           "Order Now",
-                            //           style: TextStyle(
-                            //             color: Colors.white,
-                            //             fontWeight: FontWeight.w600,
-                            //             fontSize: 13,
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
+                                  // Gradient CTA
+                                  // Container(
+                                  //   decoration: BoxDecoration(
+                                  //     gradient: LinearGradient(
+                                  //       colors: [
+                                  //         primaryBlue,
+                                  //         primaryBlue.withOpacity(0.7),
+                                  //       ],
+                                  //     ),
+                                  //     borderRadius: BorderRadius.circular(10),
+                                  //   ),
+                                  //   child: Material(
+                                  //     color: Colors.transparent,
+                                  //     child: InkWell(
+                                  //       borderRadius: BorderRadius.circular(10),
+                                  //       onTap: () {},
+                                  //       child: const Padding(
+                                  //         padding: EdgeInsets.symmetric(
+                                  //           horizontal: 14,
+                                  //           vertical: 8,
+                                  //         ),
+                                  //         child: Text(
+                                  //           "Order Now",
+                                  //           style: TextStyle(
+                                  //             color: Colors.white,
+                                  //             fontWeight: FontWeight.w600,
+                                  //             fontSize: 13,
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
                         ),
                       ],
                     ),

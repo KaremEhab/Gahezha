@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/admin/admin_state.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 
@@ -19,6 +21,9 @@ class AdminCubit extends Cubit<AdminState> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  bool isBlocked = false;
+  bool isDisabled = false;
 
   /// ✅ Get current logged-in Admin
   Future<void> getCurrentAdmin() async {
@@ -61,6 +66,63 @@ class AdminCubit extends Cubit<AdminState> {
       emit(AdminsLoaded(admins));
     } catch (e) {
       emit(AdminError(e.toString()));
+    }
+  }
+
+  /// ✅ Disable a shop
+  Future<void> adminDisableAccount(
+    String id,
+    String userType,
+    bool disable,
+  ) async {
+    try {
+      String type = userType == "customer" ? "users" : "shops";
+      await _firestore.collection(type).doc(id).update({"disabled": disable});
+
+      emit(AdminShopDisabled(id, disable));
+
+      // Refresh lists after action
+      userType == "customer"
+          ? await UserCubit.instance.adminGetAllCustomers()
+          : await ShopCubit.instance.adminGetAllShops();
+      isDisabled = disable;
+    } catch (e) {
+      emit(AdminError("Failed to disable shop: $e"));
+    }
+  }
+
+  /// ✅ Block a shop
+  Future<void> adminBlockAccount(String id, String userType, bool block) async {
+    try {
+      String type = userType == "customer" ? "users" : "shops";
+      await _firestore.collection(type).doc(id).update({"blocked": block});
+
+      emit(AdminShopBlocked(id, block));
+
+      // Refresh lists after action
+      userType == "customer"
+          ? await UserCubit.instance.adminGetAllCustomers()
+          : await ShopCubit.instance.adminGetAllShops();
+      isBlocked = block;
+    } catch (e) {
+      emit(AdminError("Failed to block shop: $e"));
+    }
+  }
+
+  /// ✅ Delete a shop
+  Future<void> adminDeleteAccount(String userType, String id) async {
+    try {
+      String type = userType == "customer" ? "users" : "shops";
+      await _firestore.collection(type).doc(id).delete();
+
+      emit(AdminShopDeleted(id));
+
+      // Refresh lists after action
+      userType == "customer"
+          ? await UserCubit.instance.adminGetAllCustomers()
+          : await ShopCubit.instance.adminGetAllShops();
+    } catch (e) {
+      emit(AdminError("Failed to delete shop: $e"));
     }
   }
 }

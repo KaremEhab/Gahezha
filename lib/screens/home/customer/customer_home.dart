@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/order/order_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
 import 'package:gahezha/cubits/shop/shop_cubit.dart';
@@ -37,7 +38,16 @@ class _CustomerHomePageState extends State<CustomerHomePage>
   void initState() {
     super.initState();
     // ShopCubit.instance.getHotDealerShops();
+    final orderCubit = OrderCubit.instance;
+    orderCubit.getPickupOrdersStream(currentUserModel!.userId);
     ShopCubit.instance.customerGetAllShops();
+  }
+
+  @override
+  void dispose() {
+    // Cancel the pickup orders subscription
+    OrderCubit.instance.pickupOrdersSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -181,130 +191,142 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                           const SizedBox(height: 20),
 
                           // Active Orders Card
-                          FadeInUp(
-                            duration: const Duration(milliseconds: 600),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      primaryBlue.withOpacity(0.8),
-                                      primaryBlue.withOpacity(0.5),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
+                          BlocConsumer<OrderCubit, OrderState>(
+                            listener: (context, state) {},
+                            builder: (context, state) {
+                              return FadeInUp(
+                                duration: const Duration(milliseconds: 600),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
                                   ),
-                                  borderRadius: BorderRadius.circular(18),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: primaryBlue.withOpacity(0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(18),
-                                    onTap: () {
-                                      if (currentUserType == UserType.guest) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: const Text(
-                                              "Create an account first",
-                                            ),
-                                            action: SnackBarAction(
-                                              label: "Sign Up",
-                                              textColor: primaryBlue,
-                                              onPressed: () {
-                                                navigateTo(
-                                                  context: context,
-                                                  screen: Signup(
-                                                    isGuestMode: true,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          backgroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(sheetRadius),
-                                            ),
-                                          ),
-                                          builder: (context) =>
-                                              const ActiveOrdersBottomSheet(),
-                                        );
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(18),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            IconlyBold.bag,
-                                            color: Colors.white,
-                                            size: 30,
-                                          ),
-                                          const SizedBox(width: 14),
-                                          Expanded(
-                                            child: Text(
-                                              currentUserType == UserType.guest
-                                                  ? "See your active orders"
-                                                  : S
-                                                        .current
-                                                        .home_active_orders, // replaced text
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                          const Icon(
-                                            Icons.arrow_forward_ios,
-                                            size: 18,
-                                            color: Colors.white,
-                                          ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          primaryBlue.withOpacity(0.8),
+                                          primaryBlue.withOpacity(0.5),
                                         ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(18),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: primaryBlue.withOpacity(0.2),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(18),
+                                        onTap: () {
+                                          if (currentUserType ==
+                                              UserType.guest) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                  "Create an account first",
+                                                ),
+                                                action: SnackBarAction(
+                                                  label: "Sign Up",
+                                                  textColor: primaryBlue,
+                                                  onPressed: () {
+                                                    navigateTo(
+                                                      context: context,
+                                                      screen: Signup(
+                                                        isGuestMode: true,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              backgroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                      top: Radius.circular(
+                                                        sheetRadius,
+                                                      ),
+                                                    ),
+                                              ),
+                                              builder: (context) =>
+                                                  const ActiveOrdersBottomSheet(),
+                                            );
+                                          }
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(18),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                IconlyBold.bag,
+                                                color: Colors.white,
+                                                size: 30,
+                                              ),
+                                              const SizedBox(width: 14),
+                                              Expanded(
+                                                child: Text(
+                                                  currentUserType ==
+                                                          UserType.guest
+                                                      ? "See your active orders"
+                                                      : "${S.current.you_have} ${OrderCubit.instance.activeOrders} ${S.current.orders_to_pickup}", // replaced text
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                              const Icon(
+                                                Icons.arrow_forward_ios,
+                                                size: 18,
+                                                color: Colors.white,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
 
                           const SizedBox(height: 30),
                           // Hot Dealers Section
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              "🔥 ${S.current.hot_dealers}",
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                          if (ShopCubit.instance.hotDealerShops.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: Text(
+                                "🔥 ${S.current.hot_dealers}",
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
-                          AnimatedDealerList(
-                            dealerShopsDisplayNotifier:
-                                dealerShopsDisplayNotifier,
-                            dealerShops: ShopCubit.instance.hotDealerShops,
-                          ),
+                            AnimatedDealerList(
+                              dealerShopsDisplayNotifier:
+                                  dealerShopsDisplayNotifier,
+                              dealerShops: ShopCubit.instance.hotDealerShops,
+                            ),
 
-                          const SizedBox(height: 20),
+                            const SizedBox(height: 20),
+                          ],
 
                           // Recommended Section
                           Padding(

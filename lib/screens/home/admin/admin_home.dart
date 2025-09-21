@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gahezha/cubits/order/order_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
 import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/report_model.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/notifications/notifications.dart';
 import 'package:gahezha/screens/orders/orders.dart';
@@ -27,6 +30,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   @override
   void initState() {
     super.initState();
+    OrderCubit.instance.getLastTenOrdersStream();
     ShopCubit.instance.getHomePendingShops();
   }
 
@@ -143,13 +147,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     // }
                   },
                   builder: (context, state) {
-                    return state is ShopLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : ShopCubit.instance.pendingShops.isEmpty
-                        ? const Center(child: Text("No pending shops"))
-                        : SizedBox(
-                            height: 290,
-                            child: ListView.separated(
+                    return SizedBox(
+                      height: 325,
+                      child: state is ShopLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ShopCubit.instance.pendingShops.isEmpty
+                          ? const Center(child: Text("No pending shops"))
+                          : ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: ShopCubit.instance.pendingShops.length,
                               shrinkWrap: true,
@@ -157,16 +161,38 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                   const SizedBox(width: 5),
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               itemBuilder: (context, index) {
+                                final shop =
+                                    ShopCubit.instance.pendingShops[index];
+
                                 return SizedBox(
-                                  width: 330,
+                                  width:
+                                      ShopCubit.instance.pendingShops.length > 1
+                                      ? 330
+                                      : MediaQuery.sizeOf(context).width * 0.95,
                                   child: ShopCard(
-                                    shopModel:
-                                        ShopCubit.instance.pendingShops[index],
+                                    isPending: true,
+                                    shopModel: shop,
+                                    onAccepted: () {
+                                      ShopCubit.instance
+                                          .changeShopAcceptanceStatus(
+                                            shop: shop,
+                                            newStatus:
+                                                ShopAcceptanceStatus.accepted,
+                                          );
+                                    },
+                                    onRejected: () {
+                                      ShopCubit.instance
+                                          .changeShopAcceptanceStatus(
+                                            shop: shop,
+                                            newStatus:
+                                                ShopAcceptanceStatus.rejected,
+                                          );
+                                    },
                                   ),
                                 );
                               },
                             ),
-                          );
+                    );
                   },
                 ),
 
@@ -192,7 +218,22 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     separatorBuilder: (_, __) => const SizedBox(width: 5),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     itemBuilder: (context, index) {
-                      return ReportCard(fromHome: true);
+                      return ReportCard(
+                        report: ReportModel(
+                          id: "#110029",
+                          reportType: "Order prepared late / not ready on time",
+                          reportDescription: "reportDescription",
+                          reporter: ReportUser(
+                            id: "cscwfwdcaer2",
+                            name: "Alaa El-Sayed",
+                          ),
+                          reporting: ReportUser(
+                            id: "cscwfwdcaer2",
+                            name: "Kareem Ehab",
+                          ),
+                          createdAt: DateTime.now(),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -216,13 +257,48 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
 
           // Orders list
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: OrderCard(order: orders[index]),
-              );
-            }, childCount: orders.length),
+          BlocBuilder<OrderCubit, OrderState>(
+            bloc: OrderCubit.instance,
+            builder: (context, state) {
+              if (state is OrderLoading) {
+                return SliverToBoxAdapter(
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              } else if (state is OrderLoaded) {
+                final orders = state.orders;
+                if (orders.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 80),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(IconlyLight.bag, size: 64, color: Colors.grey),
+                          const SizedBox(height: 12),
+                          Text(
+                            "No orders yet",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: OrderCard(order: orders[index]),
+                    );
+                  }, childCount: orders.length),
+                );
+              }
+              return SliverToBoxAdapter(child: SizedBox());
+            },
           ),
         ],
       ),

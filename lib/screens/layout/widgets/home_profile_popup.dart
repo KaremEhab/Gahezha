@@ -98,41 +98,41 @@ class HomeProfilePopup extends StatelessWidget {
                                   style: TextStyle(fontSize: 14),
                                 ),
 
-                                const SizedBox(height: 16),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                  ),
-                                  child: Divider(
-                                    height: 1,
-                                    color: Colors.grey.withOpacity(0.3),
-                                  ),
-                                ),
+                                const SizedBox(height: 24),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(
+                                //     horizontal: 20,
+                                //   ),
+                                //   child: Divider(
+                                //     height: 1,
+                                //     color: Colors.grey.withOpacity(0.3),
+                                //   ),
+                                // ),
 
-                                const SizedBox(height: 16),
-
-                                // Stats
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    FadeInLeft(
-                                      child: _buildProfileStat(
-                                        S.current.orders,
-                                        "120",
-                                      ),
-                                    ),
-                                    FadeInRight(
-                                      child: _buildProfileStat(
-                                        S.current.cart,
-                                        "3",
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // const SizedBox(height: 16),
+                                //
+                                // // Stats
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceEvenly,
+                                //   children: [
+                                //     FadeInLeft(
+                                //       child: _buildProfileStat(
+                                //         S.current.orders,
+                                //         "120",
+                                //       ),
+                                //     ),
+                                //     FadeInRight(
+                                //       child: _buildProfileStat(
+                                //         S.current.cart,
+                                //         "3",
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                               ],
 
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 30),
 
                               // Action buttons
                               FadeInDown(
@@ -188,6 +188,7 @@ class HomeProfilePopup extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 30),
                             ],
                           ),
                         ),
