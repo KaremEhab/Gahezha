@@ -1,0 +1,51 @@
+name: Auto Build Flutter APKs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 🟢 استخرج نسخة Flutter من pubspec.lock أو pubspec.yaml
+      - name: Detect Flutter version
+        id: flutter_version
+        run: |
+          if [ -f "pubspec.lock" ]; then
+            VERSION=$(grep -A 1 "flutter:" pubspec.lock | grep "version:" | awk '{print $2}' | head -n 1)
+          fi
+          if [ -z "$VERSION" ] && [ -f "pubspec.yaml" ]; then
+            VERSION=$(grep "sdk:" pubspec.yaml | sed 's/[^0-9.]//g' | head -n 1)
+          fi
+          if [ -z "$VERSION" ]; then
+            VERSION="stable" # fallback
+          fi
+          echo "Detected Flutter version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # 🟢 نزّل نسخة Flutter اللي اتكشفت
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.flutter_version.outputs.version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 🟢 Build Split APKs
+      - name: Build Split APKs
+        run: flutter build apk --release --split-per-abi
+
+      # 🟢 Upload جميع الـ APKs
+      - name: Upload Split APKs
+        uses: actions/upload-artifact@v3
+        with:
+          name: split-apks
+          path: build/app/outputs/flutter-apk/*.apk
