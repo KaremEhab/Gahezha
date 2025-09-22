@@ -10,6 +10,7 @@ import 'package:gahezha/screens/profile/customer/pages/change_email.dart';
 import 'package:gahezha/screens/profile/customer/pages/change_password.dart';
 import 'package:gahezha/screens/profile/customer/pages/edit_profile.dart';
 import 'package:gahezha/screens/profile/customer/pages/privacy_security.dart';
+import 'package:gahezha/screens/reports/reports_list.dart';
 import 'package:iconly/iconly.dart';
 
 class ShopProfilePage extends StatefulWidget {
@@ -216,6 +217,18 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
               await ShopCubit.instance.editShopData(shopStatus: val);
             },
           ),
+          _buildListTile(
+              icon: IconlyLight.info_circle,
+              title: S.current.reports,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ReportsListPage(),
+                  ),
+                );
+              },
+            ),
           _buildListTile(
             icon: IconlyLight.message,
             title: S.current.change_email,
