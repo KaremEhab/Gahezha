@@ -14,26 +14,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 🟢 استخرج نسخة Flutter
-      - name: Detect Flutter version
-        id: flutter_version
-        run: |
-          if [ -f "pubspec.lock" ]; then
-            VERSION=$(grep -A 1 "flutter:" pubspec.lock | grep "version:" | awk '{print $2}' | head -n 1)
-          fi
-          if [ -z "$VERSION" ] && [ -f "pubspec.yaml" ]; then
-            VERSION=$(grep "sdk:" pubspec.yaml | sed 's/[^0-9.]//g' | head -n 1)
-          fi
-          if [ -z "$VERSION" ]; then
-            VERSION="stable" # fallback
-          fi
-          echo "Detected Flutter version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
+      # 🟢 نزّل Flutter آخر نسخة stable
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ steps.flutter_version.outputs.version }}
+          channel: stable
 
       - name: Install dependencies
         run: flutter pub get
