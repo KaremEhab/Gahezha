@@ -16,11 +16,13 @@ class ReportsListPage extends StatefulWidget {
 
 class _ReportsListPageState extends State<ReportsListPage> {
   @override
-  void initState() {
-    super.initState();
-    // Load all reports initially
-    ReportCubit.instance.getAllReports();
-  }
+void initState() {
+  super.initState();
+  ReportCubit.instance.getAllReports(
+    userId: uId,
+    userType: currentUserType.name,
+  );
+}
 
   @override
   Widget build(BuildContext context) {
