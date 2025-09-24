@@ -10,7 +10,6 @@ import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
 import 'package:iconly/iconly.dart';
-import 'package:uuid/uuid.dart';
 import 'package:gahezha/generated/l10n.dart';
 
 class CreateReportSheet extends StatefulWidget {
@@ -62,7 +61,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                 ),
                 const SizedBox(height: 12),
 
-                // Report Type
+                /// Report Type
                 DropdownButtonFormField<String>(
                   value: selectedReportType,
                   hint: Text(
@@ -111,9 +110,8 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                 ),
                 const SizedBox(height: 12),
 
-                // Assignment Section
+                /// Assignment Section
                 if (currentUserType == UserType.admin) ...[
-                  // Admin assigns to shops or customers
                   Row(
                     spacing: 5,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -155,7 +153,6 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                     ],
                   ),
                 ] else if (currentUserType == UserType.shop) ...[
-                  // Shop sees customers + admin
                   FutureBuilder(
                     future: UserCubit.instance.adminGetAllCustomers(),
                     builder: (context, snapshot) {
@@ -169,7 +166,6 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                         );
                       }
 
-                      // Combine customers + support team
                       assignedList = [
                         {
                           'id': 'support_team',
@@ -225,7 +221,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                               ],
                             );
                           }
-                          return DropdownMenuItem(value: id, child: child);
+                          return DropdownMenuItem<String>(value: id, child: child);
                         }).toList(),
                         onChanged: (val) =>
                             setState(() => selectedAssignedId = val),
@@ -233,7 +229,6 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                     },
                   ),
                 ] else if (currentUserType == UserType.customer) ...[
-                  // Customers can assign only to shops
                   FutureBuilder(
                     future: ShopCubit.instance.adminGetAllShops(),
                     builder: (context, snapshot) {
@@ -270,7 +265,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                         ),
                         items: assignedList.map((item) {
                           if (item is ShopModel) {
-                            return DropdownMenuItem(
+                            return DropdownMenuItem<String>(
                               value: item.id,
                               child: Row(
                                 spacing: 8,
@@ -281,8 +276,8 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                               ),
                             );
                           }
-                          return const DropdownMenuItem(
-                            value: null,
+                          return const DropdownMenuItem<String>(
+                            value: "unknown",
                             child: Text("Unknown"),
                           );
                         }).toList(),
@@ -295,7 +290,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
 
                 const SizedBox(height: 12),
 
-                // Description
+                /// Description
                 Padding(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -310,7 +305,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                 ),
                 const SizedBox(height: 16),
 
-                // Submit
+                /// Submit
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
