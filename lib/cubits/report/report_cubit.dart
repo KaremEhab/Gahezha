@@ -44,91 +44,108 @@ class ReportCubit extends Cubit<ReportState> {
 
   // --- CREATE REPORT ---
   Future<void> createReport({
-    required String reportType,
-    required String reportDescription,
-    required String reporterId,
-    required String reporterName,
-    required dynamic assignedItem, // ShopModel / UserModel / Map
-    bool toAdmin = true,
-  }) async {
-    emit(ReportLoading());
+  required String reportType,
+  required String reportDescription,
+  required String reporterId,
+  required String reporterName,
+  required String reporterType, // 'customer' | 'shop' | 'admin'
+  required dynamic assignedItem, // ShopModel / UserModel / Map
+}) async {
+  emit(ReportLoading());
 
-    try {
-      // Assign name/image
-      String assignedName = '';
-      String assignedImage = '';
-      String reportingId = '';
+  try {
+    String assignedName = '';
+    String assignedImage = '';
+    String reportingId = '';
 
-      if (assignedItem is ShopModel) {
-        assignedName = assignedItem.shopName;
-        assignedImage = assignedItem.shopLogo;
-        reportingId = assignedItem.id;
-      } else if (assignedItem is UserModel) {
-        assignedName = assignedItem.fullName ?? '';
-        assignedImage = assignedItem.profileUrl ?? '';
-        reportingId = assignedItem.userId ?? '';
-      } else if (assignedItem is Map<String, dynamic>) {
-        assignedName = assignedItem['name'];
-        assignedImage = assignedItem['image'];
-        reportingId = assignedItem['id'];
-      }
-
-      // Generate unique ID
-      final reportId = await _generateReportId();
-
-      // Create report
-      final newReport = ReportModel(
-        id: reportId,
-        reportType: reportType,
-        reportDescription: reportDescription,
-        reporter: ReportUser(id: reporterId, name: reporterName),
-        reporting: ReportUser(id: reportingId, name: assignedName),
-        status: ReportStatusType.pending,
-        reportRespond: '',
-        createdAt: DateTime.now(),
-      );
-
-      // Save to Firestore
-      if (toAdmin) {
-        await _firestore
-            .collection('reports')
-            .doc(reportId)
-            .set(newReport.toMap());
-      } else {
-        final ref = _firestore
-            .collection(reportingId.startsWith('shop_') ? 'shops' : 'users')
-            .doc(reportingId)
-            .collection('reports')
-            .doc(reportId);
-
-        await ref.set(newReport.toMap());
-      }
-
-      // Update local list
-      _reports.insert(0, newReport);
-
-      emit(ReportCreated());
-      emit(ReportLoaded(_reports));
-    } catch (e, st) {
-      print('Report creation failed: $e\n$st');
-      emit(ReportError(e.toString()));
+    if (assignedItem is ShopModel) {
+      assignedName = assignedItem.shopName;
+      assignedImage = assignedItem.shopLogo;
+      reportingId = assignedItem.id;
+    } else if (assignedItem is UserModel) {
+      assignedName = assignedItem.fullName ?? '';
+      assignedImage = assignedItem.profileUrl ?? '';
+      reportingId = assignedItem.userId ?? '';
+    } else if (assignedItem is Map<String, dynamic>) {
+      assignedName = assignedItem['name'];
+      assignedImage = assignedItem['image'];
+      reportingId = assignedItem['id'];
     }
+
+    final reportId = await _generateReportId();
+
+    final newReport = ReportModel(
+      id: reportId,
+      reportType: reportType,
+      reportDescription: reportDescription,
+      reporter: ReportUser(id: reporterId, name: reporterName),
+      reporting: ReportUser(id: reportingId, name: assignedName),
+      status: ReportStatusType.pending,
+      reportRespond: '',
+      createdAt: DateTime.now(),
+    );
+
+    // ---- حدد مكان التخزين حسب نوع المستخدم ----
+    if (reporterType == 'admin') {
+      await _firestore.collection('reports').doc(reportId).set(newReport.toMap());
+    } else if (reporterType == 'customer') {
+      await _firestore
+          .collection('users')
+          .doc(reporterId)
+          .collection('reports')
+          .doc(reportId)
+          .set(newReport.toMap());
+    } else if (reporterType == 'shop') {
+      await _firestore
+          .collection('shops')
+          .doc(reporterId)
+          .collection('reports')
+          .doc(reportId)
+          .set(newReport.toMap());
+    }
+
+    _reports.insert(0, newReport);
+
+    emit(ReportCreated());
+    emit(ReportLoaded(_reports));
+  } catch (e, st) {
+    print('Report creation failed: $e\n$st');
+    emit(ReportError(e.toString()));
   }
+}
 
   // --- GET ALL REPORTS ---
-  Future<void> getAllReports() async {
-    emit(ReportLoading());
+  Future<void> getAllReports({required String userId, required String userType}) async {
+  emit(ReportLoading());
 
-    try {
-      final snapshot = await _firestore.collection('reports').get();
-      _reports = snapshot.docs
-          .map((doc) => ReportModel.fromMap(doc.data()))
-          .toList();
-      emit(ReportLoaded(_reports));
-    } catch (e) {
-      emit(ReportError(e.toString()));
+  try {
+    QuerySnapshot<Map<String, dynamic>> snapshot;
+
+    if (userType == 'admin') {
+      snapshot = await _firestore.collection('reports').get();
+    } else if (userType == 'customer') {
+      snapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('reports')
+          .get();
+    } else if (userType == 'shop') {
+      snapshot = await _firestore
+          .collection('shops')
+          .doc(userId)
+          .collection('reports')
+          .get();
+    } else {
+      throw Exception('Unknown user type');
     }
+
+    _reports = snapshot.docs.map((doc) => ReportModel.fromMap(doc.data())).toList();
+
+    emit(ReportLoaded(_reports));
+  } catch (e) {
+    emit(ReportError(e.toString()));
   }
+}
 
   // --- GET REPORTS BY REPORT ID ---
   Future<void> getReportsById(String id, {bool isShop = false}) async {
