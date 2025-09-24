@@ -433,6 +433,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
       reportDescription: _descriptionController.text,
       reporterId: widget.currentUserId,
       reporterName: widget.currentUserName,
+      reporterType: currentUserType.name,
       assignedItem: assignedItem, // ShopModel / UserModel / Map
     );
     Navigator.of(context).pop(); // optionally pass back newReport if needed
