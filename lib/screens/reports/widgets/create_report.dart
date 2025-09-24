@@ -30,13 +30,9 @@ class CreateReportSheet extends StatefulWidget {
 class _CreateReportSheetState extends State<CreateReportSheet> {
   String? selectedReportType;
   String? selectedAssignedId;
-  String? selectedCategory;
   final TextEditingController _descriptionController = TextEditingController();
 
   List<dynamic> assignedList = [];
-  bool isShopAssigned = false;
-  bool isAdminAssigned = false;
-  bool isCustomerAssigned = false;
   bool isLoadingAssigned = false;
 
   @override
@@ -44,13 +40,11 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
     final reportTypes = currentUserType == UserType.admin
         ? adminReportTypes
         : currentUserType == UserType.shop
-        ? shopReportTypes
-        : customerReportTypes;
+            ? shopReportTypes
+            : customerReportTypes;
 
     return BlocConsumer<ReportCubit, ReportState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return SafeArea(
           child: Padding(
@@ -80,7 +74,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                     size: 20,
                     color: Colors.black54,
                   ),
-                  isExpanded: true, // prevents overflow
+                  isExpanded: true,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey.shade100,
@@ -96,277 +90,208 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                   dropdownColor: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                   items: reportTypes.map((type) {
                     return DropdownMenuItem<String>(
                       value: type,
                       child: Text(
                         type,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
                     );
                   }).toList(),
-
                   onChanged: (val) => setState(() => selectedReportType = val),
-                  menuMaxHeight: 300, // fixed height for scrollable menu
+                  menuMaxHeight: 300,
                 ),
                 const SizedBox(height: 12),
 
-                Row(
-                  spacing: 5,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Admin Button
-                    if (currentUserType != UserType.admin)
+                // Assignment Section
+                if (currentUserType == UserType.admin) ...[
+                  // Admin assigns to shops or customers
+                  Row(
+                    spacing: 5,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
                       Expanded(
                         child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: primaryBlue.withOpacity(0.1),
-                            foregroundColor: primaryBlue,
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            side: BorderSide(
-                              color: isAdminAssigned
-                                  ? primaryBlue
-                                  : Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(radius),
-                            ),
-                          ),
                           onPressed: () async {
                             setState(() {
                               isLoadingAssigned = true;
-                              isAdminAssigned = !isAdminAssigned;
-                              isShopAssigned = false;
-                              isCustomerAssigned = false;
                               assignedList = [];
                               selectedAssignedId = null;
                             });
-
-                            setState(() {
-                              if (isAdminAssigned) {
-                                // Admin always assigns to support team
-                                assignedList = [
-                                  {
-                                    'id': 'support_team',
-                                    'name': 'Gahezha Support Team',
-                                    'image': 'assets/images/logo.svg',
-                                  },
-                                ];
-                                selectedAssignedId = 'support_team';
-                              }
-                              isLoadingAssigned = false;
-                            });
-                          },
-                          child: Text(
-                            S.current.report_app,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-
-                    // Customers Button
-                    if (currentUserType != UserType.customer)
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: primaryBlue.withOpacity(0.1),
-                            foregroundColor: primaryBlue,
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            side: BorderSide(
-                              color: isCustomerAssigned
-                                  ? primaryBlue
-                                  : Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(radius),
-                            ),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              isLoadingAssigned = true;
-                              isCustomerAssigned = !isCustomerAssigned;
-                              isAdminAssigned = false;
-                              isShopAssigned = false;
-                              assignedList = [];
-                              selectedAssignedId = null;
-                            });
-
-                            if (isCustomerAssigned) {
-                              await UserCubit.instance.adminGetAllCustomers();
-                            }
-
+                            await UserCubit.instance.adminGetAllCustomers();
                             setState(() {
                               assignedList = UserCubit.instance.allCustomers;
                               isLoadingAssigned = false;
                             });
                           },
-                          child: Text(
-                            S.current.report_customer,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                          child: Text(S.current.report_customer),
                         ),
                       ),
-
-                    // Shops Button
-                    if (currentUserType != UserType.shop)
                       Expanded(
                         child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: primaryBlue.withOpacity(0.1),
-                            foregroundColor: primaryBlue,
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            side: BorderSide(
-                              color: isShopAssigned
-                                  ? primaryBlue
-                                  : Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(radius),
-                            ),
-                          ),
                           onPressed: () async {
                             setState(() {
                               isLoadingAssigned = true;
-                              isShopAssigned = !isShopAssigned;
-                              isAdminAssigned = false;
-                              isCustomerAssigned = false;
                               assignedList = [];
                               selectedAssignedId = null;
                             });
-
-                            if (isShopAssigned) {
-                              await ShopCubit.instance.adminGetAllShops();
-                            }
-
+                            await ShopCubit.instance.adminGetAllShops();
                             setState(() {
                               assignedList = ShopCubit.instance.allShops;
                               isLoadingAssigned = false;
                             });
                           },
-                          child: Text(
-                            S.current.report_shop,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          child: Text(S.current.report_shop),
+                        ),
+                      ),
+                    ],
+                  ),
+                ] else if (currentUserType == UserType.shop) ...[
+                  // Shop sees customers + admin
+                  FutureBuilder(
+                    future: UserCubit.instance.adminGetAllCustomers(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting &&
+                          assignedList.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      // Combine customers + support team
+                      assignedList = [
+                        {
+                          'id': 'support_team',
+                          'name': 'Gahezha Support Team',
+                          'image': 'assets/images/logo.svg',
+                        },
+                        ...UserCubit.instance.allCustomers,
+                      ];
+
+                      return DropdownButtonFormField<String>(
+                        value: selectedAssignedId,
+                        hint: Text(
+                          S.current.assign_to,
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
                           ),
                         ),
-                      ),
-                  ],
-                ),
+                        items: assignedList.map((item) {
+                          String id = '';
+                          Widget child = const SizedBox();
 
-                if (isShopAssigned || isCustomerAssigned || isAdminAssigned)
-                  const SizedBox(height: 15),
-
-                // Assigned List Dropdown
-                if (isShopAssigned || isCustomerAssigned || isAdminAssigned)
-                  AbsorbPointer(
-                    absorbing:
-                        currentUserType != UserType.admin &&
-                        (selectedAssignedId != null &&
-                            selectedAssignedId == 'support_team'),
-                    child: DropdownButtonFormField<String>(
-                      value: selectedAssignedId,
-                      hint: Text(
-                        S.current.assign_to,
-                        style: const TextStyle(color: Colors.black54),
-                      ),
-                      icon: isLoadingAssigned
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : currentUserType != UserType.admin &&
-                                (selectedAssignedId != null &&
-                                    selectedAssignedId == 'support_team')
-                          ? Text("")
-                          : const Icon(
-                              IconlyBold.arrow_down_2,
-                              size: 20,
-                              color: Colors.black54,
-                            ),
-                      isExpanded: true, // prevents overflow
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      dropdownColor: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                      items: assignedList.map((item) {
-                        String id = '';
-                        Widget child = const SizedBox();
-
-                        if (item is ShopModel) {
-                          id = item.id;
-                          child = Row(
-                            spacing: 8,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(IconlyLight.buy),
-                              Text(item.shopName),
-                            ],
-                          );
-                        } else if (item is UserModel) {
-                          id = item.userId ?? '';
-                          child = Row(
-                            spacing: 8,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(IconlyLight.profile),
-                              Text(item.fullName ?? ''),
-                            ],
-                          );
-                        } else if (item is Map<String, dynamic>) {
-                          id = item['id'];
-                          child = Row(
-                            spacing: 8,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(
-                                item['image'],
-                                width: 24,
-                                height: 24,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  item['name'],
-                                  overflow: TextOverflow.ellipsis,
+                          if (item is UserModel) {
+                            id = item.userId ?? '';
+                            child = Row(
+                              spacing: 8,
+                              children: [
+                                const Icon(IconlyLight.profile),
+                                Text(item.fullName ?? ''),
+                              ],
+                            );
+                          } else if (item is Map<String, dynamic>) {
+                            id = item['id'];
+                            child = Row(
+                              spacing: 8,
+                              children: [
+                                SvgPicture.asset(
+                                  item['image'],
+                                  width: 24,
+                                  height: 24,
                                 ),
-                              ),
-                            ],
-                          );
-                        }
-
-                        return DropdownMenuItem(value: id, child: child);
-                      }).toList(),
-                      onChanged: (val) =>
-                          setState(() => selectedAssignedId = val),
-                      menuMaxHeight: 300, // fixed height for scrollable menu
-                    ),
+                                Text(item['name']),
+                              ],
+                            );
+                          }
+                          return DropdownMenuItem(value: id, child: child);
+                        }).toList(),
+                        onChanged: (val) =>
+                            setState(() => selectedAssignedId = val),
+                      );
+                    },
                   ),
+                ] else if (currentUserType == UserType.customer) ...[
+                  // Customers can assign only to shops
+                  FutureBuilder(
+                    future: ShopCubit.instance.adminGetAllShops(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting &&
+                          assignedList.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      assignedList = ShopCubit.instance.allShops;
+
+                      return DropdownButtonFormField<String>(
+                        value: selectedAssignedId,
+                        hint: Text(
+                          S.current.assign_to,
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: assignedList.map((item) {
+                          if (item is ShopModel) {
+                            return DropdownMenuItem(
+                              value: item.id,
+                              child: Row(
+                                spacing: 8,
+                                children: [
+                                  const Icon(IconlyLight.buy),
+                                  Text(item.shopName),
+                                ],
+                              ),
+                            );
+                          }
+                          return const DropdownMenuItem(
+                            value: null,
+                            child: Text("Unknown"),
+                          );
+                        }).toList(),
+                        onChanged: (val) =>
+                            setState(() => selectedAssignedId = val),
+                      );
+                    },
+                  ),
+                ],
 
                 const SizedBox(height: 12),
 
@@ -389,8 +314,7 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed:
-                        selectedReportType == null ||
+                    onPressed: selectedReportType == null ||
                             selectedAssignedId == null ||
                             _descriptionController.text.isEmpty
                         ? null
@@ -414,28 +338,15 @@ class _CreateReportSheetState extends State<CreateReportSheet> {
           (item is Map<String, dynamic> && item['id'] == selectedAssignedId),
     );
 
-    String assignedName = '';
-    String assignedImage = '';
-
-    if (assignedItem is ShopModel) {
-      assignedName = assignedItem.shopName;
-      assignedImage = assignedItem.shopLogo;
-    } else if (assignedItem is UserModel) {
-      assignedName = assignedItem.fullName ?? '';
-      assignedImage = assignedItem.profileUrl ?? '';
-    } else if (assignedItem is Map<String, dynamic>) {
-      assignedName = assignedItem['name'];
-      assignedImage = assignedItem['image'];
-    }
-
     await ReportCubit.instance.createReport(
       reportType: selectedReportType!,
       reportDescription: _descriptionController.text,
       reporterId: widget.currentUserId,
       reporterName: widget.currentUserName,
       reporterType: currentUserType.name,
-      assignedItem: assignedItem, // ShopModel / UserModel / Map
+      assignedItem: assignedItem,
     );
-    Navigator.of(context).pop(); // optionally pass back newReport if needed
+
+    Navigator.of(context).pop();
   }
 }
