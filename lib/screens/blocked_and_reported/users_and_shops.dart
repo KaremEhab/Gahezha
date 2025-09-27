@@ -6,7 +6,8 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/admin/admin_state.dart';
-import 'package:gahezha/cubits/shop/shop_cubit.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
+import 'package:gahezha/cubits/shop/shop_cubit.dart' hide AllShopsLoaded;
 import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/cubits/user/user_state.dart';
 import 'package:gahezha/generated/l10n.dart';
@@ -15,8 +16,19 @@ import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/shops/widgets/shop_card.dart';
 import 'package:gahezha/screens/accounts/widgets/account_settings_card.dart';
 
-class UsersAndShopsPage extends StatelessWidget {
+class UsersAndShopsPage extends StatefulWidget {
   const UsersAndShopsPage({super.key});
+
+  @override
+  State<UsersAndShopsPage> createState() => _UsersAndShopsPageState();
+}
+
+class _UsersAndShopsPageState extends State<UsersAndShopsPage> {
+  @override
+  void initState() {
+    super.initState();
+    ReportCubit.instance.getAllReports();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +91,9 @@ class _UsersTabState extends State<_UsersTab> {
   @override
   void initState() {
     super.initState();
+    ReportCubit.instance.processCustomerReports(
+      ReportCubit.instance.allReports,
+    );
     UserCubit.instance.adminGetAllCustomers();
   }
 
@@ -111,10 +126,10 @@ class _UsersTabState extends State<_UsersTab> {
           SliverFillRemaining(
             child: TabBarView(
               children: [
-                _UsersList(tabType: S.current.all),
-                _UsersList(tabType: S.current.blocked),
-                _UsersList(tabType: S.current.reported),
-                _UsersList(tabType: S.current.disabled),
+                _UsersList(tabType: UserTabType.all),
+                _UsersList(tabType: UserTabType.blocked),
+                _UsersList(tabType: UserTabType.reported),
+                _UsersList(tabType: UserTabType.disabled),
               ],
             ),
           ),
@@ -136,6 +151,7 @@ class _ShopsTabState extends State<_ShopsTab> {
   @override
   void initState() {
     super.initState();
+    ReportCubit.instance.processShopReports(ReportCubit.instance.allReports);
     ShopCubit.instance.adminGetAllShops();
   }
 
@@ -183,7 +199,7 @@ class _ShopsTabState extends State<_ShopsTab> {
 
 /// ---------- USERS LIST ----------
 class _UsersList extends StatelessWidget {
-  final String tabType;
+  final UserTabType tabType;
 
   const _UsersList({required this.tabType});
 
@@ -191,17 +207,21 @@ class _UsersList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UserCubit, UserState>(
       builder: (context, state) {
-        final cubit = UserCubit.instance;
+        if (state is UserLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
+        final cubit = UserCubit.instance;
         List<UserModel> usersList;
+
         switch (tabType) {
-          case "Blocked":
+          case UserTabType.blocked:
             usersList = cubit.blockedCustomers;
             break;
-          case "Reported":
+          case UserTabType.reported:
             usersList = cubit.reportedCustomers;
             break;
-          case "Disabled":
+          case UserTabType.disabled:
             usersList = cubit.disabledCustomers;
             break;
           default:
@@ -217,32 +237,17 @@ class _UsersList extends StatelessWidget {
           itemCount: usersList.length,
           itemBuilder: (context, index) {
             final user = usersList[index];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: BlocConsumer<AdminCubit, AdminState>(
-                listener: (context, state) {
-                  // if (state is AdminCustomerDeleted &&
-                  //     state.userId == user.userId) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(content: Text("Customer deleted")),
-                  //   );
-                  // }
-                },
-                builder: (context, state) {
-                  return AccountSettingsCard(
-                    userType: UserType.customer,
-                    id: user.userId,
-                    avatarUrl: user.profileUrl,
-                    userName: user.fullName,
-                    userEmail: user.email,
-                    userPhone: user.phoneNumber,
-                    isBlocked: user.blocked,
-                    isDisabled: user.disabled,
-                    isReported: false,
-                    reportedCount: 0,
-                  );
-                },
-              ),
+            return AccountSettingsCard(
+              userType: UserType.customer,
+              id: user.userId,
+              avatarUrl: user.profileUrl,
+              userName: user.fullName,
+              userEmail: user.email,
+              userPhone: user.phoneNumber,
+              isBlocked: user.blocked,
+              isDisabled: user.disabled,
+              isReported: user.reported,
+              reportedCount: user.reportedCount,
             );
           },
         );
@@ -265,63 +270,56 @@ class _ShopsList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state is AllShopsLoaded) {
-          // ✅ Use the updated lists from the cubit
-          final cubit = ShopCubit.instance;
+        // ✅ Use the updated lists from the cubit
+        final cubit = ShopCubit.instance;
 
-          List<ShopModel> shopsList;
-          switch (tabType) {
-            case "Blocked":
-              shopsList = cubit.blockedShops;
-              break;
-            case "Reported":
-              shopsList = cubit.reportedShops;
-              break;
-            case "Disabled":
-              shopsList = cubit.disabledShops;
-              break;
-            default:
-              shopsList = cubit.allShops;
-          }
+        List<ShopModel> shopsList;
 
-          if (shopsList.isEmpty) {
-            return const Center(child: Text("No Shops"));
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            itemCount: shopsList.length,
-            itemBuilder: (context, index) {
-              final shop = shopsList[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: BlocConsumer<AdminCubit, AdminState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    return AccountSettingsCard(
-                      userType: UserType.shop,
-                      id: shop.id,
-                      avatarUrl: shop.shopLogo,
-                      bannerUrl: shop.shopBanner,
-                      userName: shop.shopName,
-                      userEmail: shop.shopEmail,
-                      isBlocked: shop.blocked,
-                      isDisabled: shop.disabled,
-                      userPhone: shop.shopPhoneNumber,
-                      isReported: false,
-                      shopAcceptanceStatus: shop.shopAcceptanceStatus.index,
-                      reportedCount: 0,
-                    );
-                  },
-                ),
-              );
-            },
-          );
+        if (tabType == S.current.blocked) {
+          shopsList = cubit.blockedShops;
+        } else if (tabType == S.current.reported) {
+          shopsList = cubit.reportedShops;
+        } else if (tabType == S.current.disabled) {
+          shopsList = cubit.disabledShops;
+        } else {
+          shopsList = cubit.allShops;
         }
 
-        return const SizedBox();
+        if (shopsList.isEmpty) {
+          return const Center(child: Text("No Shops"));
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          itemCount: shopsList.length,
+          itemBuilder: (context, index) {
+            final shop = shopsList[index];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: BlocConsumer<AdminCubit, AdminState>(
+                listener: (context, state) {
+                  // TODO: implement listener
+                },
+                builder: (context, state) {
+                  return AccountSettingsCard(
+                    userType: UserType.shop,
+                    id: shop.id,
+                    avatarUrl: shop.shopLogo,
+                    bannerUrl: shop.shopBanner,
+                    userName: shop.shopName,
+                    userEmail: shop.shopEmail,
+                    isBlocked: shop.blocked,
+                    isDisabled: shop.disabled,
+                    userPhone: shop.shopPhoneNumber,
+                    isReported: shop.reported, // ✅ use real value
+                    reportedCount: shop.reportedCount, // ✅ use real count
+                    shopAcceptanceStatus: shop.shopAcceptanceStatus.index,
+                  );
+                },
+              ),
+            );
+          },
+        );
       },
     );
   }

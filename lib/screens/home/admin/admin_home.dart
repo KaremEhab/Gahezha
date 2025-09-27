@@ -4,10 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/cubits/order/order_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_cubit.dart';
 import 'package:gahezha/cubits/profile_toggle/profile_toggle_state.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
 import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/report_model.dart';
 import 'package:gahezha/models/shop_model.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/cached_images.dart';
 import 'package:gahezha/screens/notifications/notifications.dart';
 import 'package:gahezha/screens/orders/orders.dart';
@@ -32,6 +34,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     super.initState();
     OrderCubit.instance.getLastTenOrdersStream();
     ShopCubit.instance.getHomePendingShops();
+    ReportCubit.instance.getAllReports();
   }
 
   @override
@@ -148,7 +151,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   },
                   builder: (context, state) {
                     return SizedBox(
-                      height: 325,
+                      height: 315,
                       child: state is ShopLoading
                           ? const Center(child: CircularProgressIndicator())
                           : ShopCubit.instance.pendingShops.isEmpty
@@ -203,40 +206,58 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ReportsListPage(),
+                        builder: (context) =>
+                            ReportsListPage(userType: currentUserType),
                       ),
                     );
                   },
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 160,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 3,
-                    shrinkWrap: true,
-                    separatorBuilder: (_, __) => const SizedBox(width: 5),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    itemBuilder: (context, index) {
-                      return ReportCard(
-                        report: ReportModel(
-                          id: "#110029",
-                          reportType: "Order prepared late / not ready on time",
-                          reportDescription: "reportDescription",
-                          reporter: ReportUser(
-                            id: "cscwfwdcaer2",
-                            name: "Alaa El-Sayed",
-                          ),
-                          reporting: ReportUser(
-                            id: "cscwfwdcaer2",
-                            name: "Kareem Ehab",
-                          ),
-                          createdAt: DateTime.now(),
-                        ),
-                      );
-                    },
-                  ),
+
+                BlocConsumer<ReportCubit, ReportState>(
+                  listener: (context, state) {
+                    // if (state is PendingShopsLoaded) {
+                    //   display = true;
+                    // }
+                  },
+                  builder: (context, state) {
+                    return SizedBox(
+                      height: 150, // adjust based on ReportCard height
+                      child: state is ReportLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ReportCubit.instance.allReports.isEmpty
+                          ? const Center(child: Text("No pending Reports"))
+                          : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 10),
+                              itemCount:
+                                  ReportCubit.instance.allReports.length > 5
+                                  ? 5
+                                  : ReportCubit.instance.allReports.length,
+                              // replace with your cubit reports length
+                              itemBuilder: (context, index) {
+                                final report =
+                                    ReportCubit.instance.allReports[index];
+
+                                return SizedBox(
+                                  width: 300,
+                                  child: ReportCard(
+                                    report: report,
+                                    fromHome: true,
+                                    canEdit: false,
+                                  ),
+                                );
+                              },
+                            ),
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 28),
 
                 // Section: Orders

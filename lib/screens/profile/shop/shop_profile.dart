@@ -218,17 +218,18 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
             },
           ),
           _buildListTile(
-              icon: IconlyLight.info_circle,
-              title: S.current.reports,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ReportsListPage(),
-                  ),
-                );
-              },
-            ),
+            icon: IconlyLight.info_circle,
+            title: S.current.reports,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ReportsListPage(userType: currentUserType),
+                ),
+              );
+            },
+          ),
           _buildListTile(
             icon: IconlyLight.message,
             title: S.current.change_email,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/admin/admin_state.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/report_model.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -54,6 +55,7 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
   @override
   void initState() {
     super.initState();
+    ReportCubit.instance.getReportsAboutMe(widget.id);
     _isBlocked = widget.isBlocked;
     _isDisabled = widget.isDisabled;
   }
@@ -342,12 +344,17 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AccountReports(
-                                        name: widget.name,
-                                        initialTabIndex: 1,
-                                        pendingReportsCount:
-                                            widget.reportedCount,
+                                      builder: (context) => ReportsListPage(
+                                        userType: widget.userType,
+                                        userName: widget.name,
+                                        initialTabIndex: 4,
                                       ),
+                                      //     AccountReports(
+                                      //   name: widget.name,
+                                      //   initialTabIndex: 1,
+                                      //   pendingReportsCount:
+                                      //       widget.reportedCount,
+                                      // ),
                                     ),
                                   );
                                 },
@@ -379,34 +386,30 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          Column(
-                            children: reports
-                                .take(3)
-                                .map(
-                                  (report) => Container(
-                                    height: 145,
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.only(bottom: 10),
-                                    child: ReportCard(
-                                      report: ReportModel(
-                                        id: "#110029",
-                                        reportType:
-                                            "Order prepared late / not ready on time",
-                                        reportDescription: "reportDescription",
-                                        reporter: ReportUser(
-                                          id: "cscwfwdcaer2",
-                                          name: "Alaa El-Sayed",
+                          BlocBuilder<ReportCubit, ReportState>(
+                            builder: (context, state) {
+                              if (state is ReportsDataLoaded) {
+                                return Column(
+                                  children: state.reportsAboutMe
+                                      .take(3)
+                                      .map(
+                                        (report) => Container(
+                                          height: 145,
+                                          width: double.infinity,
+                                          margin: const EdgeInsets.only(
+                                            bottom: 10,
+                                          ),
+                                          child: ReportCard(
+                                            report: report,
+                                            canEdit: false,
+                                          ),
                                         ),
-                                        reporting: ReportUser(
-                                          id: "cscwfwdcaer2",
-                                          name: "Kareem Ehab",
-                                        ),
-                                        createdAt: DateTime.now(),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                                      )
+                                      .toList(),
+                                );
+                              }
+                              return const SizedBox();
+                            },
                           ),
                           const SizedBox(height: 20),
                         ],

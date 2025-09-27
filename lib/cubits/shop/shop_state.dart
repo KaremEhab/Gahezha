@@ -11,6 +11,12 @@ class ShopLoaded extends ShopState {
   ShopLoaded(this.shop);
 }
 
+class ShopStateAllShopsLoaded extends ShopState {
+  final List<ShopModel> allCustomers;
+  final List<ShopModel> reportedCustomers;
+  ShopStateAllShopsLoaded(this.allCustomers, this.reportedCustomers);
+}
+
 class ShopsLoaded extends ShopState {
   final List<ShopModel> shops;
   ShopsLoaded(this.shops);

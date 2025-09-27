@@ -21,8 +21,11 @@ import 'package:gahezha/cubits/user/user_cubit.dart';
 import 'package:gahezha/firebase_options.dart';
 import 'package:gahezha/gahezha_splash.dart';
 import 'package:gahezha/generated/l10n.dart';
-import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/theme/app_theme.dart';
+import 'deep_link_service.dart';
+
+// Navigator key for deep link navigation
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> setupFCM() async {
   await FirebaseMessaging.instance.requestPermission();
@@ -38,11 +41,15 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CacheHelper.init();
   Bloc.observer = MyBlocObserver();
+
+  // Firebase Messaging token
   fcmDeviceToken = await FirebaseMessaging.instance.getToken() ?? '';
-  // accessToken = await AccessTokenFirebase().getAccessToken();
+
+  // Cache stored data
   uId = await CacheHelper.getData(key: 'uId') ?? '';
   lang = await CacheHelper.getData(key: 'lang') ?? 'en';
   skipOnboarding = await CacheHelper.getData(key: 'skipOnboarding') ?? false;
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -50,11 +57,30 @@ Future<void> main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize deep links
+    DeepLinkService.instance.init(navigatorKey);
+  }
+
+  @override
+  void dispose() {
+    DeepLinkService.instance.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +101,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
           return MaterialApp(
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: buildGahezhaTheme(Brightness.light),
             locale: locale,
@@ -85,10 +112,39 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+            // initial route points to splash screen
             home: const GahezhaSplash(),
           );
         },
       ),
+    );
+  }
+}
+
+// product_page.dart
+class ProductPage extends StatelessWidget {
+  final String productId;
+  const ProductPage({super.key, required this.productId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Product $productId')),
+      body: Center(child: Text('Product ID: $productId')),
+    );
+  }
+}
+
+// offer_page.dart
+class OfferPage extends StatelessWidget {
+  final String? ref;
+  const OfferPage({super.key, this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Offer')),
+      body: Center(child: Text('Ref: $ref')),
     );
   }
 }

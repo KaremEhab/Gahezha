@@ -16,6 +16,12 @@ class UsersLoaded extends UserState {
   UsersLoaded(this.users);
 }
 
+class UserStateAllCustomersLoaded extends UserState {
+  final List<UserModel> allCustomers;
+  final List<UserModel> reportedCustomers;
+  UserStateAllCustomersLoaded(this.allCustomers, this.reportedCustomers);
+}
+
 class GuestLoaded extends UserState {
   final GuestUserModel guest;
   GuestLoaded(this.guest);

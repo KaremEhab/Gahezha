@@ -11,9 +11,14 @@ import 'package:intl/intl.dart';
 
 class ReportCard extends StatelessWidget {
   final ReportModel report;
-  final bool fromHome;
+  final bool fromHome, canEdit;
 
-  const ReportCard({super.key, required this.report, this.fromHome = false});
+  const ReportCard({
+    super.key,
+    required this.report,
+    this.fromHome = false,
+    this.canEdit = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,43 +27,48 @@ class ReportCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          if (currentUserType == UserType.admin) {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              showDragHandle: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(sheetRadius),
-                  topRight: Radius.circular(sheetRadius),
-                ),
-              ),
-              builder: (_) => ReportDetailsSheet(report: report),
-            );
-          } else {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              showDragHandle: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(sheetRadius),
-                  topRight: Radius.circular(sheetRadius),
-                ),
-              ),
-              builder: (_) => EditReportSheet(report: report),
-            );
-          }
-        },
+        onTap: canEdit
+            ? null
+            : () {
+                if (currentUserType == UserType.admin) {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    showDragHandle: true,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(sheetRadius),
+                        topRight: Radius.circular(sheetRadius),
+                      ),
+                    ),
+                    builder: (_) => ReportDetailsSheet(report: report),
+                  );
+                } else {
+                  if (report.reporter.id == uId) {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      showDragHandle: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(sheetRadius),
+                          topRight: Radius.circular(sheetRadius),
+                        ),
+                      ),
+                      builder: (_) => EditReportSheet(report: report),
+                    );
+                  }
+                }
+              },
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
             mainAxisSize:
                 MainAxisSize.min, // <-- important: makes height flexible
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Report ID row
               Row(
@@ -80,31 +90,24 @@ class ReportCard extends StatelessWidget {
                         backgroundColor: Colors.black,
                       ),
                     ),
-                    Row(
-                      children: [
-                        report.reporting.name.toLowerCase().contains("gahezha")
-                            ? SvgPicture.asset(
-                                "assets/images/logo.svg",
-                                height: 15,
-                                width: 15,
-                              )
-                            : Icon(
-                                currentUserType == UserType.customer
-                                    ? IconlyBold.profile
-                                    : Icons.storefront,
-                                size: 14,
-                                color: primaryBlue,
+
+                    // --- Reporter & Reporting ---
+                    Flexible(
+                      child: Row(
+                        children: [
+                          buildUserIcon(report.reporter),
+                          const SizedBox(width: 3),
+                          Flexible(
+                            child: Text(
+                              report.reporter.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
                               ),
-                        const SizedBox(width: 4),
-                        Text(
-                          report.reporting.name,
-                          style: Theme.of(context).textTheme.bodyMedium!
-                              .copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: primaryBlue,
-                              ),
-                        ),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ],
@@ -116,11 +119,14 @@ class ReportCard extends StatelessWidget {
                 children: [
                   const Icon(IconlyLight.danger, size: 18, color: Colors.red),
                   const SizedBox(width: 6),
-                  Text(
-                    report.reportType,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: Colors.red,
+                  Flexible(
+                    child: Text(
+                      report.reportType,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                 ],
@@ -131,7 +137,7 @@ class ReportCard extends StatelessWidget {
               Text(
                 report.reportDescription,
                 maxLines: fromHome ? 2 : null, // null allows unlimited lines
-                overflow: TextOverflow.ellipsis,
+                overflow: fromHome ? TextOverflow.ellipsis : null,
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   color: Colors.black54,
                   height: 1.4,
@@ -165,7 +171,11 @@ class ReportCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.15),
+                      color: report.status == ReportStatusType.pending
+                          ? Colors.orange.withOpacity(0.15)
+                          : report.status == ReportStatusType.resolved
+                          ? Colors.green.withOpacity(0.15)
+                          : Colors.grey.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -174,7 +184,11 @@ class ReportCard extends StatelessWidget {
                         report.status,
                       ),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Colors.orange[700],
+                        color: report.status == ReportStatusType.pending
+                            ? Colors.orange[700]
+                            : report.status == ReportStatusType.resolved
+                            ? Colors.green.shade700
+                            : Colors.grey.shade700,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -45,14 +45,13 @@ class _EditReportSheetState extends State<EditReportSheet> {
   void initState() {
     super.initState();
 
-    // Initialize fields from the passed report
     selectedReportType = widget.report.reportType;
     _descriptionController.text = widget.report.reportDescription;
+    selectedAssignedId = widget.report.reporting.id;
 
     final reporting = widget.report.reporting;
-    selectedAssignedId = reporting.id;
 
-    // Determine assigned type (Shop / User / Admin)
+    // Case 1: Already assigned to support team
     if (reporting.id == 'support_team') {
       isAdminAssigned = true;
       assignedList = [
@@ -62,10 +61,16 @@ class _EditReportSheetState extends State<EditReportSheet> {
           'image': 'assets/images/logo.svg',
         },
       ];
-    } else if (reporting.id.startsWith('shop_')) {
+    }
+    // Case 2: If *I am the reporter* and I'm a customer → report shop
+    else if (widget.report.reporter.id == uId &&
+        currentUserType == UserType.customer) {
       isShopAssigned = true;
       assignedList = ShopCubit.instance.allShops;
-    } else {
+    }
+    // Case 3: If *I am the reporter* and I'm a shop → report customer
+    else if (widget.report.reporter.id == uId &&
+        currentUserType == UserType.shop) {
       isCustomerAssigned = true;
       assignedList = UserCubit.instance.allCustomers;
     }
@@ -151,7 +156,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
                   spacing: 5,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    if (currentUserType != UserType.shop)
+                    if (currentUserType != UserType.admin)
                       _buildAssignButton(
                         label: S.current.report_app,
                         active: isAdminAssigned,
@@ -174,7 +179,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
                         },
                       ),
 
-                    if (currentUserType != UserType.admin)
+                    if (currentUserType != UserType.shop)
                       _buildAssignButton(
                         label: S.current.report_shop,
                         active: isShopAssigned,
@@ -381,8 +386,9 @@ class _EditReportSheetState extends State<EditReportSheet> {
 
     await ReportCubit.instance.updateReport(
       reportId: widget.report.id,
-      reportType: selectedReportType!,
-      reportDescription: _descriptionController.text,
+      status: null,
+      reportType: selectedReportType,
+      respond: null,
       assignedItem: assignedItem,
     );
   }

@@ -1,5 +1,7 @@
 enum UserType { guest, customer, shop, admin }
 
+enum UserTabType { all, blocked, reported, disabled }
+
 enum Gender { male, female }
 
 class UserModel {
@@ -14,7 +16,10 @@ class UserModel {
   final UserType userType;
   final bool blocked;
   final bool disabled;
-  final bool reported;
+  late bool reported;
+  late int reportedCount;
+  double commissionBalance; // ✅ total balance in SAR
+  List<String> referredShopIds; // ✅ shops referred by this user
   final DateTime createdAt;
 
   UserModel({
@@ -26,10 +31,13 @@ class UserModel {
     required this.phoneNumber, // ✨ مطلوب
     this.gender = Gender.male,
     this.notificationsEnabled = true,
-    this.blocked = true,
-    this.disabled = true,
-    this.reported = true,
+    this.blocked = false,
+    this.disabled = false,
+    this.reported = false,
+    this.reportedCount = 0,
     this.userType = UserType.customer,
+    this.commissionBalance = 0,
+    this.referredShopIds = const [],
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
@@ -48,7 +56,10 @@ class UserModel {
       'blocked': blocked,
       'disabled': disabled,
       'reported': reported,
+      'reportedCount': reportedCount,
       'userType': userType.name,
+      'commissionBalance': commissionBalance,
+      'referredShopIds': referredShopIds,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -68,15 +79,18 @@ class UserModel {
       email: map['email'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
       notificationsEnabled: map['notificationsEnabled'] ?? true,
-      blocked: map['blocked'] ?? true,
-      disabled: map['disabled'] ?? true,
-      reported: map['reported'] ?? true,
+      blocked: map['blocked'] ?? false,
+      disabled: map['disabled'] ?? false,
+      reported: map['reported'] ?? false,
+      reportedCount: map['reportedCount'] ?? 0,
       userType: map['userType'] != null
           ? UserType.values.firstWhere(
               (e) => e.name == map['userType'],
               orElse: () => UserType.customer,
             )
           : UserType.customer,
+      commissionBalance: map['commissionBalance'].toDouble() ?? 0,
+      referredShopIds: List<String>.from(map['referredShopIds'] ?? []),
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
           : DateTime.now(),
@@ -96,7 +110,10 @@ class UserModel {
     bool? blocked,
     bool? disabled,
     bool? reported,
+    int? reportedCount,
     UserType? userType,
+    double? commissionBalance,
+    List<String>? referredShopIds,
     DateTime? createdAt,
   }) {
     return UserModel(
@@ -111,7 +128,10 @@ class UserModel {
       blocked: blocked ?? this.blocked,
       disabled: disabled ?? this.disabled,
       reported: reported ?? this.reported,
+      reportedCount: reportedCount ?? this.reportedCount,
       userType: userType ?? this.userType,
+      commissionBalance: commissionBalance ?? this.commissionBalance,
+      referredShopIds: referredShopIds ?? this.referredShopIds,
       createdAt: createdAt ?? this.createdAt,
     );
   }

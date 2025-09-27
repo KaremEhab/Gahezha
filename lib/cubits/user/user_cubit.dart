@@ -8,11 +8,14 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/cupertino.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
 import 'package:gahezha/cubits/user/user_state.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:share_plus/share_plus.dart';
 
 class UserCubit extends Cubit<UserState> {
   UserCubit._privateConstructor() : super(UserInitial());
@@ -87,42 +90,39 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
+  void updateReportedCustomers(List<UserModel> reportedList) {
+    reportedCustomers = reportedList;
+    emit(UserStateAllCustomersLoaded(allCustomers, reportedCustomers));
+  }
+
   /// ✅ Get all shops and separate blocked/disabled
   Future<void> adminGetAllCustomers() async {
     try {
       emit(UserLoading());
 
-      // Fetch all shops sorted by createdAt descending
       final querySnapshot = await _firestore
           .collection("users")
           .where('userType', isEqualTo: UserType.customer.name)
           .orderBy("createdAt", descending: true)
           .get();
 
-      if (querySnapshot.docs.isEmpty) {
-        allCustomers = [];
-        blockedCustomers = [];
-        disabledCustomers = [];
-        reportedCustomers = []; // keep fixed for now
-        emit(UsersLoaded(allCustomers));
-        return;
-      }
-
-      // Convert to models
       final users = querySnapshot.docs
           .map((doc) => UserModel.fromMap(doc.data(), userId: doc.id))
           .toList();
 
-      // Separate into lists
       allCustomers = users;
-      blockedCustomers = users.where((user) => user.blocked).toList();
-      disabledCustomers = users.where((user) => user.disabled).toList();
-      reportedCustomers = []; // Placeholder until reporting logic ready
+      blockedCustomers = users.where((u) => u.blocked).toList();
+      disabledCustomers = users.where((u) => u.disabled).toList();
+
+      // 🔑 Run reports processing here
+      ReportCubit.instance.processCustomerReports(
+        ReportCubit.instance.allReports,
+      );
 
       emit(UsersLoaded(allCustomers));
-    } catch (e, stackTrace) {
+    } catch (e, st) {
       print("Error in adminGetAllCustomers: $e");
-      print(stackTrace);
+      print(st);
       allCustomers = [];
       blockedCustomers = [];
       disabledCustomers = [];
@@ -323,6 +323,16 @@ class UserCubit extends Cubit<UserState> {
         log("⚠️ Error uploading image: $e");
       }
     }
+  }
+
+  String generateReferralLink(String userId) {
+    // Use your working deep link host
+    return "https://deep-link-hosting.vercel.app/create-shop?ref=$userId";
+  }
+
+  void shareReferral(String userId) {
+    final link = generateReferralLink(userId);
+    Share.share("Join Gahezha and open your shop: $link");
   }
 
   Future<void> logout(BuildContext context) async {

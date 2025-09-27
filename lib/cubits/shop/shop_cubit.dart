@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
 import 'package:gahezha/models/shop_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -118,41 +119,40 @@ class ShopCubit extends Cubit<ShopState> {
     }
   }
 
+  /// ✅ Update reported shops list and notify listeners
+  void updateReportedShops(List<ShopModel> reportedList) {
+    reportedShops = reportedList;
+    emit(ShopStateAllShopsLoaded(allShops, reportedShops));
+  }
+
   /// ✅ Get all shops and separate blocked/disabled
   Future<void> adminGetAllShops() async {
     try {
       emit(ShopLoading());
 
-      // Fetch all shops sorted by createdAt descending
       final querySnapshot = await _firestore
           .collection("shops")
           .orderBy("createdAt", descending: true)
           .get();
 
-      if (querySnapshot.docs.isEmpty) {
-        allShops = [];
-        blockedShops = [];
-        disabledShops = [];
-        reportedShops = []; // keep fixed for now
-        emit(AllShopsLoaded(allShops));
-        return;
-      }
-
-      // Convert to models
       final shops = querySnapshot.docs
           .map((doc) => ShopModel.fromMap(doc.data(), id: doc.id))
           .toList();
 
-      // Separate into lists
       allShops = shops;
       blockedShops = shops.where((shop) => shop.blocked).toList();
       disabledShops = shops.where((shop) => shop.disabled).toList();
-      reportedShops = []; // Placeholder until reporting logic ready
 
-      emit(AllShopsLoaded(allShops));
-    } catch (e, stackTrace) {
+      // ✅ Process reports with fresh shops
+      ReportCubit.instance.processShopReports(ReportCubit.instance.allReports);
+
+      // ✅ Now reportedShops will be filled by processShopReports
+      reportedShops = allShops.where((s) => s.reported).toList();
+
+      emit(ShopStateAllShopsLoaded(allShops, reportedShops));
+    } catch (e, st) {
       print("Error in adminGetAllShops: $e");
-      print(stackTrace);
+      print(st);
       allShops = [];
       blockedShops = [];
       disabledShops = [];
@@ -244,6 +244,7 @@ class ShopCubit extends Cubit<ShopState> {
   }
 
   /// Change the acceptance status of a shop
+  /// Change the acceptance status of a shop
   Future<void> changeShopAcceptanceStatus({
     required ShopModel shop,
     required ShopAcceptanceStatus newStatus,
@@ -274,11 +275,48 @@ class ShopCubit extends Cubit<ShopState> {
         case ShopAcceptanceStatus.accepted:
           acceptedShops.insert(0, updatedShop);
           emit(AcceptedShopsLoaded(acceptedShops));
+
+          // 4️⃣ Update referrer customer if exists
+          if (shop.referredByUserId != null &&
+              shop.referredByUserId!.isNotEmpty) {
+            final referrerDoc = await _firestore
+                .collection('users')
+                .doc(shop.referredByUserId)
+                .get();
+
+            if (referrerDoc.exists) {
+              final referrerData = referrerDoc.data()!;
+              final currentCommission =
+                  (referrerData['commissionBalance'] ?? 0) as num;
+              final referredShopIds = List<String>.from(
+                referrerData['referredShopIds'] ?? [],
+              );
+
+              if (!referredShopIds.contains(shop.id)) {
+                referredShopIds.add(shop.id);
+
+                await _firestore
+                    .collection('users')
+                    .doc(shop.referredByUserId)
+                    .set({
+                      'commissionBalance': currentCommission + 50,
+                      'referredShopIds': referredShopIds,
+                    }, SetOptions(merge: true));
+
+                print(
+                  'Updated referrer ${shop.referredByUserId}: +50 SAR, added shop ${shop.id}',
+                );
+              }
+            }
+          }
+
           break;
+
         case ShopAcceptanceStatus.rejected:
           rejectedShops.insert(0, updatedShop);
           emit(RejectedShopsLoaded(rejectedShops));
           break;
+
         case ShopAcceptanceStatus.pending:
           pendingShops.insert(0, updatedShop);
           emit(PendingShopsLoaded(pendingShops));
@@ -307,6 +345,7 @@ class ShopCubit extends Cubit<ShopState> {
     String? shopEmail,
     bool? shopStatus,
     bool? notificationsEnabled,
+    String? referredByUserId,
     bool silentUpdate = true,
   }) async {
     try {
@@ -380,6 +419,8 @@ class ShopCubit extends Cubit<ShopState> {
             ShopAcceptanceStatus.pending,
         notificationsEnabled:
             notificationsEnabled ?? currentShopModel!.notificationsEnabled,
+        referredByUserId:
+            referredByUserId ?? currentShopModel!.referredByUserId,
         createdAt: currentShopModel!.createdAt,
       );
 

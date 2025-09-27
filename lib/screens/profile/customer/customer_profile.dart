@@ -167,7 +167,8 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ReportsListPage(),
+                    builder: (context) =>
+                        ReportsListPage(userType: currentUserType),
                   ),
                 );
               },

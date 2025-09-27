@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/order_model.dart';
 import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
+import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 
 double radius = 12;
@@ -129,6 +131,26 @@ final categories = [
   {"name": S.current.photography_studio, "icon": Icons.camera_alt},
   {"name": S.current.bookstore_cafe, "icon": Icons.menu_book},
 ];
+
+Widget buildUserIcon(dynamic user, {double size = 18}) {
+  if (user.id == 'support_team') {
+    return SvgPicture.asset(
+      "assets/images/logo.svg",
+      height: size,
+      width: size,
+    );
+  }
+
+  if (user.userType == UserType.customer.name) {
+    return Icon(IconlyLight.profile, size: size);
+  }
+
+  if (user.userType == UserType.shop.name) {
+    return Icon(Icons.storefront, size: size);
+  }
+
+  return Icon(Icons.help_outline, size: size, color: Colors.grey);
+}
 
 IconData backIcon() {
   return lang == 'en' ? Icons.keyboard_arrow_left : Icons.keyboard_arrow_right;

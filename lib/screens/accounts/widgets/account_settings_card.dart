@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -36,6 +38,7 @@ class AccountSettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log("REPORTED COUNTER: $reportedCount -------------------------");
     // Determine card background color
     final Color bgColor = isBlocked
         ? Colors.red.withOpacity(0.05)
