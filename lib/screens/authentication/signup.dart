@@ -9,6 +9,7 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/authentication/signup/signup_cubit.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/public_widgets/form_field.dart';
+import 'package:gahezha/screens/google_maps/map_screen.dart';
 import 'package:gahezha/screens/layout/layout.dart';
 import 'package:iconly/iconly.dart';
 import 'package:gahezha/generated/l10n.dart';
@@ -259,6 +260,9 @@ class _SignupState extends State<Signup> {
                         title: S.current.shop_location,
                         hint: S.current.enter_shop_location,
                         icon: IconlyLight.location,
+                        onTap: () {
+                          navigateTo(context: context, screen: MapScreen());
+                        },
                       ),
 
                       const SizedBox(height: 16),
