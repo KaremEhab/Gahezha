@@ -40,6 +40,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // ✅ Extension على NavigatorState
 extension NavigatorStateX on NavigatorState {
   void pushReplacementIfNeeded(MaterialPageRoute route) {
+
     final shouldReplace = canPop();
     if (shouldReplace) {
       pushReplacement(route);
