@@ -243,6 +243,7 @@
   "shop_menu": "Shop Menu",
   "shop_products": "Shop Products",
   "no_products_yet": "No products yet.",
+  "no_orders_yet": "No orders yet.",
   "extra_pickles": "Extra Pickles",
   "no_vegetables": "No Vegetables",
   "extra_mushrooms": "Extra Mushrooms",
@@ -294,7 +295,6 @@
   "bakery": "Bakery",
   "cafe": "Cafe",
   "supermarket": "Supermarket",
-  "restaurant": "Restaurant",
   "grocery": "Grocery",
   "dessert": "Dessert",
   "juice_bar": "Juice Bar",
@@ -380,5 +380,27 @@
   "report_customer": "Report Customer",
   "report_shop": "Report Shop",
   "report_app": "Report Gahezha",
-  "no_reports_found": "No reports found"
+  "no_reports_found": "No reports found",
+
+  "once_you_add_products_cart": "Once you add products to cart, it will appear here.",
+  "once_you_place_new_orders": "Once you place an order, it will appear here.",
+  "gahezha_support_team": "Gahezha Support Team",
+
+  "commission": "Commission",
+  "about_me": "About Me",
+  "no_active_orders": "No active orders",
+  "no_products_added_yet": "This shop has not added any products yet.",
+  "join_gahezha_and_open_shop": "Join Gahezha and open your shop",
+
+  "no_customers": "No customers",
+  "no_shops": "No shops",
+
+  "total": "Total",
+  "paid": "Paid",
+  "remaining": "Remaining",
+
+  "click_to_pay": "Click to pay",
+  "paid_commission_successfully": "Paid commission successfully",
+
+  "no_notifications": "No notifications"
 }

@@ -7,16 +7,28 @@ enum ReportStatusType { pending, resolved, dismissed }
 class ReportUser {
   final String id;
   final String name;
+  final String userType;
 
-  ReportUser({required this.id, required this.name});
+  ReportUser({required this.id, required this.name, required this.userType});
 
-  factory ReportUser.fromMap(Map<String, dynamic> map) =>
-      ReportUser(id: map['id'] ?? '', name: map['name'] ?? '');
+  factory ReportUser.fromMap(Map<String, dynamic> map) => ReportUser(
+    id: map['id'] ?? '',
+    name: map['name'] ?? '',
+    userType: map['userType'] ?? '',
+  );
 
-  Map<String, dynamic> toMap() => {'id': id, 'name': name};
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'name': name,
+    'userType': userType,
+  };
 
-  ReportUser copyWith({String? id, String? name, String? image}) {
-    return ReportUser(id: id ?? this.id, name: name ?? this.name);
+  ReportUser copyWith({String? id, String? name, String? userType}) {
+    return ReportUser(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      userType: userType ?? this.userType,
+    );
   }
 }
 

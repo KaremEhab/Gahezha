@@ -28,14 +28,21 @@ class OrderModel {
   });
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
+    DateTime parseDate(dynamic value) {
+      if (value == null) return DateTime.now();
+      if (value is Timestamp) return value.toDate();
+      if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+      return DateTime.now();
+    }
+
     return OrderModel(
       id: map['id'] ?? '',
-      startDate: (map['startDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      startDate: parseDate(map['startDate']),
       shopIds: List<String>.from(map['shopIds'] ?? []),
       shops: (map['shops'] as List<dynamic>? ?? [])
           .map((shop) => OrderShop.fromMap(shop))
           .toList(),
-      totalPrice: map['totalPrice'] ?? '0.0',
+      totalPrice: map['totalPrice']?.toString() ?? '0.0',
       customerId: map['customerId'] ?? '',
       customerFullName: map['customerFullName'] ?? '',
       customerProfileUrl: map['customerProfileUrl'] ?? '',
@@ -45,7 +52,7 @@ class OrderModel {
 
   Map<String, dynamic> toMap() => {
     'id': id,
-    'startDate': Timestamp.fromDate(startDate),
+    'startDate': Timestamp.fromDate(startDate).toDate().toIso8601String(),
     'shopIds': shopIds,
     'shops': shops.map((s) => s.toMap()).toList(),
     'totalPrice': totalPrice,
@@ -109,16 +116,24 @@ class OrderShop {
   });
 
   factory OrderShop.fromMap(Map<String, dynamic> map) {
+    DateTime parseDate(dynamic value) {
+      if (value == null) return DateTime.now().add(const Duration(minutes: 30));
+      if (value is Timestamp) return value.toDate();
+      if (value is String)
+        return DateTime.tryParse(value) ??
+            DateTime.now().add(const Duration(minutes: 30));
+      return DateTime.now().add(const Duration(minutes: 30));
+    }
+
     int statusIndex = map['statusIndex'] ?? 0;
+
     return OrderShop(
       shopId: map['shopId'] ?? '',
       status: OrderStatus.values[statusIndex],
       shopName: map['shopName'] ?? '',
       shopLogo: map['shopLogo'] ?? '',
       shopPhone: map['shopPhone'] ?? '',
-      endDate:
-          (map['endDate'] as Timestamp?)?.toDate() ??
-          DateTime.now().add(const Duration(minutes: 30)),
+      endDate: parseDate(map['endDate']),
       preparingTimeFrom: map['preparingTimeFrom'] ?? 0,
       preparingTimeTo: map['preparingTimeTo'] ?? 0,
       items: (map['items'] as List<dynamic>? ?? [])
@@ -134,7 +149,7 @@ class OrderShop {
     'shopName': shopName,
     'shopLogo': shopLogo,
     'shopPhone': shopPhone,
-    'endDate': Timestamp.fromDate(endDate),
+    'endDate': Timestamp.fromDate(endDate).toDate().toIso8601String(),
     'preparingTimeFrom': preparingTimeFrom,
     'preparingTimeTo': preparingTimeTo,
     'items': items.map((i) => i.toMap()).toList(),

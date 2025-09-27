@@ -230,11 +230,11 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                                               context,
                                             ).showSnackBar(
                                               SnackBar(
-                                                content: const Text(
-                                                  "Create an account first",
+                                                content: Text(
+                                                  S.current.create_account_first,
                                                 ),
                                                 action: SnackBarAction(
-                                                  label: "Sign Up",
+                                                  label: S.current.sign_up,
                                                   textColor: primaryBlue,
                                                   onPressed: () {
                                                     navigateTo(
@@ -279,7 +279,7 @@ class _CustomerHomePageState extends State<CustomerHomePage>
                                                 child: Text(
                                                   currentUserType ==
                                                           UserType.guest
-                                                      ? "See your active orders"
+                                                      ? S.current.see_your_active_orders
                                                       : "${S.current.you_have} ${OrderCubit.instance.activeOrders} ${S.current.orders_to_pickup}", // replaced text
                                                   style: const TextStyle(
                                                     color: Colors.white,

@@ -6,13 +6,18 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/vars.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
 import 'package:gahezha/cubits/user/user_state.dart';
+import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:share_plus/share_plus.dart';
 
 class UserCubit extends Cubit<UserState> {
   UserCubit._privateConstructor() : super(UserInitial());
@@ -70,6 +75,26 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
+  /// ✅ Get user by ID
+  Future<void> getUserById(String userId) async {
+    try {
+      emit(UserLoading());
+
+      final doc = await _firestore.collection("users").doc(userId).get();
+
+      if (!doc.exists) {
+        emit(UserError("User not found in database"));
+        return;
+      }
+
+      final user = UserModel.fromMap(doc.data()!);
+
+      emit(UserLoaded(user));
+    } catch (e) {
+      emit(UserError(e.toString()));
+    }
+  }
+
   /// ✅ Get all users
   Future<void> getAllUsers() async {
     try {
@@ -87,42 +112,39 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
+  void updateReportedCustomers(List<UserModel> reportedList) {
+    reportedCustomers = reportedList;
+    emit(UserStateAllCustomersLoaded(allCustomers, reportedCustomers));
+  }
+
   /// ✅ Get all shops and separate blocked/disabled
   Future<void> adminGetAllCustomers() async {
     try {
       emit(UserLoading());
 
-      // Fetch all shops sorted by createdAt descending
       final querySnapshot = await _firestore
           .collection("users")
           .where('userType', isEqualTo: UserType.customer.name)
           .orderBy("createdAt", descending: true)
           .get();
 
-      if (querySnapshot.docs.isEmpty) {
-        allCustomers = [];
-        blockedCustomers = [];
-        disabledCustomers = [];
-        reportedCustomers = []; // keep fixed for now
-        emit(UsersLoaded(allCustomers));
-        return;
-      }
-
-      // Convert to models
       final users = querySnapshot.docs
           .map((doc) => UserModel.fromMap(doc.data(), userId: doc.id))
           .toList();
 
-      // Separate into lists
       allCustomers = users;
-      blockedCustomers = users.where((user) => user.blocked).toList();
-      disabledCustomers = users.where((user) => user.disabled).toList();
-      reportedCustomers = []; // Placeholder until reporting logic ready
+      blockedCustomers = users.where((u) => u.blocked).toList();
+      disabledCustomers = users.where((u) => u.disabled).toList();
+
+      // 🔑 Run reports processing here
+      ReportCubit.instance.processCustomerReports(
+        ReportCubit.instance.allReports,
+      );
 
       emit(UsersLoaded(allCustomers));
-    } catch (e, stackTrace) {
+    } catch (e, st) {
       print("Error in adminGetAllCustomers: $e");
-      print(stackTrace);
+      print(st);
       allCustomers = [];
       blockedCustomers = [];
       disabledCustomers = [];
@@ -227,65 +249,100 @@ class UserCubit extends Cubit<UserState> {
 
   /// ✅ Change Email (supports customer, guest, and admin)
   Future<void> changeEmail({
-    required String oldEmail,
     required String newEmail,
     required String password,
+    required BuildContext context,
   }) async {
+    emit(UserLoading());
+
     try {
-      emit(UserUpdating());
-
-      if (uId == null) {
-        emit(UserUpdatingError("No user logged in"));
-        return;
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No user is currently signed in.');
       }
 
-      // ✅ Pick the right collection
-      final collectionName = (currentUserType == UserType.admin)
-          ? "admins"
-          : "users";
-
-      // ✅ If not guest, reauthenticate + update Firebase Auth email
-      if (currentUserModel?.userType != UserType.guest) {
-        final fb.User? user = _auth.currentUser;
-        if (user == null) {
-          emit(UserUpdatingError("Firebase user not found"));
-          return;
-        }
-
-        // Reauthenticate first
-        final cred = fb.EmailAuthProvider.credential(
-          email: oldEmail,
-          password: password,
-        );
-        await user.reauthenticateWithCredential(cred);
-
-        // ✅ Send verification before updating email
-        await user.verifyBeforeUpdateEmail(newEmail);
-
-        // Reload to refresh user data
-        await user.reload();
-      }
-
-      // ✅ Update Firestore
-      await _firestore.collection(collectionName).doc(uId).update({
-        "email": newEmail,
-      });
-
-      // ✅ Update local model
-      currentUserModel = currentUserModel?.copyWith(email: newEmail);
-
-      await CacheHelper.saveData(
-        key: "currentUserModel",
-        value: currentUserModel?.toMap(),
+      // Re-authenticate user
+      final cred = EmailAuthProvider.credential(
+        email: user.email!,
+        password: password,
       );
+      await user.reauthenticateWithCredential(cred);
+
+      // Send verification link to new email
+      await user.verifyBeforeUpdateEmail(newEmail);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'A verification link has been sent to your new email address.',
+            ),
+          ),
+        );
+      }
 
       emit(UserUpdated(currentUserModel!));
-
-      log(
-        "✅ Verification email sent. Email will update once verified: $newEmail",
-      );
+    } on FirebaseAuthException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'An unknown error occurred.')),
+        );
+      }
+      emit(UserError(e.message ?? 'An unknown error occurred.'));
     } catch (e) {
-      emit(UserUpdatingError(e.toString()));
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+      emit(UserError(e.toString()));
+    }
+  }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required BuildContext context,
+  }) async {
+    emit(UserLoading());
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No user is currently signed in.');
+      }
+
+      // Re-authenticate user with current password
+      final cred = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(cred);
+
+      // Update password
+      await user.updatePassword(newPassword);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Password updated successfully.')),
+        );
+      }
+
+      emit(UserUpdated(currentUserModel!));
+    } on FirebaseAuthException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'An unknown error occurred.')),
+        );
+      }
+      emit(UserError(e.message ?? 'An unknown error occurred.'));
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+      emit(UserError(e.toString()));
     }
   }
 
@@ -323,6 +380,16 @@ class UserCubit extends Cubit<UserState> {
         log("⚠️ Error uploading image: $e");
       }
     }
+  }
+
+  String generateReferralLink(String userId) {
+    // Use your working deep link host
+    return "https://deep-link-hosting.vercel.app/create-shop?ref=$userId";
+  }
+
+  void shareReferral(String userId) {
+    final link = generateReferralLink(userId);
+    Share.share("${S.current.join_gahezha_and_open_shop}: $link");
   }
 
   Future<void> logout(BuildContext context) async {

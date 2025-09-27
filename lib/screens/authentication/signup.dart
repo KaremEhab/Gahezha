@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,8 +15,14 @@ import 'package:gahezha/generated/l10n.dart';
 import 'login.dart';
 
 class Signup extends StatefulWidget {
-  const Signup({super.key, this.isShop = false, this.isGuestMode = false});
+  const Signup({
+    super.key,
+    this.referrerId = "",
+    this.isShop = false,
+    this.isGuestMode = false,
+  });
 
+  final String referrerId;
   final bool isShop, isGuestMode;
 
   @override
@@ -47,6 +54,8 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     final bool isiOS = Platform.isIOS;
+
+    log("${widget.referrerId} Reportssssssssss");
 
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) {
@@ -591,6 +600,7 @@ class _SignupState extends State<Signup> {
                               openingHoursFrom: openingFrom,
                               openingHoursTo: openingTo,
                               shopPhoneNumber: shopPhone,
+                              referredByUserId: widget.referrerId,
                             );
                           }
                         },

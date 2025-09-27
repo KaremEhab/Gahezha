@@ -132,11 +132,10 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                 }
                 totalCartPrice = totalPrice;
                 if (state.cartShops.isEmpty) {
-                  return Center(
-                    child: Text(
-                      S.current.no_products_yet,
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                  return buildEmptyView(
+                    S.current.no_products_yet,
+                    S.current.once_you_add_products_cart,
+                    IconlyLight.buy,
                   );
                 }
                 return Builder(

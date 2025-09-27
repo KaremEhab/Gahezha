@@ -67,9 +67,9 @@ class ActiveOrdersBottomSheet extends StatelessWidget {
                     }).toList();
 
                     if (pickupOrders.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Text(
-                          "No active orders",
+                          S.current.no_active_orders,
                           style: TextStyle(color: Colors.grey),
                         ),
                       );

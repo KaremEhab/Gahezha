@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/admin/admin_state.dart';
+import 'package:gahezha/cubits/report/report_cubit.dart';
+import 'package:gahezha/cubits/user/user_cubit.dart';
+import 'package:gahezha/cubits/user/user_state.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/report_model.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -21,9 +24,14 @@ class AccountDetailsSheet extends StatefulWidget {
   final String phone;
   final String avatarUrl;
   final String bannerUrl;
+  final String referredByUserId;
   final bool isBlocked;
   final bool isReported;
   final bool isDisabled;
+  final List<String>? referredShopIds;
+  final double commissionBalance;
+  final double paidCommissionBalance;
+  final double remainingCommissionBalance;
   final int shopAcceptanceStatus;
   final int reportedCount;
 
@@ -36,9 +44,14 @@ class AccountDetailsSheet extends StatefulWidget {
     required this.phone,
     required this.avatarUrl,
     required this.bannerUrl,
+    this.referredByUserId = "",
     this.isBlocked = false,
     this.isReported = false,
     this.isDisabled = false,
+    this.referredShopIds,
+    this.commissionBalance = 0,
+    this.paidCommissionBalance = 0,
+    this.remainingCommissionBalance = 0,
     this.shopAcceptanceStatus = 0,
     this.reportedCount = 0,
   });
@@ -50,10 +63,13 @@ class AccountDetailsSheet extends StatefulWidget {
 class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
   late bool _isBlocked;
   late bool _isDisabled;
+  double paidAmount = 0;
 
   @override
   void initState() {
     super.initState();
+    UserCubit.instance.getUserById(widget.referredByUserId);
+    ReportCubit.instance.getReportsAboutMe(widget.id);
     _isBlocked = widget.isBlocked;
     _isDisabled = widget.isDisabled;
   }
@@ -95,6 +111,17 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
           _toggleDisabled(state.isDisabled);
         }
         if (state is AdminShopDeleted && state.shopId == widget.id) {
+          Navigator.pop(context);
+        }
+        if (state is AdminPaidCommissionSuccessfully) {
+          UserCubit.instance.adminGetAllCustomers();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "✅ ${S.current.paid_commission_successfully}: ${state.amount}",
+              ),
+            ),
+          );
           Navigator.pop(context);
         }
       },
@@ -177,94 +204,409 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
                                         color: Colors.black54,
                                       ),
                                     ),
+
+                                    if (widget.referredShopIds!.isNotEmpty)
+                                      const SizedBox(height: 20),
+
+                                    if (widget.referredShopIds!.isNotEmpty)
+                                      Column(
+                                        spacing: 5,
+                                        children: [
+                                          Row(
+                                            spacing: 5,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Material(
+                                                color: primaryBlue.withOpacity(
+                                                  0.15,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      radius,
+                                                    ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 13,
+                                                      ),
+                                                  child: Text(
+                                                    "${widget.referredShopIds!.length} ${widget.referredShopIds!.length > 1 ? S.current.shops : S.current.shop}",
+                                                    style: TextStyle(
+                                                      color: primaryBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Material(
+                                                color: primaryBlue.withOpacity(
+                                                  0.15,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      radius,
+                                                    ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 13,
+                                                      ),
+                                                  child: Text(
+                                                    "${S.current.total}: ${S.current.sar} ${widget.commissionBalance}",
+                                                    style: TextStyle(
+                                                      color: primaryBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Material(
+                                                color: primaryBlue.withOpacity(
+                                                  0.15,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      radius,
+                                                    ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 13,
+                                                      ),
+                                                  child: Text(
+                                                    "${S.current.paid}: ${S.current.sar} ${widget.paidCommissionBalance}",
+                                                    style: TextStyle(
+                                                      color: primaryBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            spacing: 5,
+                                            children: [
+                                              Expanded(
+                                                flex: 2,
+                                                child: Material(
+                                                  color: primaryBlue
+                                                      .withOpacity(0.15),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        radius,
+                                                      ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 10,
+                                                          horizontal: 13,
+                                                        ),
+                                                    child: Text(
+                                                      "${S.current.remaining}: ${S.current.sar} ${widget.remainingCommissionBalance}",
+                                                      style: TextStyle(
+                                                        color: primaryBlue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Material(
+                                                color: primaryBlue,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      radius,
+                                                    ),
+                                                child: InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        radius,
+                                                      ),
+                                                  onTap: () async {
+                                                    final controller =
+                                                        TextEditingController();
+
+                                                    final result = await showDialog<double>(
+                                                      context: context,
+                                                      builder: (ctx) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                            S
+                                                                .current
+                                                                .commission,
+                                                          ),
+                                                          content: TextField(
+                                                            controller:
+                                                                controller,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration:
+                                                                InputDecoration(
+                                                                  hintText:
+                                                                      "${S.current.sar} 1,500",
+                                                                ),
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.of(
+                                                                    ctx,
+                                                                  ).pop(),
+                                                              child: Text(
+                                                                S
+                                                                    .current
+                                                                    .cancel,
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                final value =
+                                                                    double.tryParse(
+                                                                      controller
+                                                                          .text
+                                                                          .trim(),
+                                                                    );
+                                                                if (value !=
+                                                                    null) {
+                                                                  Navigator.of(
+                                                                    ctx,
+                                                                  ).pop(
+                                                                    value,
+                                                                  ); // ✅ يرجع القيمة
+                                                                }
+                                                              },
+                                                              child: Text(
+                                                                S
+                                                                    .current
+                                                                    .click_to_pay,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+
+                                                    if (result != null) {
+                                                      paidAmount = result;
+
+                                                      await AdminCubit.instance
+                                                          .paidCommission(
+                                                            userId: widget.id,
+                                                            amount: paidAmount,
+                                                          );
+                                                    }
+                                                  },
+
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 10,
+                                                          horizontal: 20,
+                                                        ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        S.current.click_to_pay,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+
                                     const SizedBox(height: 20),
                                   ],
                                 )
                               :
                                 /// Profile Header
-                                Container(
-                                  height: 200,
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      CustomCachedImage(
-                                        imageUrl: widget.bannerUrl,
-                                        height: double.infinity,
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 200,
+                                      margin: const EdgeInsets.only(bottom: 15),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      Container(
-                                        color: Colors.black.withOpacity(0.5),
-                                      ),
-                                      Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 40,
-                                              backgroundImage: NetworkImage(
-                                                widget.avatarUrl,
+                                      child: Stack(
+                                        children: [
+                                          CustomCachedImage(
+                                            imageUrl: widget.bannerUrl,
+                                            height: double.infinity,
+                                          ),
+                                          Container(
+                                            color: Colors.black.withOpacity(
+                                              0.5,
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 40,
+                                                  backgroundImage: NetworkImage(
+                                                    widget.avatarUrl,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  widget.name,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge
+                                                      ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                ),
+                                                Text(
+                                                  widget.email,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        color: Colors.white,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          if (widget.shopAcceptanceStatus == 0)
+                                            Positioned.directional(
+                                              textDirection: Directionality.of(
+                                                context,
+                                              ),
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 10,
+                                                    ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        200,
+                                                      ),
+                                                ),
+                                                child: Text(
+                                                  S.current.pending,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        color: Colors
+                                                            .grey
+                                                            .shade800,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              widget.name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                            ),
-                                            Text(
-                                              widget.email,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    color: Colors.white,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                      if (widget.shopAcceptanceStatus == 0)
-                                        Positioned.directional(
-                                          textDirection: Directionality.of(
-                                            context,
-                                          ),
-                                          child: Container(
+                                    ),
+
+                                    /// display user's info here
+                                    BlocBuilder<UserCubit, UserState>(
+                                      builder: (context, state) {
+                                        if (state is UserLoading) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        } else if (state is UserLoaded) {
+                                          final user = state.user;
+
+                                          return Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.all(16),
                                             margin: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 10,
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 4,
+                                              vertical: 5,
+                                              horizontal: 5,
                                             ),
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade100,
                                               borderRadius:
-                                                  BorderRadius.circular(200),
+                                                  BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: Colors.grey.shade300,
+                                                width: 1,
+                                              ),
                                             ),
-                                            child: Text(
-                                              S.current.pending,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .copyWith(
-                                                    color: Colors.grey.shade800,
-                                                    fontWeight: FontWeight.w600,
+                                            child: Row(
+                                              spacing: 12,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 30,
+                                                  backgroundImage: NetworkImage(
+                                                    user.profileUrl,
                                                   ),
+                                                ),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        user.fullName,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleMedium
+                                                            ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        "${S.current.commission}: ${S.current.sar} ${user.commissionBalance.toStringAsFixed(2)}",
+                                                        style: Theme.of(
+                                                          context,
+                                                        ).textTheme.bodyMedium,
+                                                      ),
+                                                      Text(
+                                                        "${user.referredShopIds.length > 1 ? S.current.shops : S.current.shop}: ${user.referredShopIds.length}",
+                                                        style: Theme.of(
+                                                          context,
+                                                        ).textTheme.bodyMedium,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
+                                          );
+                                        }
+                                        return const SizedBox.shrink();
+                                      },
+                                    ),
+                                  ],
                                 ),
                         ),
 
@@ -342,11 +684,11 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AccountReports(
-                                        name: widget.name,
-                                        initialTabIndex: 1,
-                                        pendingReportsCount:
-                                            widget.reportedCount,
+                                      builder: (context) => ReportsListPage(
+                                        userType: widget.userType,
+                                        userName: widget.name,
+                                        userId: widget.id,
+                                        initialTabIndex: 4,
                                       ),
                                     ),
                                   );
@@ -379,34 +721,30 @@ class _AccountDetailsSheetState extends State<AccountDetailsSheet> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          Column(
-                            children: reports
-                                .take(3)
-                                .map(
-                                  (report) => Container(
-                                    height: 145,
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.only(bottom: 10),
-                                    child: ReportCard(
-                                      report: ReportModel(
-                                        id: "#110029",
-                                        reportType:
-                                            "Order prepared late / not ready on time",
-                                        reportDescription: "reportDescription",
-                                        reporter: ReportUser(
-                                          id: "cscwfwdcaer2",
-                                          name: "Alaa El-Sayed",
+                          BlocBuilder<ReportCubit, ReportState>(
+                            builder: (context, state) {
+                              if (state is ReportsDataLoaded) {
+                                return Column(
+                                  children: state.reportsAboutMe
+                                      .take(3)
+                                      .map(
+                                        (report) => Container(
+                                          height: 145,
+                                          width: double.infinity,
+                                          margin: const EdgeInsets.only(
+                                            bottom: 10,
+                                          ),
+                                          child: ReportCard(
+                                            report: report,
+                                            canEdit: false,
+                                          ),
                                         ),
-                                        reporting: ReportUser(
-                                          id: "cscwfwdcaer2",
-                                          name: "Kareem Ehab",
-                                        ),
-                                        createdAt: DateTime.now(),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                                      )
+                                      .toList(),
+                                );
+                              }
+                              return const SizedBox();
+                            },
                           ),
                           const SizedBox(height: 20),
                         ],

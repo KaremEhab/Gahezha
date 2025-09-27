@@ -22,6 +22,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "about_me": MessageLookupByLibrary.simpleMessage("بلاغات عني"),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accepted": MessageLookupByLibrary.simpleMessage("مقبول"),
     "accepted_shops": MessageLookupByLibrary.simpleMessage("المتاجر المقبولة"),
@@ -124,9 +125,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "click_again_to_exit": MessageLookupByLibrary.simpleMessage(
       "اضغط زر العودة مجددًا للخروج من التطبيق.",
     ),
+    "click_to_pay": MessageLookupByLibrary.simpleMessage("اضغط للدفع"),
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "closed": MessageLookupByLibrary.simpleMessage("مغلق"),
     "clothing": MessageLookupByLibrary.simpleMessage("ملابس"),
+    "commission": MessageLookupByLibrary.simpleMessage("العمولة"),
     "confirm_password": MessageLookupByLibrary.simpleMessage(
       "اعد إدخال كلمة المرور",
     ),
@@ -275,6 +278,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "furniture": MessageLookupByLibrary.simpleMessage("أثاث"),
     "gahezha": MessageLookupByLibrary.simpleMessage("جهزها"),
     "gahezha_accounts": MessageLookupByLibrary.simpleMessage("حسابات جهزها"),
+    "gahezha_support_team": MessageLookupByLibrary.simpleMessage(
+      "فريق دعم جهزها",
+    ),
     "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
     "get_started": MessageLookupByLibrary.simpleMessage("ابدأ الآن"),
     "gift_wrap": MessageLookupByLibrary.simpleMessage("تغليف هدية"),
@@ -304,6 +310,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "item": MessageLookupByLibrary.simpleMessage("عنصر"),
     "items": MessageLookupByLibrary.simpleMessage("عناصر"),
     "jewelry": MessageLookupByLibrary.simpleMessage("مجوهرات"),
+    "join_gahezha_and_open_shop": MessageLookupByLibrary.simpleMessage(
+      "انضم الى تطبيق جهزها وافتتح متجرك الآن",
+    ),
     "juice_bar": MessageLookupByLibrary.simpleMessage("عصائر"),
     "large": MessageLookupByLibrary.simpleMessage("كبير"),
     "last_name": MessageLookupByLibrary.simpleMessage("اسم العائلة"),
@@ -340,12 +349,23 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "next": MessageLookupByLibrary.simpleMessage("التالي"),
     "night_club": MessageLookupByLibrary.simpleMessage("نادي ليلي"),
+    "no_active_orders": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد اي طلبات نشطة",
+    ),
+    "no_customers": MessageLookupByLibrary.simpleMessage("لا يوجد عملاء"),
+    "no_notifications": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد اي اشعارات",
+    ),
+    "no_products_added_yet": MessageLookupByLibrary.simpleMessage(
+      "هذا المتجر لم يضيف اي منتج حتى الآن.",
+    ),
     "no_products_yet": MessageLookupByLibrary.simpleMessage(
       "لا توجد منتجات بعد.",
     ),
     "no_reports_found": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على اي بلاغات",
     ),
+    "no_shops": MessageLookupByLibrary.simpleMessage("لا توجد متاجر"),
     "no_vegetables": MessageLookupByLibrary.simpleMessage("بدون خضروات"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "old_email": MessageLookupByLibrary.simpleMessage(
@@ -354,6 +374,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "old_email_title": MessageLookupByLibrary.simpleMessage("بريدك القديم"),
     "old_password": MessageLookupByLibrary.simpleMessage(
       "أدخل كلمة المرور القديمة",
+    ),
+    "once_you_add_products_cart": MessageLookupByLibrary.simpleMessage(
+      "بمجرد إضافة منتجات إلى السلة، ستظهر هنا.",
+    ),
+    "once_you_place_new_orders": MessageLookupByLibrary.simpleMessage(
+      "بمجرد إجراء طلب جديد، سيظهر هنا.",
     ),
     "open": MessageLookupByLibrary.simpleMessage("مفتوح"),
     "opening_hours": MessageLookupByLibrary.simpleMessage("ساعات العمل"),
@@ -378,6 +404,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "طلبات جاهزة للاستلام",
     ),
     "organic_food": MessageLookupByLibrary.simpleMessage("أطعمة عضوية"),
+    "paid": MessageLookupByLibrary.simpleMessage("مدفوع"),
+    "paid_commission_successfully": MessageLookupByLibrary.simpleMessage(
+      "تم دفع العمولة بنجاح",
+    ),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "pending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "pending_lower": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
@@ -470,6 +500,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "rejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
     "rejected_shops": MessageLookupByLibrary.simpleMessage("المتاجر المرفوضة"),
+    "remaining": MessageLookupByLibrary.simpleMessage("المتبقي"),
     "report": MessageLookupByLibrary.simpleMessage("بلاغ"),
     "report_app": MessageLookupByLibrary.simpleMessage("الإبلاغ إلى جهزها"),
     "report_customer": MessageLookupByLibrary.simpleMessage("الإبلاغ عن عميل"),
@@ -483,7 +514,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "respond_to_reporter": MessageLookupByLibrary.simpleMessage(
       "الرد على المُبلغ",
     ),
-    "restaurant": MessageLookupByLibrary.simpleMessage("مطعم"),
+    "restaurant": MessageLookupByLibrary.simpleMessage("المطعم"),
     "restaurants": MessageLookupByLibrary.simpleMessage("المطاعم"),
     "sar": MessageLookupByLibrary.simpleMessage("ر.س"),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
@@ -567,6 +598,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "time": MessageLookupByLibrary.simpleMessage("مرة"),
     "times": MessageLookupByLibrary.simpleMessage("مرات"),
     "to_cart": MessageLookupByLibrary.simpleMessage("إلى السلة"),
+    "total": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "total_price": MessageLookupByLibrary.simpleMessage("السعر الإجمالي"),
     "toys": MessageLookupByLibrary.simpleMessage("ألعاب"),
     "type_response_here": MessageLookupByLibrary.simpleMessage(

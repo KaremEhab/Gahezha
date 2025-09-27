@@ -294,7 +294,6 @@
   "bakery": "مخبز",
   "cafe": "مقهى",
   "supermarket": "سوبرماركت",
-  "restaurant": "مطعم",
   "grocery": "بقالة",
   "dessert": "حلويات",
   "juice_bar": "عصائر",
@@ -380,5 +379,27 @@
   "report_customer": "الإبلاغ عن عميل",
   "report_shop": "الإبلاغ عن متجر",
   "report_app": "الإبلاغ إلى جهزها",
-  "no_reports_found": "لم يتم العثور على اي بلاغات"
+  "no_reports_found": "لم يتم العثور على اي بلاغات",
+
+  "once_you_add_products_cart": "بمجرد إضافة منتجات إلى السلة، ستظهر هنا.",
+  "once_you_place_new_orders": "بمجرد إجراء طلب جديد، سيظهر هنا.",
+  "gahezha_support_team": "فريق دعم جهزها",
+
+  "commission": "العمولة",
+  "about_me": "بلاغات عني",
+  "no_active_orders": "لا يوجد اي طلبات نشطة",
+  "no_products_added_yet": "هذا المتجر لم يضيف اي منتج حتى الآن.",
+  "join_gahezha_and_open_shop": "انضم الى تطبيق جهزها وافتتح متجرك الآن",
+
+  "no_customers": "لا يوجد عملاء",
+  "no_shops": "لا توجد متاجر",
+
+  "total": "الإجمالي",
+  "paid": "مدفوع",
+  "remaining": "المتبقي",
+
+  "click_to_pay": "اضغط للدفع",
+  "paid_commission_successfully": "تم دفع العمولة بنجاح",
+
+  "no_notifications": "لا يوجد اي اشعارات"
 }

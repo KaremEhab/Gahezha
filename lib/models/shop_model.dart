@@ -22,7 +22,10 @@ class ShopModel {
   final bool shopStatus;
   final bool blocked;
   final bool disabled;
+  late bool reported;
+  late int reportedCount;
   final bool notificationsEnabled;
+  final String? referredByUserId; // ✅ who referred this shop
   final DateTime createdAt;
 
   ShopModel({
@@ -43,7 +46,10 @@ class ShopModel {
     required this.shopStatus,
     required this.blocked,
     required this.disabled,
+    this.reported = false,
+    this.reportedCount = 0,
     required this.notificationsEnabled,
+    required this.referredByUserId,
     required this.createdAt,
   });
 
@@ -66,7 +72,10 @@ class ShopModel {
     bool? shopStatus,
     bool? blocked,
     bool? disabled,
+    bool? reported,
+    int? reportedCount,
     bool? notificationsEnabled,
+    String? referredByUserId,
     DateTime? createdAt,
   }) {
     return ShopModel(
@@ -87,7 +96,10 @@ class ShopModel {
       shopStatus: shopStatus ?? this.shopStatus,
       blocked: blocked ?? this.blocked,
       disabled: disabled ?? this.disabled,
+      reported: reported ?? this.reported,
+      reportedCount: reportedCount ?? this.reportedCount,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      referredByUserId: referredByUserId ?? this.referredByUserId,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -109,8 +121,11 @@ class ShopModel {
       'shopStatus': shopStatus,
       'blocked': blocked,
       'disabled': disabled,
+      'reported': reported,
+      'reportedCount': reportedCount,
       'notificationsEnabled': notificationsEnabled,
       'shopAcceptanceStatus': shopAcceptanceStatus.index,
+      'referredByUserId': referredByUserId,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
@@ -135,9 +150,12 @@ class ShopModel {
       shopStatus: map['shopStatus'] ?? false,
       blocked: map['blocked'] ?? false,
       disabled: map['disabled'] ?? false,
+      reported: map['reported'] ?? false,
+      reportedCount: map['reportedCount'] ?? 0,
       notificationsEnabled: map['notificationsEnabled'] ?? false,
       shopAcceptanceStatus:
           ShopAcceptanceStatus.values[map['shopAcceptanceStatus'] ?? 0],
+      referredByUserId: map['referredByUserId'] ?? '',
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }

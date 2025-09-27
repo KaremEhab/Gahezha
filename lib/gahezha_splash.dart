@@ -35,8 +35,6 @@ class _GahezhaSplashState extends State<GahezhaSplash> {
   }
 
   Future<void> _setupAndNavigate() async {
-    await setupFCM();
-
     if (uId.isNotEmpty) {
       UserType? type;
       DocumentSnapshot<Map<String, dynamic>>? doc;
@@ -44,6 +42,7 @@ class _GahezhaSplashState extends State<GahezhaSplash> {
       // 1️⃣ Check Shops collection
       final shopDoc = await FirebaseFirestore.instance
           .collection('shops')
+
           .doc(uId)
           .get();
       if (shopDoc.exists) {
@@ -121,6 +120,8 @@ class _GahezhaSplashState extends State<GahezhaSplash> {
         navigateAndFinish(context: context, screen: const Layout());
       }
     }
+
+    log("accessToken: $accessToken -----------------------");
   }
 
   @override

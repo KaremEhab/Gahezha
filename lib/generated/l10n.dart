@@ -1745,6 +1745,16 @@ class S {
     );
   }
 
+  /// `No orders yet.`
+  String get no_orders_yet {
+    return Intl.message(
+      'No orders yet.',
+      name: 'no_orders_yet',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Extra Pickles`
   String get extra_pickles {
     return Intl.message(
@@ -2740,6 +2750,136 @@ class S {
     return Intl.message(
       'No reports found',
       name: 'no_reports_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Once you add products to cart, it will appear here.`
+  String get once_you_add_products_cart {
+    return Intl.message(
+      'Once you add products to cart, it will appear here.',
+      name: 'once_you_add_products_cart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Once you place an order, it will appear here.`
+  String get once_you_place_new_orders {
+    return Intl.message(
+      'Once you place an order, it will appear here.',
+      name: 'once_you_place_new_orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gahezha Support Team`
+  String get gahezha_support_team {
+    return Intl.message(
+      'Gahezha Support Team',
+      name: 'gahezha_support_team',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Commission`
+  String get commission {
+    return Intl.message('Commission', name: 'commission', desc: '', args: []);
+  }
+
+  /// `About Me`
+  String get about_me {
+    return Intl.message('About Me', name: 'about_me', desc: '', args: []);
+  }
+
+  /// `No active orders`
+  String get no_active_orders {
+    return Intl.message(
+      'No active orders',
+      name: 'no_active_orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This shop has not added any products yet.`
+  String get no_products_added_yet {
+    return Intl.message(
+      'This shop has not added any products yet.',
+      name: 'no_products_added_yet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join Gahezha and open your shop`
+  String get join_gahezha_and_open_shop {
+    return Intl.message(
+      'Join Gahezha and open your shop',
+      name: 'join_gahezha_and_open_shop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No customers`
+  String get no_customers {
+    return Intl.message(
+      'No customers',
+      name: 'no_customers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No shops`
+  String get no_shops {
+    return Intl.message('No shops', name: 'no_shops', desc: '', args: []);
+  }
+
+  /// `Total`
+  String get total {
+    return Intl.message('Total', name: 'total', desc: '', args: []);
+  }
+
+  /// `Paid`
+  String get paid {
+    return Intl.message('Paid', name: 'paid', desc: '', args: []);
+  }
+
+  /// `Remaining`
+  String get remaining {
+    return Intl.message('Remaining', name: 'remaining', desc: '', args: []);
+  }
+
+  /// `Click to pay`
+  String get click_to_pay {
+    return Intl.message(
+      'Click to pay',
+      name: 'click_to_pay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid commission successfully`
+  String get paid_commission_successfully {
+    return Intl.message(
+      'Paid commission successfully',
+      name: 'paid_commission_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No notifications`
+  String get no_notifications {
+    return Intl.message(
+      'No notifications',
+      name: 'no_notifications',
       desc: '',
       args: [],
     );

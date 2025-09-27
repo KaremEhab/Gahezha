@@ -138,7 +138,75 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
           //   },
           // ),
 
-          // const SizedBox(height: 10),
+          // Account Section
+          if (currentUserType != UserType.guest) ...[
+            _buildSectionTitle(S.current.account_settings, context),
+            if (currentUserType == UserType.customer)
+              buildListTile(
+                icon: Icons.monetization_on_outlined,
+                title: S.current.commission,
+                trailingIcon: currentUserModel!.commissionBalance > 0
+                    ? Row(
+                        spacing: 5,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Material(
+                            color: primaryBlue.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(radius),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 13,
+                              ),
+                              child: Text(
+                                "${currentUserModel!.referredShopIds.length} ${currentUserModel!.referredShopIds.length > 1 ? S.current.shops : S.current.shop}",
+                                style: TextStyle(
+                                  color: primaryBlue,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Material(
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(radius),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 13,
+                              ),
+                              child: Text(
+                                "${S.current.sar} ${currentUserModel!.commissionBalance}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : null,
+                onTap: () {
+                  UserCubit.instance.shareReferral(uId);
+                },
+              ),
+            buildListTile(
+              icon: IconlyLight.info_circle,
+              title: S.current.reports,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ReportsListPage(userType: currentUserType),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 10),
+          ],
 
           // Settings Section
           _buildSectionTitle(S.current.app_settings, context),
@@ -160,31 +228,19 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
             },
           ),
           if (currentUserType != UserType.guest) ...[
-            _buildListTile(
-              icon: IconlyLight.info_circle,
-              title: S.current.reports,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ReportsListPage(),
-                  ),
-                );
-              },
-            ),
-            _buildListTile(
-              icon: IconlyLight.message,
-              title: S.current.change_email,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ChangeEmailPage(),
-                  ),
-                );
-              },
-            ),
-            _buildListTile(
+            // _buildListTile(
+            //   icon: IconlyLight.message,
+            //   title: S.current.change_email,
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const ChangeEmailPage(),
+            //       ),
+            //     );
+            //   },
+            // ),
+            buildListTile(
               icon: IconlyLight.lock,
               title: S.current.change_password,
               onTap: () {
@@ -197,7 +253,7 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
               },
             ),
           ],
-          _buildListTile(
+          buildListTile(
             icon: IconlyLight.shield_done,
             title: S.current.privacy_policy,
             onTap: () {
@@ -211,7 +267,7 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
           ),
 
           // 🔥 NEW Language Switch Tile
-          _buildListTile(
+          buildListTile(
             leadingIcon: lang == 'en' ? " 🇺🇸" : " 🇸🇦",
             title: lang == 'en' ? "English" : "العربية",
             onTap: () {
@@ -264,29 +320,6 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
           color: Colors.grey[700],
         ),
       ),
-    );
-  }
-
-  Widget _buildListTile({
-    IconData? icon,
-    String? leadingIcon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 10),
-      leading: leadingIcon != null
-          ? Text(leadingIcon, style: const TextStyle(fontSize: 15))
-          : Icon(icon, color: primaryBlue),
-      title: Text(title),
-      trailing: Icon(
-        leadingIcon != null
-            ? Icons.swap_horizontal_circle
-            : Icons.arrow_forward_ios,
-        size: leadingIcon != null ? 22 : 16,
-        color: leadingIcon != null ? primaryBlue : Colors.grey,
-      ),
-      onTap: onTap,
     );
   }
 }

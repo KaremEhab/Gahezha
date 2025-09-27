@@ -4,7 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/cart/cart_cubit.dart';
+import 'package:gahezha/cubits/notifications/notifications_cubit.dart';
 import 'package:gahezha/models/cart_model.dart';
+import 'package:gahezha/models/notification_model.dart';
 import 'package:gahezha/models/order_model.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/home/shop/shop_home.dart';
@@ -79,13 +81,10 @@ class OrderCubit extends Cubit<OrderState> {
         }
 
         transaction.set(counterRef, {'lastOrderNumber': current});
-
         return '#$current';
       });
 
-      // Define realistic start and end times
       final startDate = DateTime.now();
-      var endDate = DateTime.now();
 
       final List<Map<String, dynamic>> shopsData = shops.map((shop) {
         final shopItems = shop.orders.map((cartItem) {
@@ -123,7 +122,7 @@ class OrderCubit extends Cubit<OrderState> {
         'id': orderId,
         'startDate': Timestamp.fromDate(startDate),
         'shops': shopsData,
-        'shopIds': shopIds, // ✅ store all shopIds for easy querying
+        'shopIds': shopIds,
         'totalPrice': totalPrice.toStringAsFixed(2),
         'customerId': customerInfo.userId ?? '',
         'customerFullName': customerInfo.fullName ?? '',
@@ -131,9 +130,39 @@ class OrderCubit extends Cubit<OrderState> {
         'customerPhone': customerInfo.phoneNumber ?? '',
       };
 
+      final orderModel = OrderModel.fromMap(orderData);
+
+      // Save order in Firestore
       await _firestore.collection('orders').doc(orderId).set(orderData);
 
-      emit(OrderPlaced(OrderModel.fromMap(orderData)));
+      // Prepare receivers for notification
+      final receivers = shops.map((shop) {
+        return SenderReceiver(
+          id: shop.shopId,
+          name: shop.shopName,
+          profile: shop.shopLogo,
+        );
+      }).toList();
+
+      // Send notification to all shops
+      await NotificationCubit.instance.sendNotification(
+        receivers: receivers,
+        isShop: true,
+        sender: SenderReceiver(
+          id: customerInfo.userId ?? '',
+          name: customerInfo.fullName ?? '',
+          profile: customerInfo.profileUrl ?? '',
+        ),
+        label: "New Order Received",
+        content: "You have received a new order ${orderModel.id}",
+        notificationType: NotificationType.newOrder,
+        payload: {
+          "type": NotificationType.newOrder.name,
+          "order": orderModel.toMap(),
+        }, // send the order as payload
+      );
+
+      emit(OrderPlaced(orderModel));
       CartCubit.instance.clearCart();
     } catch (e) {
       emit(OrderError(e.toString()));
@@ -143,9 +172,13 @@ class OrderCubit extends Cubit<OrderState> {
   /// --------------------
   /// CHANGE ORDER STATUS
   /// --------------------
-  Future<void> changeOrderStatus(String orderId, OrderStatus status) async {
+  Future<void> changeOrderStatus(
+    OrderModel orderModel,
+    OrderStatus status,
+    SenderReceiver receiver,
+  ) async {
     try {
-      final orderRef = _firestore.collection('orders').doc(orderId);
+      final orderRef = _firestore.collection('orders').doc(orderModel.id);
       final snapshot = await orderRef.get();
 
       if (!snapshot.exists) throw Exception("Order not found");
@@ -191,6 +224,24 @@ class OrderCubit extends Cubit<OrderState> {
 
       final updatedSnapshot = await orderRef.get();
       final updatedOrder = OrderModel.fromMap(updatedSnapshot.data()!);
+
+      // Send notification to all shops
+      await NotificationCubit.instance.sendNotification(
+        receivers: [receiver],
+        isShop: false,
+        sender: SenderReceiver(
+          id: uId ?? '',
+          name: currentShopModel!.shopName ?? '',
+          profile: currentShopModel!.shopLogo ?? '',
+        ),
+        label: "Order ${orderModel.id} is now ${status.name}",
+        content: "Click the notification to view the order",
+        notificationType: NotificationType.orderStatus,
+        payload: {
+          "type": NotificationType.orderStatus.name,
+          "order": orderModel.toMap(),
+        }, // send the order as payload
+      );
 
       emit(OrderStatusChanged(updatedOrder));
     } catch (e) {

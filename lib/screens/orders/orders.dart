@@ -129,7 +129,13 @@ class _OrdersPageState extends State<OrdersPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is OrderLoaded) {
             final orders = state.orders;
-            if (orders.isEmpty) return _buildEmptyView();
+            if (orders.isEmpty) {
+              return buildEmptyView(
+                S.current.no_orders_yet,
+                S.current.once_you_place_new_orders,
+                IconlyLight.bag,
+              );
+            }
 
             return SafeArea(
               child: ListView.builder(
@@ -161,7 +167,7 @@ class _OrdersPageState extends State<OrdersPage> {
             Icon(IconlyLight.lock, size: 80, color: Colors.grey.shade400),
             const SizedBox(height: 20),
             Text(
-              'You need an account to view orders',
+              S.current.you_need_account_to_view_orders,
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey.shade600,
@@ -184,35 +190,6 @@ class _OrdersPageState extends State<OrdersPage> {
                 ),
               ),
               child: Text(S.current.create_account),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(IconlyLight.bag, size: 80, color: Colors.grey.shade400),
-            const SizedBox(height: 20),
-            Text(
-              'No orders yet',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Once you place an order, it will appear here.',
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

@@ -218,29 +218,30 @@ class _ShopProfilePageState extends State<ShopProfilePage> {
             },
           ),
           _buildListTile(
-              icon: IconlyLight.info_circle,
-              title: S.current.reports,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ReportsListPage(),
-                  ),
-                );
-              },
-            ),
-          _buildListTile(
-            icon: IconlyLight.message,
-            title: S.current.change_email,
+            icon: IconlyLight.info_circle,
+            title: S.current.reports,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ChangeEmailPage(),
+                  builder: (context) =>
+                      ReportsListPage(userType: currentUserType),
                 ),
               );
             },
           ),
+          // _buildListTile(
+          //   icon: IconlyLight.message,
+          //   title: S.current.change_email,
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => const ChangeEmailPage(),
+          //       ),
+          //     );
+          //   },
+          // ),
           _buildListTile(
             icon: IconlyLight.lock,
             title: S.current.change_password,

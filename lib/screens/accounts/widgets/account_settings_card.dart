@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -14,9 +16,14 @@ class AccountSettingsCard extends StatelessWidget {
     this.userPhone = "+20 111 222 3333",
     this.avatarUrl = "https://picsum.photos/200/200?random=1",
     this.bannerUrl = "https://picsum.photos/200/200?random=1",
+    this.referredByUserId = "",
     this.isBlocked = false,
     this.isReported = false,
     this.isDisabled = false, // NEW
+    this.referredShopIds,
+    this.commissionBalance = 0,
+    this.paidCommissionBalance = 0,
+    this.remainingCommissionBalance = 0,
     this.shopAcceptanceStatus = 0,
     this.reportedCount = 0,
   });
@@ -28,14 +35,20 @@ class AccountSettingsCard extends StatelessWidget {
   final String userPhone;
   final String avatarUrl;
   final String bannerUrl;
+  final String referredByUserId;
   final bool isBlocked;
   final bool isReported;
   final bool isDisabled; // NEW
+  final List<String>? referredShopIds;
+  final double commissionBalance;
+  final double paidCommissionBalance;
+  final double remainingCommissionBalance;
   final int shopAcceptanceStatus;
   final int reportedCount;
 
   @override
   Widget build(BuildContext context) {
+    log("REPORTED COUNTER: $reportedCount -------------------------");
     // Determine card background color
     final Color bgColor = isBlocked
         ? Colors.red.withOpacity(0.05)
@@ -84,11 +97,16 @@ class AccountSettingsCard extends StatelessWidget {
               phone: userPhone,
               avatarUrl: avatarUrl,
               bannerUrl: bannerUrl,
+              referredByUserId: referredByUserId,
               isBlocked: isBlocked,
               isReported: isReported,
               reportedCount: reportedCount,
               isDisabled: isDisabled,
               shopAcceptanceStatus: shopAcceptanceStatus,
+              referredShopIds: referredShopIds,
+              commissionBalance: commissionBalance,
+              paidCommissionBalance: paidCommissionBalance,
+              remainingCommissionBalance: remainingCommissionBalance,
             ),
           );
         },

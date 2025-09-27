@@ -136,6 +136,7 @@ class SignupCubit extends Cubit<SignupState> {
     required int openingHoursFrom,
     required int openingHoursTo,
     required String shopPhoneNumber,
+    String? referredByUserId,
   }) async {
     emit(SignupLoadingState());
 
@@ -161,6 +162,7 @@ class SignupCubit extends Cubit<SignupState> {
         openingHoursTo: openingHoursTo,
         shopPhoneNumber: shopPhoneNumber,
         shopEmail: email,
+        referredByUserId: referredByUserId,
       );
 
       uId = uid;
@@ -194,6 +196,7 @@ class SignupCubit extends Cubit<SignupState> {
     required int openingHoursTo,
     required String shopPhoneNumber,
     required String shopEmail,
+    String? referredByUserId,
   }) async {
     emit(SignupCreateUserLoadingState());
 
@@ -221,6 +224,7 @@ class SignupCubit extends Cubit<SignupState> {
       blocked: false, // يبدأ مغلق مثلاً
       disabled: false, // يبدأ مغلق مثلاً
       notificationsEnabled: true,
+      referredByUserId: referredByUserId,
       createdAt: DateTime.now(),
     );
 

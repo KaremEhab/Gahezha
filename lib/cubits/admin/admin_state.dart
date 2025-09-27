@@ -16,6 +16,11 @@ class AdminsLoaded extends AdminState {
   AdminsLoaded(this.admins);
 }
 
+class AdminPaidCommissionSuccessfully extends AdminState {
+  final double amount;
+  AdminPaidCommissionSuccessfully(this.amount);
+}
+
 class AdminError extends AdminState {
   final String message;
   AdminError(this.message);

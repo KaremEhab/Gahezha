@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gahezha/cubits/order/order_cubit.dart';
 import 'package:gahezha/generated/l10n.dart';
+import 'package:gahezha/models/notification_model.dart';
 import 'package:gahezha/models/order_model.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/models/user_model.dart';
@@ -679,8 +680,13 @@ class OrderDetailsSheet extends StatelessWidget {
                   ),
                   onPressed: () {
                     OrderCubit.instance.changeOrderStatus(
-                      order.id,
+                      order,
                       OrderStatus.rejected,
+                      SenderReceiver(
+                        id: order.customerId,
+                        name: order.customerFullName,
+                        profile: order.customerProfileUrl,
+                      ),
                     );
                     Navigator.pop(context);
                   },
@@ -695,8 +701,13 @@ class OrderDetailsSheet extends StatelessWidget {
                   ),
                   onPressed: () {
                     OrderCubit.instance.changeOrderStatus(
-                      order.id,
+                      order,
                       OrderStatus.accepted,
+                      SenderReceiver(
+                        id: order.customerId,
+                        name: order.customerFullName,
+                        profile: order.customerProfileUrl,
+                      ),
                     );
                     Navigator.pop(context);
                   },
@@ -712,8 +723,13 @@ class OrderDetailsSheet extends StatelessWidget {
             S.current.preparing.toUpperCase(),
             () {
               OrderCubit.instance.changeOrderStatus(
-                order.id,
+                order,
                 OrderStatus.preparing,
+                SenderReceiver(
+                  id: order.customerId,
+                  name: order.customerFullName,
+                  profile: order.customerProfileUrl,
+                ),
               );
               Navigator.pop(context);
             },
@@ -726,8 +742,13 @@ class OrderDetailsSheet extends StatelessWidget {
             S.current.pickup.toUpperCase(),
             () {
               OrderCubit.instance.changeOrderStatus(
-                order.id,
+                order,
                 OrderStatus.pickup,
+                SenderReceiver(
+                  id: order.customerId,
+                  name: order.customerFullName,
+                  profile: order.customerProfileUrl,
+                ),
               );
               Navigator.pop(context);
             },
@@ -740,8 +761,13 @@ class OrderDetailsSheet extends StatelessWidget {
             S.current.delivered.toUpperCase(),
             () {
               OrderCubit.instance.changeOrderStatus(
-                order.id,
+                order,
                 OrderStatus.delivered,
+                SenderReceiver(
+                  id: order.customerId,
+                  name: order.customerFullName,
+                  profile: order.customerProfileUrl,
+                ),
               );
               Navigator.pop(context);
             },

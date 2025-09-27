@@ -23,7 +23,7 @@ class ShopCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: SizedBox(
-        height: 270,
+        height: 250,
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: () {
@@ -115,7 +115,7 @@ class ShopCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
-                      vertical: 12,
+                      vertical: 10,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +174,7 @@ class ShopCard extends StatelessWidget {
                             height: 1.3,
                           ),
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 10),
 
                         // Info Row
                         Row(
@@ -188,7 +188,7 @@ class ShopCard extends StatelessWidget {
                                         ),
                                         foregroundColor: Colors.red,
                                         padding: const EdgeInsets.symmetric(
-                                          vertical: 14,
+                                          vertical: 10,
                                         ),
                                       ),
                                       onPressed: onRejected,
@@ -209,7 +209,7 @@ class ShopCard extends StatelessWidget {
                                         backgroundColor: Colors.green,
                                         foregroundColor: Colors.white,
                                         padding: const EdgeInsets.symmetric(
-                                          vertical: 14,
+                                          vertical: 10,
                                         ),
                                       ),
                                       onPressed: onAccepted,

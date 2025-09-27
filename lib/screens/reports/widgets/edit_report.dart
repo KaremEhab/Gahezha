@@ -22,7 +22,7 @@ class EditReportSheet extends StatefulWidget {
 }
 
 class _EditReportSheetState extends State<EditReportSheet> {
-  late String? selectedReportType;
+  late String selectedReportKey; // ✅ key من الـ Map
   late String? selectedAssignedId;
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -35,7 +35,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
   /// Check if data has changed
   bool get _hasChanged {
     final reportingId = widget.report.reporting.id;
-    return selectedReportType != widget.report.reportType ||
+    return selectedReportKey != widget.report.reportType ||
         _descriptionController.text.trim() !=
             widget.report.reportDescription.trim() ||
         selectedAssignedId != reportingId;
@@ -45,27 +45,33 @@ class _EditReportSheetState extends State<EditReportSheet> {
   void initState() {
     super.initState();
 
-    // Initialize fields from the passed report
-    selectedReportType = widget.report.reportType;
+    selectedReportKey = widget.report.reportType;
     _descriptionController.text = widget.report.reportDescription;
+    selectedAssignedId = widget.report.reporting.id;
 
     final reporting = widget.report.reporting;
-    selectedAssignedId = reporting.id;
 
-    // Determine assigned type (Shop / User / Admin)
+    // Case 1: Already assigned to support team
     if (reporting.id == 'support_team') {
       isAdminAssigned = true;
       assignedList = [
         {
           'id': 'support_team',
-          'name': 'Gahezha Support Team',
+          'name_en': 'Gahezha Support Team', // ثابت للرفع
+          'name_locale': S.current.gahezha_support_team, // معرّب للعرض
           'image': 'assets/images/logo.svg',
         },
       ];
-    } else if (reporting.id.startsWith('shop_')) {
+    }
+    // Case 2: If *I am the reporter* and I'm a customer → report shop
+    else if (widget.report.reporter.id == uId &&
+        currentUserType == UserType.customer) {
       isShopAssigned = true;
       assignedList = ShopCubit.instance.allShops;
-    } else {
+    }
+    // Case 3: If *I am the reporter* and I'm a shop → report customer
+    else if (widget.report.reporter.id == uId &&
+        currentUserType == UserType.shop) {
       isCustomerAssigned = true;
       assignedList = UserCubit.instance.allCustomers;
     }
@@ -73,11 +79,12 @@ class _EditReportSheetState extends State<EditReportSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final reportTypes = currentUserType == UserType.admin
-        ? adminReportTypes
+    // ✅ اختار الـ Map المناسب
+    final reportTypesMap = currentUserType == UserType.admin
+        ? adminReportTypesMap
         : currentUserType == UserType.shop
-        ? shopReportTypes
-        : customerReportTypes;
+        ? shopReportTypesMap
+        : customerReportTypesMap;
 
     return BlocConsumer<ReportCubit, ReportState>(
       listener: (context, state) {
@@ -102,9 +109,9 @@ class _EditReportSheetState extends State<EditReportSheet> {
                 ),
                 const SizedBox(height: 12),
 
-                // Report Type
+                /// Report Type
                 DropdownButtonFormField<String>(
-                  value: selectedReportType,
+                  value: selectedReportKey,
                   hint: Text(
                     S.current.report_type,
                     style: const TextStyle(color: Colors.black54),
@@ -133,15 +140,21 @@ class _EditReportSheetState extends State<EditReportSheet> {
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
-                  items: reportTypes
-                      .map(
-                        (type) => DropdownMenuItem<String>(
-                          value: type,
-                          child: Text(type, overflow: TextOverflow.ellipsis),
+                  // ✅ Use Map entries
+                  items: reportTypesMap.entries.map((entry) {
+                    return DropdownMenuItem<String>(
+                      value: entry.key,
+                      child: Text(
+                        entry.value,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
-                      )
-                      .toList(),
-                  onChanged: (val) => setState(() => selectedReportType = val),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => selectedReportKey = val!),
                   menuMaxHeight: 300,
                 ),
                 const SizedBox(height: 12),
@@ -151,7 +164,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
                   spacing: 5,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    if (currentUserType != UserType.shop)
+                    if (currentUserType != UserType.admin)
                       _buildAssignButton(
                         label: S.current.report_app,
                         active: isAdminAssigned,
@@ -164,7 +177,8 @@ class _EditReportSheetState extends State<EditReportSheet> {
                             assignedList = [
                               {
                                 'id': 'support_team',
-                                'name': 'Gahezha Support Team',
+                                'name_en': 'Gahezha Support Team',
+                                'name_locale': S.current.gahezha_support_team,
                                 'image': 'assets/images/logo.svg',
                               },
                             ];
@@ -174,7 +188,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
                         },
                       ),
 
-                    if (currentUserType != UserType.admin)
+                    if (currentUserType != UserType.shop)
                       _buildAssignButton(
                         label: S.current.report_shop,
                         active: isShopAssigned,
@@ -287,7 +301,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
                                     height: 24,
                                   ),
                                   const SizedBox(width: 6),
-                                  Text(item['name']),
+                                  Text(item['name_locale']), // ✅ يعرض حسب اللغة
                                 ],
                               );
                             }
@@ -323,7 +337,7 @@ class _EditReportSheetState extends State<EditReportSheet> {
                   child: ElevatedButton(
                     onPressed:
                         (!_hasChanged ||
-                            selectedReportType == null ||
+                            selectedReportKey == null ||
                             selectedAssignedId == null ||
                             _descriptionController.text.isEmpty ||
                             state is ReportLoading)
@@ -381,9 +395,20 @@ class _EditReportSheetState extends State<EditReportSheet> {
 
     await ReportCubit.instance.updateReport(
       reportId: widget.report.id,
-      reportType: selectedReportType!,
-      reportDescription: _descriptionController.text,
-      assignedItem: assignedItem,
+      status: null,
+      reportType: selectedReportKey,
+      respond: null,
+      assignedItem: assignedItem is Map<String, dynamic>
+          ? {
+              ...assignedItem,
+              'name': assignedItem['name_en'], // ✅ الإنجليزي فقط للرفع
+            }
+          : assignedItem is ShopModel
+          ? {'id': assignedItem.id, 'name': assignedItem.shopName}
+          : {
+              'id': (assignedItem as UserModel).userId,
+              'name': assignedItem.fullName,
+            },
     );
   }
 }

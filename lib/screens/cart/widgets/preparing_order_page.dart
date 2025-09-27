@@ -264,13 +264,13 @@ class OrderStatusPage extends StatelessWidget {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   if (isPlacingOrder) {
-                    // Navigate to CustomerHomePage and remove all other pages
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (_) => const Layout()),
                       (route) => false,
                     );
+                  } else {
+                    Navigator.pop(context);
                   }
-                  Navigator.pop(context);
                 },
               ),
               actions: [

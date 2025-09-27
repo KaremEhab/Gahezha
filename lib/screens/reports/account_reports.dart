@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/report_model.dart';
+import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/reports/widgets/report_card.dart';
 
 class AccountReports extends StatelessWidget {
@@ -96,10 +97,12 @@ class AccountReports extends StatelessWidget {
                         reporter: ReportUser(
                           id: "cscwfwdcaer2",
                           name: "Alaa El-Sayed",
+                          userType: UserType.customer.name,
                         ),
                         reporting: ReportUser(
                           id: "cscwfwdcaer2",
-                          name: "Kareem Ehab",
+                          name: "Adidas",
+                          userType: UserType.customer.name,
                         ),
                         createdAt: DateTime.now(),
                       ),
@@ -128,10 +131,12 @@ class AccountReports extends StatelessWidget {
                         reporter: ReportUser(
                           id: "cscwfwdcaer2",
                           name: "Alaa El-Sayed",
+                          userType: UserType.customer.name,
                         ),
                         reporting: ReportUser(
                           id: "cscwfwdcaer2",
-                          name: "Kareem Ehab",
+                          name: "Adidas",
+                          userType: UserType.customer.name,
                         ),
                         createdAt: DateTime.now(),
                       ),
@@ -160,10 +165,12 @@ class AccountReports extends StatelessWidget {
                         reporter: ReportUser(
                           id: "cscwfwdcaer2",
                           name: "Alaa El-Sayed",
+                          userType: UserType.customer.name,
                         ),
                         reporting: ReportUser(
                           id: "cscwfwdcaer2",
-                          name: "Kareem Ehab",
+                          name: "Adidas",
+                          userType: UserType.customer.name,
                         ),
                         createdAt: DateTime.now(),
                       ),
@@ -192,10 +199,12 @@ class AccountReports extends StatelessWidget {
                         reporter: ReportUser(
                           id: "cscwfwdcaer2",
                           name: "Alaa El-Sayed",
+                          userType: UserType.customer.name,
                         ),
                         reporting: ReportUser(
                           id: "cscwfwdcaer2",
-                          name: "Kareem Ehab",
+                          name: "Adidas",
+                          userType: UserType.customer.name,
                         ),
                         createdAt: DateTime.now(),
                       ),

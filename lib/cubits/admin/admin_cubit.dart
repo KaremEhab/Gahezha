@@ -69,6 +69,42 @@ class AdminCubit extends Cubit<AdminState> {
     }
   }
 
+  /// Paid Commission Balance
+  Future<void> paidCommission({
+    required String userId,
+    required double amount,
+  }) async {
+    try {
+      final userDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId);
+
+      final snapshot = await userDoc.get();
+      if (!snapshot.exists) {
+        throw Exception("User not found");
+      }
+
+      final userData = snapshot.data()!;
+      final currentPaid =
+          (userData['paidCommissionBalance'] as num?)?.toDouble() ?? 0;
+
+      // ✅ نجمع القديم + الجديد
+      final updatedPaid = currentPaid + amount;
+
+      await userDoc.update({'paidCommissionBalance': updatedPaid});
+
+      log(
+        "✅ Paid commission updated for $userId "
+        "from $currentPaid → $updatedPaid",
+      );
+
+      emit(AdminPaidCommissionSuccessfully(updatedPaid));
+    } catch (e) {
+      log("❌ Error in paidCommission: $e");
+      rethrow;
+    }
+  }
+
   /// ✅ Disable a shop
   Future<void> adminDisableAccount(
     String id,
