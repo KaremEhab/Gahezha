@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+
+class AppState {
+  static LatLng? selectedLocation;
+}
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -11,95 +16,62 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  GoogleMapController? _mapController;
+  final MapController _mapController = MapController();
   LatLng? _currentLatLng;
-  final Set<Marker> _markers = {};
+  LatLng? _selectedLatLng;
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _checkGpsAndGetLocation();
   }
 
-  /// Get current device location
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  /// Check if GPS is enabled & get current location
+  Future<void> _checkGpsAndGetLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Location services are disabled.")),
-      );
+      await Geolocator.openLocationSettings();
       return;
     }
 
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
-
     if (permission == LocationPermission.deniedForever) {
       return;
     }
 
-    final Position position = await Geolocator.getCurrentPosition(
+    final pos = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
 
     setState(() {
-      _currentLatLng = LatLng(position.latitude, position.longitude);
-      _markers.add(
-        Marker(
-          markerId: const MarkerId("current"),
-          position: _currentLatLng!,
-          infoWindow: const InfoWindow(title: "My Location"),
-        ),
-      );
+      _currentLatLng = LatLng(pos.latitude, pos.longitude);
+      _selectedLatLng = _currentLatLng;
+      AppState.selectedLocation = _selectedLatLng; // save globally
     });
 
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(_currentLatLng!, 14),
-    );
+    _mapController.move(_currentLatLng!, 15);
   }
 
-  /// Search a place by name (replace old marker, keep current location)
+  /// Search location by name / shop name
   Future<void> _searchPlace(String query) async {
     if (query.isEmpty) return;
 
     try {
-      List<Location> locations = await locationFromAddress(query);
+      final locations = await locationFromAddress(query);
       if (locations.isNotEmpty) {
         final target = LatLng(locations[0].latitude, locations[0].longitude);
 
         setState(() {
-          // Keep current location marker if exists
-          final currentMarker = _markers.firstWhere(
-            (m) => m.markerId.value == "current",
-            orElse: () => const Marker(markerId: MarkerId("none")),
-          );
-
-          _markers.clear();
-
-          if (currentMarker.markerId.value == "current") {
-            _markers.add(currentMarker);
-          }
-
-          // Add new searched marker
-          _markers.add(
-            Marker(
-              markerId: const MarkerId("searched"),
-              position: target,
-              infoWindow: InfoWindow(title: query),
-            ),
-          );
+          _selectedLatLng = target;
+          AppState.selectedLocation = target; // save globally
         });
 
-        _mapController?.animateCamera(CameraUpdate.newLatLngZoom(target, 14));
+        _mapController.move(target, 15);
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -108,48 +80,57 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  /// Add marker when user taps on map (replace old marker, keep current location)
-  void _onMapTapped(LatLng position) {
+  /// Handle tap on map
+  void _onMapTap(TapPosition tapPosition, LatLng latlng) {
     setState(() {
-      // Keep current location marker if exists
-      final currentMarker = _markers.firstWhere(
-        (m) => m.markerId.value == "current",
-        orElse: () => const Marker(markerId: MarkerId("none")),
-      );
-
-      _markers.clear();
-
-      if (currentMarker.markerId.value == "current") {
-        _markers.add(currentMarker);
-      }
-
-      // Add tapped marker
-      _markers.add(
-        Marker(
-          markerId: const MarkerId("selected"),
-          position: position,
-          infoWindow: const InfoWindow(title: "Selected Location"),
-        ),
-      );
+      _selectedLatLng = latlng;
+      AppState.selectedLocation = latlng; // save globally
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final markers = <Marker>[];
+
+    if (_currentLatLng != null) {
+      markers.add(
+        Marker(
+          point: _currentLatLng!,
+          child: const Icon(Icons.my_location, color: Colors.blue, size: 30),
+        ),
+      );
+    }
+
+    if (_selectedLatLng != null) {
+      markers.add(
+        Marker(
+          point: _selectedLatLng!,
+          child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+        ),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Google Maps Demo")),
+      appBar: AppBar(title: const Text("Flutter Map Example")),
       body: Stack(
         children: [
-          GoogleMap(
-            onMapCreated: (controller) => _mapController = controller,
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(30.0444, 31.2357), // Cairo default
-              zoom: 10,
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _currentLatLng ?? const LatLng(30.0444, 31.2357),
+              initialZoom: 10,
+              onTap: _onMapTap,
             ),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            markers: _markers,
-            onTap: _onMapTapped,
+            children: [
+              TileLayer(
+                urlTemplate:
+                    "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=tTZD5GxTLfnXDww5bfTf",
+                userAgentPackageName: "com.gahezha.gahezha",
+                tileProvider:
+                    NetworkTileProvider(), // makes sure PNGs load correctly
+              ),
+              MarkerLayer(markers: markers),
+            ],
           ),
           Positioned(
             top: 10,
@@ -159,7 +140,7 @@ class _MapScreenState extends State<MapScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: "Search place...",
+                  hintText: "Search place or shop...",
                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
@@ -173,7 +154,7 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _getCurrentLocation,
+        onPressed: _checkGpsAndGetLocation,
         child: const Icon(Icons.my_location),
       ),
     );
