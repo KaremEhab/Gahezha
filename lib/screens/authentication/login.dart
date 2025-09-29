@@ -35,7 +35,7 @@ class _LoginState extends State<Login> {
 
     return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
-        if (state is LoginSuccessState) {
+        if (state is LoginSuccessState || state is SignInWithGoogleSuccessState) {
           if (context.mounted) {
             if (currentUserType == UserType.shop) {
               if (currentShopModel!.shopAcceptanceStatus ==
@@ -356,15 +356,7 @@ class _LoginState extends State<Login> {
                           icon: "assets/icons/google-icon.svg",
                           text: S.current.continue_with_google,
                           onTap: () {
-                            currentUserType = UserType.shop;
-                            CacheHelper.saveData(
-                              key: "currentUserType",
-                              value: currentUserType.name,
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const Layout()),
-                            );
+                            LoginCubit.instance.googleSignIn(context);
                           },
                         ),
                       ),

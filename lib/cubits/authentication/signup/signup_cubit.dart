@@ -108,6 +108,8 @@ class SignupCubit extends Cubit<SignupState> {
       notificationsEnabled: true,
     );
 
+    currentUserModel = model;
+
     try {
       // Get FCM token for this device
       final fcmToken = await FirebaseMessaging.instance.getToken();

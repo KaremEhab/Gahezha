@@ -358,6 +358,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                   ),
                                   builder: (_) {
                                     return ProductDetailsSheet(
+                                      isShopOpen: widget.shopModel.shopStatus,
                                       productModel: product,
                                       shopName: widget.shopModel.shopName,
                                       shopLogo: widget.shopModel.shopLogo,
@@ -438,15 +439,21 @@ class _ShopDetailsPageState extends State<ShopDetailsPage>
                                             // ---------- Price & Button ----------
                                             Row(
                                               children: [
-                                                Text(
-                                                  "${S.current.sar} ${product.price}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                    color: Colors.black87,
+                                                SizedBox(
+                                                  height: 50,
+                                                  child: Center(
+                                                    child: Text(
+                                                      "${S.current.sar} ${product.price}",
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 15,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                                 const Spacer(),
+                                                if(widget.shopModel.shopStatus)
                                                 TextButton(
                                                   key: addButtonKey, // add this
                                                   style: TextButton.styleFrom(

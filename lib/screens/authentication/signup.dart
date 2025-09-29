@@ -19,12 +19,16 @@ class Signup extends StatefulWidget {
   const Signup({
     super.key,
     this.referrerId = "",
+    this.uId = "",
+    this.username = "",
+    this.email = "",
     this.isShop = false,
+    this.isGoogle = false,
     this.isGuestMode = false,
   });
 
-  final String referrerId;
-  final bool isShop, isGuestMode;
+  final String referrerId, uId, username, email;
+  final bool isShop, isGoogle, isGuestMode;
 
   @override
   State<Signup> createState() => _SignupState();
@@ -53,6 +57,19 @@ class _SignupState extends State<Signup> {
   TextEditingController _shopPhoneNumber = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    String username = widget.username;
+    String email = widget.email;
+
+    if (widget.isGoogle) {
+      _firstName.text = username;
+      _lastName.text = "";
+      _email.text = email;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool isiOS = Platform.isIOS;
 
@@ -60,7 +77,7 @@ class _SignupState extends State<Signup> {
 
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) {
-        if (state is SignupSuccessState) {
+        if (widget.isGoogle ? state is SignupCreateUserSuccessState : state is SignupSuccessState) {
           // Navigate to layout after success
           if (widget.isShop) {
             currentUserType = UserType.shop;
@@ -260,9 +277,9 @@ class _SignupState extends State<Signup> {
                         title: S.current.shop_location,
                         hint: S.current.enter_shop_location,
                         icon: IconlyLight.location,
-                        onTap: () {
-                          navigateTo(context: context, screen: MapScreen());
-                        },
+                        // onTap: () {
+                        //   navigateTo(context: context, screen: MapScreen());
+                        // },
                       ),
 
                       const SizedBox(height: 16),
@@ -383,41 +400,43 @@ class _SignupState extends State<Signup> {
                         spacing: 16,
                         children: [
                           /// Full Name
-                          Row(
-                            spacing: 5,
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  controller: _firstName,
-                                  title: "First Name",
-                                  hint: "Kareem",
-                                  icon: IconlyLight.profile,
-                                  keyboardType: TextInputType.text,
-                                  obscureText: false, // initial obscure state
+                          if (!widget.isGoogle)
+                            Row(
+                              spacing: 5,
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    controller: _firstName,
+                                    title: "First Name",
+                                    hint: "Kareem",
+                                    icon: IconlyLight.profile,
+                                    keyboardType: TextInputType.text,
+                                    obscureText: false, // initial obscure state
+                                  ),
                                 ),
-                              ),
-                              Expanded(
-                                child: CustomTextField(
-                                  controller: _lastName,
-                                  title: "Last Name",
-                                  hint: "Ehab",
-                                  icon: IconlyLight.profile,
-                                  keyboardType: TextInputType.text,
-                                  obscureText: false, // initial obscure state
+                                Expanded(
+                                  child: CustomTextField(
+                                    controller: _lastName,
+                                    title: "Last Name",
+                                    hint: "Ehab",
+                                    icon: IconlyLight.profile,
+                                    keyboardType: TextInputType.text,
+                                    obscureText: false, // initial obscure state
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
 
                           /// Email
-                          CustomTextField(
-                            controller: _email,
-                            title: "Email",
-                            hint: "Enter your email",
-                            icon: IconlyLight.message,
-                            keyboardType: TextInputType.emailAddress,
-                            obscureText: false, // initial obscure state
-                          ),
+                          if (!widget.isGoogle)
+                            CustomTextField(
+                              controller: _email,
+                              title: "Email",
+                              hint: "Enter your email",
+                              icon: IconlyLight.message,
+                              keyboardType: TextInputType.emailAddress,
+                              obscureText: false, // initial obscure state
+                            ),
 
                           /// Gender
                           Column(
@@ -514,24 +533,27 @@ class _SignupState extends State<Signup> {
                     const SizedBox(height: 10),
 
                     /// Already have account → Login
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(S.of(context).already_have_account),
-                        TextButton(
-                          onPressed: () {
-                            navigateAndFinish(
-                              context: context,
-                              screen: const Login(),
-                            );
-                          },
-                          child: Text(
-                            S.of(context).login,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                    if (!widget.isGoogle)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(S.of(context).already_have_account),
+                          TextButton(
+                            onPressed: () {
+                              navigateAndFinish(
+                                context: context,
+                                screen: const Login(),
+                              );
+                            },
+                            child: Text(
+                              S.of(context).login,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
                     const SizedBox(height: 10),
 
@@ -558,14 +580,26 @@ class _SignupState extends State<Signup> {
                               return;
                             }
 
-                            SignupCubit.instance.userSignup(
-                              email: email,
-                              password: password,
-                              firstName: firstName,
-                              lastName: lastName,
-                              phoneNumber: phoneNumber,
-                              gender: selectedGender,
-                            );
+                            if (!widget.isGoogle) {
+                              SignupCubit.instance.userSignup(
+                                email: email,
+                                password: password,
+                                firstName: firstName,
+                                lastName: lastName,
+                                phoneNumber: phoneNumber,
+                                gender: selectedGender,
+                              );
+                            } else {
+                              SignupCubit.instance.userCreate(
+                                userId: widget.uId,
+                                firstName: firstName,
+                                lastName: lastName,
+                                phoneNumber: phoneNumber,
+                                gender: selectedGender,
+                                email: email,
+                              );
+                              ;
+                            }
                           } else {
                             // Shop signup
                             final shopName = _shopName.text.trim();
@@ -619,63 +653,67 @@ class _SignupState extends State<Signup> {
                     ),
 
                     /// Divider
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 1,
-                              color: Colors.grey[300],
+                    if (!widget.isGoogle)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Colors.grey[300],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(
-                              S.of(context).or,
-                              style: TextStyle(color: Colors.grey[600]),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Text(
+                                S.of(context).or,
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 1,
-                              color: Colors.grey[300],
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Colors.grey[300],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    /// Social buttons
-                    if (isiOS)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _SocialButton(
-                              icon: "assets/icons/google-icon.svg",
-                              text: S.of(context).google,
-                              onTap: () {},
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _SocialButton(
-                              icon: "assets/icons/apple-icon.svg",
-                              text: S.of(context).apple,
-                              onTap: () {},
-                            ),
-                          ),
-                        ],
-                      )
-                    else
-                      SizedBox(
-                        width: double.infinity,
-                        child: _SocialButton(
-                          icon: "assets/icons/google-icon.svg",
-                          text: S.of(context).continue_with_google,
-                          onTap: () {},
+                          ],
                         ),
                       ),
+
+                    /// Social buttons
+                    if (!widget.isGoogle)
+                      if (isiOS)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _SocialButton(
+                                icon: "assets/icons/google-icon.svg",
+                                text: S.of(context).google,
+                                onTap: () {},
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _SocialButton(
+                                icon: "assets/icons/apple-icon.svg",
+                                text: S.of(context).apple,
+                                onTap: () {},
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        SizedBox(
+                          width: double.infinity,
+                          child: _SocialButton(
+                            icon: "assets/icons/google-icon.svg",
+                            text: S.of(context).continue_with_google,
+                            onTap: () {},
+                          ),
+                        ),
                     const SizedBox(height: 40),
                   ],
                 ),

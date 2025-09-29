@@ -141,56 +141,56 @@ class _CustomerProfilePageState extends State<CustomerProfilePage> {
           // Account Section
           if (currentUserType != UserType.guest) ...[
             _buildSectionTitle(S.current.account_settings, context),
-            if (currentUserType == UserType.customer)
-              buildListTile(
-                icon: Icons.monetization_on_outlined,
-                title: S.current.commission,
-                trailingIcon: currentUserModel!.commissionBalance > 0
-                    ? Row(
-                        spacing: 5,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Material(
-                            color: primaryBlue.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(radius),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 13,
-                              ),
-                              child: Text(
-                                "${currentUserModel!.referredShopIds.length} ${currentUserModel!.referredShopIds.length > 1 ? S.current.shops : S.current.shop}",
-                                style: TextStyle(
-                                  color: primaryBlue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Material(
-                            color: primaryBlue,
-                            borderRadius: BorderRadius.circular(radius),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 13,
-                              ),
-                              child: Text(
-                                "${S.current.sar} ${currentUserModel!.commissionBalance}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : null,
-                onTap: () {
-                  UserCubit.instance.shareReferral(uId);
-                },
-              ),
+            // if (currentUserType == UserType.customer)
+            //   buildListTile(
+            //     icon: Icons.monetization_on_outlined,
+            //     title: S.current.commission,
+            //     trailingIcon: currentUserModel!.commissionBalance > 0
+            //         ? Row(
+            //             spacing: 5,
+            //             mainAxisSize: MainAxisSize.min,
+            //             children: [
+            //               Material(
+            //                 color: primaryBlue.withOpacity(0.15),
+            //                 borderRadius: BorderRadius.circular(radius),
+            //                 child: Padding(
+            //                   padding: const EdgeInsets.symmetric(
+            //                     vertical: 8,
+            //                     horizontal: 13,
+            //                   ),
+            //                   child: Text(
+            //                     "${currentUserModel!.referredShopIds.length} ${currentUserModel!.referredShopIds.length > 1 ? S.current.shops : S.current.shop}",
+            //                     style: TextStyle(
+            //                       color: primaryBlue,
+            //                       fontWeight: FontWeight.w600,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //               Material(
+            //                 color: primaryBlue,
+            //                 borderRadius: BorderRadius.circular(radius),
+            //                 child: Padding(
+            //                   padding: const EdgeInsets.symmetric(
+            //                     vertical: 8,
+            //                     horizontal: 13,
+            //                   ),
+            //                   child: Text(
+            //                     "${S.current.sar} ${currentUserModel!.commissionBalance}",
+            //                     style: TextStyle(
+            //                       color: Colors.white,
+            //                       fontWeight: FontWeight.w600,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ],
+            //           )
+            //         : null,
+            //     onTap: () {
+            //       UserCubit.instance.shareReferral(uId);
+            //     },
+            //   ),
             buildListTile(
               icon: IconlyLight.info_circle,
               title: S.current.reports,

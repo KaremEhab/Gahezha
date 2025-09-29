@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "add_specification": MessageLookupByLibrary.simpleMessage(
       "Add Specification",
     ),
+    "add_to_cart": MessageLookupByLibrary.simpleMessage("Add to cart"),
     "add_your_product_images": MessageLookupByLibrary.simpleMessage(
       "Add your product\'s images",
     ),
@@ -344,7 +345,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "medium": MessageLookupByLibrary.simpleMessage("Medium"),
     "menu": MessageLookupByLibrary.simpleMessage("Menu"),
     "min": MessageLookupByLibrary.simpleMessage("min"),
-    "minuets": MessageLookupByLibrary.simpleMessage("Minuets"),
+    "minuets": MessageLookupByLibrary.simpleMessage("Minutes"),
     "mobile_phones": MessageLookupByLibrary.simpleMessage("Mobile Phones"),
     "music_instruments": MessageLookupByLibrary.simpleMessage(
       "Music & Instruments",
@@ -622,6 +623,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "this_account_has_been_reported": MessageLookupByLibrary.simpleMessage(
       "This account has been reported",
+    ),
+    "this_shop_is_closed": MessageLookupByLibrary.simpleMessage(
+      "This shop is closed, see you soon.",
     ),
     "time": MessageLookupByLibrary.simpleMessage("time"),
     "times": MessageLookupByLibrary.simpleMessage("times"),

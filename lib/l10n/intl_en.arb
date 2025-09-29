@@ -128,7 +128,7 @@
   "shop": "Shop",
   "fresh_items_quick_delivery": "Fresh items & Quick delivery",
   "min": "min",
-  "minuets": "Minuets",
+  "minuets": "Minutes",
   "open": "Open",
   "closed": "Closed",
 
@@ -402,5 +402,8 @@
   "click_to_pay": "Click to pay",
   "paid_commission_successfully": "Paid commission successfully",
 
-  "no_notifications": "No notifications"
+  "no_notifications": "No notifications",
+
+  "add_to_cart": "Add to cart",
+  "this_shop_is_closed": "This shop is closed, see you soon."
 }

@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "add_option": MessageLookupByLibrary.simpleMessage("إضافة خيار"),
     "add_product": MessageLookupByLibrary.simpleMessage("اضف منتج"),
     "add_specification": MessageLookupByLibrary.simpleMessage("إضافة مواصفة"),
+    "add_to_cart": MessageLookupByLibrary.simpleMessage("اضف الى العربة"),
     "add_your_product_images": MessageLookupByLibrary.simpleMessage(
       "أضف صور منتجك",
     ),
@@ -594,6 +595,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "this_account_has_been_reported": MessageLookupByLibrary.simpleMessage(
       "تم الإبلاغ عن هذا الحساب",
+    ),
+    "this_shop_is_closed": MessageLookupByLibrary.simpleMessage(
+      "هذا المتجر مغلق، نراك لاحقًا.",
     ),
     "time": MessageLookupByLibrary.simpleMessage("مرة"),
     "times": MessageLookupByLibrary.simpleMessage("مرات"),

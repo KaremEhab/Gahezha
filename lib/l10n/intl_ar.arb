@@ -401,5 +401,8 @@
   "click_to_pay": "اضغط للدفع",
   "paid_commission_successfully": "تم دفع العمولة بنجاح",
 
-  "no_notifications": "لا يوجد اي اشعارات"
+  "no_notifications": "لا يوجد اي اشعارات",
+
+  "add_to_cart": "اضف الى العربة",
+  "this_shop_is_closed": "هذا المتجر مغلق، نراك لاحقًا."
 }

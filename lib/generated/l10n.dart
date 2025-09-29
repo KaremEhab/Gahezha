@@ -1014,9 +1014,9 @@ class S {
     return Intl.message('min', name: 'min', desc: '', args: []);
   }
 
-  /// `Minuets`
+  /// `Minutes`
   String get minuets {
-    return Intl.message('Minuets', name: 'minuets', desc: '', args: []);
+    return Intl.message('Minutes', name: 'minuets', desc: '', args: []);
   }
 
   /// `Open`
@@ -2879,6 +2879,21 @@ class S {
     return Intl.message(
       'No notifications',
       name: 'no_notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add to cart`
+  String get add_to_cart {
+    return Intl.message('Add to cart', name: 'add_to_cart', desc: '', args: []);
+  }
+
+  /// `This shop is closed, see you soon.`
+  String get this_shop_is_closed {
+    return Intl.message(
+      'This shop is closed, see you soon.',
+      name: 'this_shop_is_closed',
       desc: '',
       args: [],
     );

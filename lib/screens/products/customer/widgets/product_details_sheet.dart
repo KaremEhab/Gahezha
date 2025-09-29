@@ -12,6 +12,7 @@ import 'package:gahezha/screens/products/shop/edit_products.dart';
 import 'package:iconly/iconly.dart';
 
 class ProductDetailsSheet extends StatefulWidget {
+  final bool isShopOpen;
   final ProductModel productModel;
   final String shopName, shopLogo, shopPhone;
   final int preparingTimeFrom, preparingTimeTo;
@@ -21,6 +22,7 @@ class ProductDetailsSheet extends StatefulWidget {
     required this.productModel,
     required this.shopName,
     required this.shopLogo,
+    required this.isShopOpen,
     required this.shopPhone,
     required this.preparingTimeFrom,
     required this.preparingTimeTo,
@@ -258,214 +260,236 @@ class _ProductDetailsSheetState extends State<ProductDetailsSheet> {
                 top: BorderSide(color: Colors.grey.shade300, width: 1),
               ),
             ),
-            child: Row(
-              spacing: 10,
-              children: [
-                // Counter
-                Material(
-                  color:
-                      currentUserType == UserType.shop ||
-                          currentUserType == UserType.admin
-                      ? Colors.red.withOpacity(0.1)
-                      : null,
-                  borderRadius: BorderRadius.circular(12),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: currentUserType == UserType.customer
-                        ? null
-                        : () {
-                            Navigator.pop(context);
-                            ProductCubit.instance.deleteProductById(
-                              widget.productModel.id,
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "${widget.productModel.name} ${S.current.deleted}",
-                                ),
-                              ),
-                            );
-                          },
-                    child: Container(
-                      padding:
-                          currentUserType == UserType.shop ||
-                              currentUserType == UserType.admin
-                          ? EdgeInsets.symmetric(horizontal: 25, vertical: 15)
-                          : null,
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border:
+            child: widget.isShopOpen
+                // 🟢 IF THE SHOP IS OPEN, build the buttons Row
+                ? Row(
+                    spacing: 10,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Counter
+                      Material(
+                        color:
                             currentUserType == UserType.shop ||
                                 currentUserType == UserType.admin
-                            ? null
-                            : Border.all(color: Colors.grey.shade300),
-                      ),
-                      child:
-                          currentUserType == UserType.shop ||
-                              currentUserType == UserType.admin
-                          ? Row(
-                              spacing: 5,
-                              children: [
-                                Icon(
-                                  IconlyBold.delete,
-                                  color: Colors.red,
-                                  size: 16,
-                                ),
-                                Text(
-                                  "Delete",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Row(
-                              children: [
-                                IconButton(
-                                  onPressed: decrease,
-                                  icon: const Icon(Icons.remove),
-                                ),
-                                Text(
-                                  "$quantity",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: increase,
-                                  icon: const Icon(Icons.add),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                ),
-
-                // Add to Cart Button
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      if (currentUserType == UserType.guest) {
-                        Navigator.pop(
-                          context,
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text("Create an account first"),
-                              action: SnackBarAction(
-                                label: "Sign Up",
-                                textColor: primaryBlue,
-                                onPressed: () {
-                                  navigateTo(
-                                    context: context,
-                                    screen: Signup(isGuestMode: true),
+                            ? Colors.red.withOpacity(0.1)
+                            : null,
+                        borderRadius: BorderRadius.circular(12),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: currentUserType == UserType.customer
+                              ? null
+                              : () {
+                                  Navigator.pop(context);
+                                  ProductCubit.instance.deleteProductById(
+                                    widget.productModel.id,
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "${widget.productModel.name} ${S.current.deleted}",
+                                      ),
+                                    ),
                                   );
                                 },
-                              ),
+                          child: Container(
+                            padding:
+                                currentUserType == UserType.shop ||
+                                    currentUserType == UserType.admin
+                                ? const EdgeInsets.symmetric(
+                                    horizontal: 25,
+                                    vertical: 15,
+                                  )
+                                : null,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border:
+                                  currentUserType == UserType.shop ||
+                                      currentUserType == UserType.admin
+                                  ? null
+                                  : Border.all(color: Colors.grey.shade300),
+                            ),
+                            child:
+                                currentUserType == UserType.shop ||
+                                    currentUserType == UserType.admin
+                                ? Row(
+                                    spacing: 5,
+                                    children: [
+                                      const Icon(
+                                        IconlyBold.delete,
+                                        color: Colors.red,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        S.current.delete,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: decrease,
+                                        icon: const Icon(Icons.remove),
+                                      ),
+                                      Text(
+                                        "$quantity",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: increase,
+                                        icon: const Icon(Icons.add),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+
+                      // Add to Cart Button
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            if (currentUserType == UserType.guest) {
+                              Navigator.pop(
+                                context,
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      S.current.create_account_first,
+                                    ),
+                                    action: SnackBarAction(
+                                      label: S.current.sign_up,
+                                      textColor: primaryBlue,
+                                      onPressed: () {
+                                        navigateTo(
+                                          context: context,
+                                          screen: Signup(isGuestMode: true),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
+                            } else if (currentUserType == UserType.shop ||
+                                currentUserType == UserType.admin) {
+                              Navigator.pop(context);
+                              navigateTo(
+                                context: context,
+                                screen: EditProductPage(
+                                  product: widget.productModel,
+                                ),
+                              );
+                            } else {
+                              final selectedSpecsList = selectedSpecs.entries
+                                  .map((e) {
+                                    return {
+                                      e.key: [
+                                        {
+                                          "name": e.value,
+                                          "price":
+                                              widget.productModel.specifications
+                                                  .firstWhere(
+                                                    (spec) =>
+                                                        spec.keys.first ==
+                                                        e.key,
+                                                  )[e.key]!
+                                                  .firstWhere(
+                                                    (v) => v["name"] == e.value,
+                                                  )["price"] ??
+                                              0.0,
+                                        },
+                                      ],
+                                    };
+                                  })
+                                  .toList();
+
+                              List<Map<String, dynamic>> selectedAddOnList =
+                                  addOns.entries.where((e) => e.value).map((e) {
+                                    final addon = widget
+                                        .productModel
+                                        .selectedAddOns
+                                        .firstWhere((a) => a["name"] == e.key);
+                                    return {
+                                      'name': e.key,
+                                      'price':
+                                          (addon["price"] ?? 0.0) as double,
+                                    };
+                                  }).toList();
+
+                              await CartCubit.instance.addToCart(
+                                widget.productModel.shopId,
+                                widget.shopName,
+                                widget.shopLogo,
+                                widget.shopPhone,
+                                widget.preparingTimeFrom,
+                                widget.preparingTimeTo,
+                                CartItem(
+                                  productId: widget.productModel.id,
+                                  name: widget.productModel.name,
+                                  basePrice: widget.productModel.price,
+                                  quantity: quantity,
+                                  productUrl: widget.productModel.images.isEmpty
+                                      ? ''
+                                      : widget.productModel.images.first,
+                                  specifications: selectedSpecsList,
+                                  selectedAddOns: selectedAddOnList,
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                              horizontal: 15,
+                            ),
+                            backgroundColor: primaryBlue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                        );
-                      } else if (currentUserType == UserType.shop ||
-                          currentUserType == UserType.admin) {
-                        Navigator.pop(context);
-                        navigateTo(
-                          context: context,
-                          screen: EditProductPage(product: widget.productModel),
-                        );
-                      } else {
-                        final selectedSpecsList = selectedSpecs.entries.map((
-                          e,
-                        ) {
-                          return {
-                            e.key: [
-                              {
-                                "name": e.value,
-                                "price":
-                                    widget.productModel.specifications
-                                        .firstWhere(
-                                          (spec) => spec.keys.first == e.key,
-                                        )[e.key]!
-                                        .firstWhere(
-                                          (v) => v["name"] == e.value,
-                                        )["price"] ??
-                                    0.0,
-                              },
-                            ],
-                          };
-                        }).toList();
-
-                        List<Map<String, dynamic>> selectedAddOnList = addOns
-                            .entries
-                            .where((e) => e.value)
-                            .map((e) {
-                              final addon = widget.productModel.selectedAddOns
-                                  .firstWhere((a) => a["name"] == e.key);
-                              return {
-                                'name': e.key,
-                                'price': (addon["price"] ?? 0.0) as double,
-                              };
-                            })
-                            .toList();
-
-                        debugPrint("Added to cart:");
-                        debugPrint("Quantity: $quantity");
-                        debugPrint("Specifications: $selectedSpecsList");
-                        debugPrint("Add-ons: $selectedAddOnList");
-
-                        await CartCubit.instance.addToCart(
-                          widget.productModel.shopId,
-                          widget.shopName,
-                          widget.shopLogo,
-                          widget.shopPhone,
-                          widget.preparingTimeFrom,
-                          widget.preparingTimeTo,
-                          CartItem(
-                            productId: widget.productModel.id,
-                            name: widget.productModel.name,
-                            basePrice: widget.productModel.price,
-                            quantity: quantity,
-                            productUrl: widget.productModel.images.isEmpty
-                                ? ''
-                                : widget.productModel.images.first,
-                            specifications: selectedSpecsList,
-                            selectedAddOns: selectedAddOnList,
+                          icon: Icon(
+                            currentUserType == UserType.shop ||
+                                    currentUserType == UserType.admin
+                                ? IconlyLight.edit
+                                : Icons.add_shopping_cart,
+                            color: Colors.white,
                           ),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 15,
+                          label: Text(
+                            currentUserType == UserType.shop ||
+                                    currentUserType == UserType.admin
+                                ? "${S.current.edit} ${widget.productModel.name}"
+                                : "${S.current.add_to_cart} ${S.current.sar} $totalPrice",
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                      backgroundColor: primaryBlue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    ],
+                  )
+                // 🔴 IF THE SHOP IS CLOSED, build a centered Text message
+                : Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      "This shop is closed, see you soon.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black54,
                       ),
-                    ),
-                    icon: Icon(
-                      currentUserType == UserType.shop ||
-                              currentUserType == UserType.admin
-                          ? IconlyLight.edit
-                          : Icons.add_shopping_cart,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      currentUserType == UserType.shop ||
-                              currentUserType == UserType.admin
-                          ? "Edit ${widget.productModel.name}"
-                          : "Add to cart $totalPrice",
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
-                ),
-              ],
-            ),
           ),
         ),
       ),

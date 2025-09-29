@@ -150,6 +150,7 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             builder: (_) => ProductDetailsSheet(
+              isShopOpen: currentShopModel!.shopStatus,
               productModel: product!,
               shopName: currentShopModel!.shopName,
               shopLogo: currentShopModel!.shopLogo,

@@ -230,7 +230,7 @@ class LoginCubit extends Cubit<LoginState> {
         String username =
             userCredential.user!.displayName ??
             userCredential.user!.email ??
-            'Anonymous';
+            'Invalid name';
         DocumentSnapshot<Map<String, dynamic>>? value = await FirebaseFirestore
             .instance
             .collection('users')
@@ -238,17 +238,30 @@ class LoginCubit extends Cubit<LoginState> {
             .get();
         if (!context.mounted) return;
         if (!value.exists) {
-          navigateAndFinish(context: context, screen: Signup());
+          navigateAndFinish(
+            context: context,
+            screen: Signup(
+              isGoogle: true,
+              uId: uId,
+              username: username,
+              email: userCredential.user!.email!,
+            ),
+          );
         } else {
           await Future.wait([
             FirebaseFirestore.instance.collection('users').doc(uId).update({
               'fcmTokens': [fcmDeviceToken],
             }),
             CacheHelper.saveData(key: 'uId', value: uId),
+            CacheHelper.saveData(
+              key: 'currentUserType',
+              value: UserType.customer.name,
+            ),
           ]);
+          await UserCubit.instance.getCurrentUser();
           emit(SignInWithGoogleSuccessState());
-          if (!context.mounted) return;
-          navigateAndFinish(context: context, screen: const Layout());
+          // if (!context.mounted) return;
+          // navigateAndFinish(context: context, screen: const Layout());
         }
       }
     } catch (error) {
