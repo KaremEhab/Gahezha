@@ -405,5 +405,15 @@
   "no_notifications": "No notifications",
 
   "add_to_cart": "Add to cart",
-  "this_shop_is_closed": "This shop is closed, see you soon."
+  "this_shop_is_closed": "This shop is closed, see you soon.",
+
+  "password_reset_link_sent": "Password reset link sent! Check your email.",
+  "reset_your_password": "Reset Your Password",
+  "enter_email_for_reset_link": "Enter your email to receive a password reset link.",
+  "send_reset_link": "Send Reset Link",
+
+  "unregistered_account": "No account found for that email.",
+  "wrong_password": "Wrong password. Please try again.",
+  "invalid_email_format": "The email address is badly formatted.",
+  "something_went_wrong": "Something went wrong. Please try again later."
 }

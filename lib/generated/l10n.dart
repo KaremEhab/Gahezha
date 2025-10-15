@@ -2898,6 +2898,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Password reset link sent! Check your email.`
+  String get password_reset_link_sent {
+    return Intl.message(
+      'Password reset link sent! Check your email.',
+      name: 'password_reset_link_sent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset Your Password`
+  String get reset_your_password {
+    return Intl.message(
+      'Reset Your Password',
+      name: 'reset_your_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email to receive a password reset link.`
+  String get enter_email_for_reset_link {
+    return Intl.message(
+      'Enter your email to receive a password reset link.',
+      name: 'enter_email_for_reset_link',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Reset Link`
+  String get send_reset_link {
+    return Intl.message(
+      'Send Reset Link',
+      name: 'send_reset_link',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No account found for that email.`
+  String get unregistered_account {
+    return Intl.message(
+      'No account found for that email.',
+      name: 'unregistered_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong password. Please try again.`
+  String get wrong_password {
+    return Intl.message(
+      'Wrong password. Please try again.',
+      name: 'wrong_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The email address is badly formatted.`
+  String get invalid_email_format {
+    return Intl.message(
+      'The email address is badly formatted.',
+      name: 'invalid_email_format',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Something went wrong. Please try again later.`
+  String get something_went_wrong {
+    return Intl.message(
+      'Something went wrong. Please try again later.',
+      name: 'something_went_wrong',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

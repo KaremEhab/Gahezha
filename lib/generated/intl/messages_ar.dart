@@ -221,6 +221,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "enjoy_your_order_title": MessageLookupByLibrary.simpleMessage(
       "استمتع بطلبك",
     ),
+    "enter_email_for_reset_link": MessageLookupByLibrary.simpleMessage(
+      "أدخل بريدك الإلكتروني لتلقي رابط إعادة تعيين كلمة المرور.",
+    ),
     "enter_extra_price": MessageLookupByLibrary.simpleMessage(
       "أدخل السعر الإضافي (0 إذا لم يكن هناك)",
     ),
@@ -308,6 +311,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "images": MessageLookupByLibrary.simpleMessage("الصور"),
     "info": MessageLookupByLibrary.simpleMessage("معلومات"),
     "internet_cafe": MessageLookupByLibrary.simpleMessage("مقهى إنترنت"),
+    "invalid_email_format": MessageLookupByLibrary.simpleMessage(
+      "صيغة البريد الإلكتروني غير صالحة.",
+    ),
     "item": MessageLookupByLibrary.simpleMessage("عنصر"),
     "items": MessageLookupByLibrary.simpleMessage("عناصر"),
     "jewelry": MessageLookupByLibrary.simpleMessage("مجوهرات"),
@@ -410,6 +416,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم دفع العمولة بنجاح",
     ),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
+    "password_reset_link_sent": MessageLookupByLibrary.simpleMessage(
+      "تم إرسال رابط إعادة تعيين كلمة المرور! تحقق من بريدك الإلكتروني.",
+    ),
     "pending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "pending_lower": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "pending_shops": MessageLookupByLibrary.simpleMessage("المتاجر المعلقة"),
@@ -511,6 +520,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "report_type": MessageLookupByLibrary.simpleMessage("نوع البلاغ"),
     "reported": MessageLookupByLibrary.simpleMessage("تم الإبلاغ"),
     "reports": MessageLookupByLibrary.simpleMessage("البلاغات"),
+    "reset_your_password": MessageLookupByLibrary.simpleMessage(
+      "إعادة تعيين كلمة المرور",
+    ),
     "resolved": MessageLookupByLibrary.simpleMessage("تم الحل"),
     "respond_to_reporter": MessageLookupByLibrary.simpleMessage(
       "الرد على المُبلغ",
@@ -524,6 +536,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "see_all": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "see_your_active_orders": MessageLookupByLibrary.simpleMessage(
       "عرض طلباتك النشطة",
+    ),
+    "send_reset_link": MessageLookupByLibrary.simpleMessage(
+      "إرسال رابط إعادة التعيين",
     ),
     "send_response_and_update": MessageLookupByLibrary.simpleMessage(
       "إرسال الرد وتحديث",
@@ -568,6 +583,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
     "small": MessageLookupByLibrary.simpleMessage("صغير"),
+    "something_went_wrong": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقاً.",
+    ),
     "special_offer": MessageLookupByLibrary.simpleMessage("عرض خاص"),
     "specifications": MessageLookupByLibrary.simpleMessage("المواصفات"),
     "spicy": MessageLookupByLibrary.simpleMessage("حار"),
@@ -609,6 +627,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "اكتب ردك هنا...",
     ),
     "unblock": MessageLookupByLibrary.simpleMessage("رفع الحظر"),
+    "unregistered_account": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد حساب مسجل بهذا البريد الإلكتروني.",
+    ),
     "vegan": MessageLookupByLibrary.simpleMessage("نباتي"),
     "viewing_details_of_order": MessageLookupByLibrary.simpleMessage(
       "عرض تفاصيل الطلب",
@@ -622,6 +643,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcome": MessageLookupByLibrary.simpleMessage("مرحباً"),
     "welcome_back": MessageLookupByLibrary.simpleMessage("مرحباً بعودتك"),
     "whipped_cream": MessageLookupByLibrary.simpleMessage("كريمة مخفوقة"),
+    "wrong_password": MessageLookupByLibrary.simpleMessage(
+      "كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+    ),
     "you_have": MessageLookupByLibrary.simpleMessage("لديك"),
     "you_need_account_to_add_items_cart": MessageLookupByLibrary.simpleMessage(
       "تحتاج إلى حساب لإضافة منتجات إلى السلة",

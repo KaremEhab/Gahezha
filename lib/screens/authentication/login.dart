@@ -9,6 +9,7 @@ import 'package:gahezha/cubits/authentication/login/login_cubit.dart';
 import 'package:gahezha/cubits/authentication/signup/signup_cubit.dart';
 import 'package:gahezha/models/shop_model.dart';
 import 'package:gahezha/models/user_model.dart';
+import 'package:gahezha/screens/authentication/forget_password.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
 import 'package:gahezha/waiting_for_approval.dart';
@@ -35,7 +36,8 @@ class _LoginState extends State<Login> {
 
     return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
-        if (state is LoginSuccessState || state is SignInWithGoogleSuccessState) {
+        if (state is LoginSuccessState ||
+            state is SignInWithGoogleSuccessState) {
           if (context.mounted) {
             if (currentUserType == UserType.shop) {
               if (currentShopModel!.shopAcceptanceStatus ==
@@ -54,6 +56,18 @@ class _LoginState extends State<Login> {
               navigateAndFinish(context: context, screen: const Layout());
             }
           }
+        }
+        // Handle Error State
+        else if (state is LoginErrorState) {
+          // Hide any previous SnackBars
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          // Show the new error SnackBar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error),
+              backgroundColor: Colors.red, // Red color for errors
+            ),
+          );
         }
       },
       builder: (context, state) {
@@ -168,15 +182,12 @@ class _LoginState extends State<Login> {
                             ),
                             TextButton(
                               onPressed: () {
-                                currentUserType = UserType.admin;
-                                CacheHelper.saveData(
-                                  key: "currentUserType",
-                                  value: currentUserType.name,
-                                );
+                                // 👈 UPDATE THIS PART
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const Layout(),
+                                    builder: (context) =>
+                                        const ForgotPasswordPage(),
                                   ),
                                 );
                               },

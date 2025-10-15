@@ -228,6 +228,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "enjoy_your_order_title": MessageLookupByLibrary.simpleMessage(
       "Enjoy Your Order",
     ),
+    "enter_email_for_reset_link": MessageLookupByLibrary.simpleMessage(
+      "Enter your email to receive a password reset link.",
+    ),
     "enter_extra_price": MessageLookupByLibrary.simpleMessage(
       "Enter extra Price (0 for none)",
     ),
@@ -319,6 +322,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "images": MessageLookupByLibrary.simpleMessage("Images"),
     "info": MessageLookupByLibrary.simpleMessage("Info"),
     "internet_cafe": MessageLookupByLibrary.simpleMessage("Internet Cafe"),
+    "invalid_email_format": MessageLookupByLibrary.simpleMessage(
+      "The email address is badly formatted.",
+    ),
     "item": MessageLookupByLibrary.simpleMessage("item"),
     "items": MessageLookupByLibrary.simpleMessage("items"),
     "jewelry": MessageLookupByLibrary.simpleMessage("Jewelry"),
@@ -424,6 +430,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Paid commission successfully",
     ),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "password_reset_link_sent": MessageLookupByLibrary.simpleMessage(
+      "Password reset link sent! Check your email.",
+    ),
     "pending": MessageLookupByLibrary.simpleMessage("PENDING"),
     "pending_lower": MessageLookupByLibrary.simpleMessage("Pending"),
     "pending_shops": MessageLookupByLibrary.simpleMessage("Pending Shops"),
@@ -535,6 +544,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "report_type": MessageLookupByLibrary.simpleMessage("Report Type"),
     "reported": MessageLookupByLibrary.simpleMessage("Reported"),
     "reports": MessageLookupByLibrary.simpleMessage("Reports"),
+    "reset_your_password": MessageLookupByLibrary.simpleMessage(
+      "Reset Your Password",
+    ),
     "resolved": MessageLookupByLibrary.simpleMessage("Resolved"),
     "respond_to_reporter": MessageLookupByLibrary.simpleMessage(
       "Respond To Reporter",
@@ -549,6 +561,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "see_your_active_orders": MessageLookupByLibrary.simpleMessage(
       "See your active orders",
     ),
+    "send_reset_link": MessageLookupByLibrary.simpleMessage("Send Reset Link"),
     "send_response_and_update": MessageLookupByLibrary.simpleMessage(
       "Send Response & Update",
     ),
@@ -594,6 +607,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
     "small": MessageLookupByLibrary.simpleMessage("Small"),
+    "something_went_wrong": MessageLookupByLibrary.simpleMessage(
+      "Something went wrong. Please try again later.",
+    ),
     "special_offer": MessageLookupByLibrary.simpleMessage("Special Offer"),
     "specifications": MessageLookupByLibrary.simpleMessage("Specifications"),
     "spicy": MessageLookupByLibrary.simpleMessage("Spicy"),
@@ -637,6 +653,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Type your response here...",
     ),
     "unblock": MessageLookupByLibrary.simpleMessage("Unblock"),
+    "unregistered_account": MessageLookupByLibrary.simpleMessage(
+      "No account found for that email.",
+    ),
     "vegan": MessageLookupByLibrary.simpleMessage("Vegan"),
     "viewing_details_of_order": MessageLookupByLibrary.simpleMessage(
       "Viewing details of order",
@@ -650,6 +669,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
     "welcome_back": MessageLookupByLibrary.simpleMessage("Welcome Back"),
     "whipped_cream": MessageLookupByLibrary.simpleMessage("Whipped Cream"),
+    "wrong_password": MessageLookupByLibrary.simpleMessage(
+      "Wrong password. Please try again.",
+    ),
     "you_have": MessageLookupByLibrary.simpleMessage("You have"),
     "you_need_account_to_add_items_cart": MessageLookupByLibrary.simpleMessage(
       "You need an account to add items to cart",

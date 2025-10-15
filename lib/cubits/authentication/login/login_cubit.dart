@@ -14,6 +14,7 @@ import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/shop/shop_cubit.dart';
 import 'package:gahezha/cubits/user/user_cubit.dart';
+import 'package:gahezha/generated/l10n.dart';
 import 'package:gahezha/models/user_model.dart';
 import 'package:gahezha/screens/authentication/signup.dart';
 import 'package:gahezha/screens/layout/layout.dart';
@@ -105,18 +106,20 @@ class LoginCubit extends Cubit<LoginState> {
       }
 
       emit(LoginSuccessState(uId));
-    } catch (error) {
-      if (error is FirebaseAuthException) {
-        if (error.code == 'user-not-found') {
-          emit(LoginErrorState(error: 'Unregistered account'));
-        } else if (error.code == 'wrong-password') {
-          emit(LoginErrorState(error: 'Wrong password'));
-        } else {
-          emit(LoginErrorState(error: 'Something went wrong'));
-        }
+    } on FirebaseAuthException catch (error) {
+      // ✅ This block handles specific Firebase Authentication errors.
+      if (error.code == 'user-not-found') {
+        emit(LoginErrorState(error: S.current.unregistered_account));
+      } else if (error.code == 'wrong-password') {
+        emit(LoginErrorState(error: S.current.wrong_password));
+      } else if (error.code == 'invalid-email') {
+        emit(LoginErrorState(error: S.current.invalid_email_format));
       } else {
-        emit(LoginErrorState(error: 'An error occurred: $error'));
+        emit(LoginErrorState(error: S.current.something_went_wrong));
       }
+    } catch (error) {
+      // This handles other errors, like the 'user_data_not_found' throw
+      emit(LoginErrorState(error: S.current.something_went_wrong));
     }
   }
 

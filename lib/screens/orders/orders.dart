@@ -84,18 +84,18 @@ class _OrdersPageState extends State<OrdersPage> {
               child: Row(
                 spacing: 5,
                 children: [
-                  Material(
-                    color: Colors.grey.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(radius),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(radius),
-                      onTap: () {},
-                      child: const Padding(
-                        padding: EdgeInsets.all(13),
-                        child: Icon(IconlyLight.search, size: 16),
-                      ),
-                    ),
-                  ),
+                  // Material(
+                  //   color: Colors.grey.withOpacity(0.1),
+                  //   borderRadius: BorderRadius.circular(radius),
+                  //   child: InkWell(
+                  //     borderRadius: BorderRadius.circular(radius),
+                  //     onTap: () {},
+                  //     child: const Padding(
+                  //       padding: EdgeInsets.all(13),
+                  //       child: Icon(IconlyLight.search, size: 16),
+                  //     ),
+                  //   ),
+                  // ),
                   if (currentUserType == UserType.admin)
                     Material(
                       color: Colors.grey.withOpacity(0.1),
