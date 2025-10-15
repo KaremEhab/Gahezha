@@ -1,30 +1,36 @@
 // This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:gahezha/constants/remote_config.dart';
+import 'package:gahezha/gahezha_splash.dart';
 import 'package:gahezha/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  // Test case for when the app is enabled
+  testWidgets('App shows splash screen when enabled', (
+    WidgetTester tester,
+  ) async {
+    // Build our app with the enabled flag and trigger a frame.
+    await tester.pumpWidget(const MyApp(enabled: true));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the GahezhaSplash screen is shown.
+    expect(find.byType(GahezhaSplash), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify that the disabled screen is NOT shown.
+    expect(find.byType(AppDisabledScreen), findsNothing);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  // Test case for when the app is disabled
+  testWidgets('App shows disabled screen when disabled', (
+    WidgetTester tester,
+  ) async {
+    // Build our app with the disabled flag and trigger a frame.
+    await tester.pumpWidget(const MyApp(enabled: false));
+
+    // Verify that the AppDisabledScreen is shown.
+    expect(find.byType(AppDisabledScreen), findsOneWidget);
+
+    // Verify that the splash screen is NOT shown.
+    expect(find.byType(GahezhaSplash), findsNothing);
   });
 }

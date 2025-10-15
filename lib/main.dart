@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gahezha/constants/bloc_observer.dart';
 import 'package:gahezha/constants/cache_helper.dart';
 import 'package:gahezha/constants/notifications_services.dart';
+import 'package:gahezha/constants/remote_config.dart';
 import 'package:gahezha/constants/vars.dart';
 import 'package:gahezha/cubits/admin/admin_cubit.dart';
 import 'package:gahezha/cubits/authentication/login/login_cubit.dart';
@@ -40,7 +42,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // ✅ Extension على NavigatorState
 extension NavigatorStateX on NavigatorState {
   void pushReplacementIfNeeded(MaterialPageRoute route) {
-
     final shouldReplace = canPop();
     if (shouldReplace) {
       pushReplacement(route);
@@ -73,6 +74,18 @@ class AccessTokenFirebase {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  final remoteConfig = FirebaseRemoteConfig.instance;
+  await remoteConfig.setConfigSettings(
+    RemoteConfigSettings(
+      fetchTimeout: const Duration(minutes: 1),
+      minimumFetchInterval: const Duration(seconds: 1),
+    ),
+  );
+  await remoteConfig.setDefaults(const {"is_app_enabled": true});
+  await remoteConfig.fetchAndActivate();
+  final bool enabled = remoteConfig.getBool('is_app_enabled');
+
   await CacheHelper.init();
   Bloc.observer = MyBlocObserver();
 
@@ -147,11 +160,12 @@ Future<void> main() async {
     ),
   );
 
-  runApp(const MyApp());
+  runApp(MyApp(enabled: enabled));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final bool enabled;
+  const MyApp({super.key, required this.enabled});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -161,17 +175,27 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    DeepLinkService.instance.init(navigatorKey);
+    if (widget.enabled) {
+      DeepLinkService.instance.init(navigatorKey);
+    }
   }
 
   @override
   void dispose() {
-    DeepLinkService.instance.dispose();
+    if (widget.enabled) {
+      DeepLinkService.instance.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.enabled) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: AppDisabledScreen(),
+      );
+    }
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => LocaleCubit()),
