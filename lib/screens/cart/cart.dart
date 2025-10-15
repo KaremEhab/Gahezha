@@ -55,7 +55,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
             leading: currentUserType == UserType.guest
                 ? null
                 : Padding(
-                    padding: EdgeInsets.fromLTRB(
+                    padding: EdgeInsets.fromLTRB( 
                       lang == 'en' ? 7 : 0,
                       6,
                       lang == 'ar' ? 7 : 0,
