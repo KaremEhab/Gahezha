@@ -77,7 +77,9 @@ class _SignupState extends State<Signup> {
 
     return BlocConsumer<SignupCubit, SignupState>(
       listener: (context, state) {
-        if (widget.isGoogle ? state is SignupCreateUserSuccessState : state is SignupSuccessState) {
+        if (widget.isGoogle
+            ? state is SignupCreateUserSuccessState
+            : state is SignupSuccessState) {
           // Navigate to layout after success
           if (widget.isShop) {
             currentUserType = UserType.shop;
@@ -530,7 +532,7 @@ class _SignupState extends State<Signup> {
                         ],
                       ),
 
-                    const SizedBox(height: 10),
+                    // const SizedBox(height: 10),
 
                     /// Already have account → Login
                     if (!widget.isGoogle)
@@ -653,67 +655,67 @@ class _SignupState extends State<Signup> {
                     ),
 
                     /// Divider
-                    if (!widget.isGoogle)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey[300],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Text(
-                                S.of(context).or,
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey[300],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    // if (!widget.isGoogle)
+                    //   Padding(
+                    //     padding: const EdgeInsets.symmetric(vertical: 14),
+                    //     child: Row(
+                    //       children: [
+                    //         Expanded(
+                    //           child: Divider(
+                    //             thickness: 1,
+                    //             color: Colors.grey[300],
+                    //           ),
+                    //         ),
+                    //         Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //             horizontal: 8,
+                    //           ),
+                    //           child: Text(
+                    //             S.of(context).or,
+                    //             style: TextStyle(color: Colors.grey[600]),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //           child: Divider(
+                    //             thickness: 1,
+                    //             color: Colors.grey[300],
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
 
                     /// Social buttons
-                    if (!widget.isGoogle)
-                      if (isiOS)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _SocialButton(
-                                icon: "assets/icons/google-icon.svg",
-                                text: S.of(context).google,
-                                onTap: () {},
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _SocialButton(
-                                icon: "assets/icons/apple-icon.svg",
-                                text: S.of(context).apple,
-                                onTap: () {},
-                              ),
-                            ),
-                          ],
-                        )
-                      else
-                        SizedBox(
-                          width: double.infinity,
-                          child: _SocialButton(
-                            icon: "assets/icons/google-icon.svg",
-                            text: S.of(context).continue_with_google,
-                            onTap: () {},
-                          ),
-                        ),
+                    // if (!widget.isGoogle)
+                    //   if (isiOS)
+                    //     Row(
+                    //       children: [
+                    //         Expanded(
+                    //           child: _SocialButton(
+                    //             icon: "assets/icons/google-icon.svg",
+                    //             text: S.of(context).google,
+                    //             onTap: () {},
+                    //           ),
+                    //         ),
+                    //         const SizedBox(width: 12),
+                    //         Expanded(
+                    //           child: _SocialButton(
+                    //             icon: "assets/icons/apple-icon.svg",
+                    //             text: S.of(context).apple,
+                    //             onTap: () {},
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     )
+                    //   else
+                    //     SizedBox(
+                    //       width: double.infinity,
+                    //       child: _SocialButton(
+                    //         icon: "assets/icons/google-icon.svg",
+                    //         text: S.of(context).continue_with_google,
+                    //         onTap: () {},
+                    //       ),
+                    //     ),
                     const SizedBox(height: 40),
                   ],
                 ),
